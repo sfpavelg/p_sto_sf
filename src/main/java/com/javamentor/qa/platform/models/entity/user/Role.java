@@ -1,5 +1,7 @@
 package com.javamentor.qa.platform.models.entity.user;
 
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -9,6 +11,7 @@ import org.springframework.security.core.GrantedAuthority;
 import javax.persistence.*;
 import java.util.Objects;
 
+@ApiModel(value = "Role")
 @Entity
 @Getter
 @Setter
@@ -22,6 +25,7 @@ public class Role implements GrantedAuthority {
     @GeneratedValue(generator = "Role_seq")
     private Long id;
 
+    @ApiModelProperty(value = "Имя")
     @Column
     private String name;
 
