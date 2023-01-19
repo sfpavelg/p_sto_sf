@@ -12,6 +12,8 @@ import org.springframework.stereotype.Component;
 public class TestEntityInit implements CommandLineRunner {
 
     private final TestDataInitService testDataInitService;
+    @Value("${spring.jpa.hibernate.ddl-auto}")
+    private String ddlAuto;
 
     @Autowired
     public TestEntityInit(TestDataInitService testDataInitService) {
@@ -20,6 +22,6 @@ public class TestEntityInit implements CommandLineRunner {
 
     @Override
     public void run(String... args) {
-
+        testDataInitService.init();
     }
 }
