@@ -1,4 +1,4 @@
-package com.javamentor.qa.platform.dao.impl.model.util;
+package com.javamentor.qa.platform.dao.util;
 
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
