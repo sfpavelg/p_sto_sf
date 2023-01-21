@@ -1,12 +1,11 @@
 package com.javamentor.qa.platform.service.impl;
 
-import com.javamentor.qa.platform.dao.abstracts.model.ReadWriteDao;
 import com.javamentor.qa.platform.models.entity.user.Role;
 import com.javamentor.qa.platform.models.entity.user.User;
 import com.javamentor.qa.platform.service.abstracts.model.RoleService;
 import com.javamentor.qa.platform.service.abstracts.model.UserService;
-import groovy.lang.Lazy;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -15,7 +14,7 @@ import java.time.LocalDateTime;
 public class TestDataInitService {
     public static Role ROLE_ADMIN = new Role("ROLE_ADMIN");
     public static Role ROLE_USER = new Role("ROLE_USER");
-
+    BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder(10);
     private RoleService roleService;
 
     private UserService userService;
@@ -31,7 +30,7 @@ public class TestDataInitService {
         for (int i = 0; i < count; i++) {
             User user = new User();
             user.setEmail("super" + i + "@gmail.com");
-            user.setPassword(i + "pwd");
+            user.setPassword(passwordEncoder.encode(i + "pwd"));
             user.setFullName("superfullname" + i);
             user.setPersistDateTime(LocalDateTime.of(2023, 1, 19, 0, 0));
             user.setIsEnabled(true);
@@ -53,7 +52,7 @@ public class TestDataInitService {
         for (int i = 0; i < count; i++) {
             User user = new User();
             user.setEmail(i + "@gmail.com");
-            user.setPassword(i + "pwd");
+            user.setPassword(passwordEncoder.encode(i + "pwd"));
             user.setFullName("fullname" + i);
             user.setPersistDateTime(LocalDateTime.of(2023, 1, 19, 0, 0));
             user.setIsEnabled(true);

@@ -1,10 +1,8 @@
 package com.javamentor.qa.platform.service.impl.model;
 
-import com.javamentor.qa.platform.dao.abstracts.model.ReadWriteDao;
 import com.javamentor.qa.platform.dao.abstracts.model.UserDao;
 import com.javamentor.qa.platform.models.entity.user.User;
 import com.javamentor.qa.platform.service.abstracts.model.UserService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -20,11 +18,11 @@ public class UserServiceImpl extends ReadWriteServiceImpl<User, Long> implements
 
     @Override
     public void persist(User user) {
-        userDao.persist(user);
+        super.persist(user);
     }
 
     @Override
     public Optional<User> getByEmail(String email) {
-        return Optional.empty();
+        return userDao.getByEmail(email);
     }
 }
