@@ -25,36 +25,14 @@ public class UserDtoDaoImpl implements UserDtoDao {
     @Override
     public Optional<UserDto> getUserById(Long id) {
 
-//        Query query = manager.createNativeQuery(
-//        "SELECT id, email, full_name, image_link, city, " +
-//        "(SELECT SUM(count) as reputation FROM reputation WHERE author_id = :id)" +
-//        " FROM user_entity WHERE id = :id ;")
-//                .setParameter("id", id);
+
         Query query = manager.createQuery("SELECT new " + UserDto.class.getName() +
-                        " (u.id, u.email, u.fullName, u.imageLink, u.city) " +
-                        " from User u where id = :id")
+                        " (u.id, u.email, u.fullName, u.imageLink, u.city, sum(r.count)) " +
+                        " from User u, Reputation r where u.id = :id and r.author.id = :id group by u.id")
                 .setParameter("id", id);
-//                        " FROM User u, Reputation r WHERE id = :id")
 
 
         List<UserDto> list = query.getResultList();
-//        UserDto name = new UserDto();
-//        for(Object[] q1 : list){
-//            name.setId((Long) ((BigInteger) q1[0]).longValue());
-//            name.setEmail((String) q1[1]);
-//            name.setFullName((String) q1[2]);
-//            name.setImageLink((String) q1[3]);
-//            name.setCity((String) q1[4]);
-//            name.setReputation((int) q1[5]);
-//        }
-        System.out.println(list.get(0));
-
         return Optional.of(list.get(0));
     }
 }
-
-
-//manager.createNativeQuery(
-//        "SELECT id, email, full_name, image_link, city, " +
-//        "(SELECT SUM(count) as reputation FROM reputation WHERE author_id = 1)" +
-//        " FROM user_entity WHERE id = 1;").getResultList()

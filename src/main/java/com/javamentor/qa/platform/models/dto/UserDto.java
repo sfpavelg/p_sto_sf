@@ -26,23 +26,12 @@ public class UserDto implements Serializable {
     private String imageLink;
     private int reputation;
 
-    public UserDto(Long id, String email, String fullName, String city, String imageLink) {
+    public UserDto(Long id, String email, String fullName, String city, String imageLink, Long reputation) {
         this.id = id;
         this.email = email;
         this.fullName = fullName;
         this.city = city;
         this.imageLink = imageLink;
+        this.reputation = reputation.intValue();
     }
-
-    //    public UserDto() {
-//    }
-//
-//    public UserDto(Long id, String email, String fullName, String city, String imageLink, int reputation) {
-//        this.id = id;
-//        this.email = email;
-//        this.fullName = fullName;
-//        this.city = city;
-//        this.imageLink = imageLink;
-//        this.reputation = reputation;
-//    }
 }
