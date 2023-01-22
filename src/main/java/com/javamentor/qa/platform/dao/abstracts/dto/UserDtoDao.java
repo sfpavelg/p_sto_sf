@@ -11,5 +11,5 @@ import java.util.Optional;
  */
 @Repository
 public interface UserDtoDao {
-    Optional<UserDto> getUserById(Long id);
+    Optional<UserDto> getById(Long id);
 }

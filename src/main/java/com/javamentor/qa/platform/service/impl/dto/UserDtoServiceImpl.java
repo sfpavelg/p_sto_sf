@@ -5,6 +5,8 @@ import com.javamentor.qa.platform.models.dto.UserDto;
 import com.javamentor.qa.platform.service.abstracts.dto.UserDtoService;
 import org.springframework.stereotype.Service;
 
+import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -17,7 +19,7 @@ public class UserDtoServiceImpl implements UserDtoService {
     }
 
     @Override
-    public Optional<UserDto> getUserById(Long id) {
-        return userDtoDao.getUserById(id);
+    public Optional<UserDto> getById(Long id) {
+        return userDtoDao.getById(id);
     }
 }
