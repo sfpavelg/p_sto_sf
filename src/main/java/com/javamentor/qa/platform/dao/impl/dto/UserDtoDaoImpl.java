@@ -3,6 +3,7 @@ package com.javamentor.qa.platform.dao.impl.dto;
 import com.javamentor.qa.platform.dao.abstracts.dto.UserDtoDao;
 import com.javamentor.qa.platform.models.dto.UserDto;
 import org.springframework.stereotype.Repository;
+
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.util.List;
@@ -20,7 +21,7 @@ public class UserDtoDaoImpl implements UserDtoDao {
 
     @Override
     public Optional<UserDto> getById(Long id) {
-        List<UserDto> list = entityManager.createQuery("""
+        List<UserDto> userDtoList = entityManager.createQuery("""
                         SELECT new com.javamentor.qa.platform.models.dto.UserDto
                         (u.id, u.email, u.fullName, u.city, u.imageLink, sum(cast(r.count as int)))
                         from User u, Reputation r where u.id = :id and r.author.id = :id group by u.id
@@ -28,6 +29,6 @@ public class UserDtoDaoImpl implements UserDtoDao {
                 .setParameter("id", id)
                 .getResultList();
 
-        return Optional.of(list.get(0));
+        return userDtoList.isEmpty() ? Optional.empty() : Optional.of(userDtoList.get(0));
     }
 }
