@@ -1,4 +1,4 @@
-package com.javamentor.qa.platform.dao.abstracts.dto;
+package com.javamentor.qa.platform.dao.abstracts.dto.user;
 
 import com.javamentor.qa.platform.models.dto.UserDto;
 import com.javamentor.qa.platform.models.entity.user.User;
