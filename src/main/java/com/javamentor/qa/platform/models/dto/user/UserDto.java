@@ -1,4 +1,4 @@
-package com.javamentor.qa.platform.models.dto;
+package com.javamentor.qa.platform.models.dto.user;
 
 import com.javamentor.qa.platform.models.entity.user.User;
 import lombok.AllArgsConstructor;
