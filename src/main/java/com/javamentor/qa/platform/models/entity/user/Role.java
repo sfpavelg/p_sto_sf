@@ -11,7 +11,7 @@ import org.springframework.security.core.GrantedAuthority;
 import javax.persistence.*;
 import java.util.Objects;
 
-@ApiModel(value = "Role")
+
 @Entity
 @Getter
 @Setter
@@ -25,7 +25,7 @@ public class Role implements GrantedAuthority {
     @GeneratedValue(generator = "Role_seq")
     private Long id;
 
-    @ApiModelProperty(value = "Имя")
+
     @Column
     private String name;
 
