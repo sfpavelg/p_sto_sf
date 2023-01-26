@@ -21,8 +21,9 @@ public class UserDtoDaoImpl implements UserDtoDao {
         return SingleResultUtil.getSingleResultOrNull(
                 entityManager.createQuery(
                                 "SELECT new com.javamentor.qa.platform.models.dto.user.UserDto" +
-                                        "(u.id, u.email, u.fullName, u.city, u.imageLink, sum(cast(r.count as int)))" +
-                                        "from User u, Reputation r where u.id = :id and r.author.id = :id group by u.id")
+                                        "(u.id, u.email, u.fullName, u.city, u.imageLink, coalesce(sum(r.count), 0))" +
+                                        "from User u, Reputation r where u.id = :id and r.author.id = :id " +
+                                        "group by u.id", UserDto.class)
                         .setParameter("id", id));
     }
 }
