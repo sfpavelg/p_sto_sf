@@ -7,13 +7,14 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.jdbc.Sql;
 
 import java.util.Random;
-
+@Sql ({"/question-dto-data.sql"})
 class QuestionDtoControllerTest extends AbstractTestApi {
 
 
-    private int id = new Random().nextInt(10);
+    private int id = new Random().nextInt(5);
 
 
     @Test
