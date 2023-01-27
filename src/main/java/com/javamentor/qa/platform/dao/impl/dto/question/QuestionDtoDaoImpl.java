@@ -23,9 +23,9 @@ public class QuestionDtoDaoImpl implements QuestionDtoDao {
                         "select new com.javamentor.qa.platform.models.dto.question.QuestionDto ( q.id, " +
                                 "q.title , " +
                                 "u.id, " +
-                                "sum(r.count), " +
+                                "coalesce(sum(r.count),0), " +
                                 "u.fullName, " +
-                                "u.imageLink, " +
+                                "coalesce(u.imageLink,'No image link') , " +
                                 "q.description , " +
                                 "0, " +
                                 "(select count (a.question.id) from Answer a where a.question.id = q.id), " +
