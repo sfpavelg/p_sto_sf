@@ -1,9 +1,9 @@
-package com.javamentor.qa.platform.service.impl.dto;
+package com.javamentor.qa.platform.service.impl.dto.question;
 
-import com.javamentor.qa.platform.dao.abstracts.dto.QuestionDtoDao;
+import com.javamentor.qa.platform.dao.abstracts.dto.question.QuestionDtoDao;
 import com.javamentor.qa.platform.models.dto.question.QuestionDto;
-import com.javamentor.qa.platform.service.abstracts.dto.QuestionDtoService;
-import com.javamentor.qa.platform.service.abstracts.dto.TagDtoService;
+import com.javamentor.qa.platform.service.abstracts.dto.question.QuestionDtoService;
+import com.javamentor.qa.platform.service.abstracts.dto.tag.TagDtoService;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;

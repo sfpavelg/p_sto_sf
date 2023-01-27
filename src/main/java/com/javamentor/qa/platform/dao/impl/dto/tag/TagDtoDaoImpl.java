@@ -1,6 +1,6 @@
-package com.javamentor.qa.platform.dao.impl.dto;
+package com.javamentor.qa.platform.dao.impl.dto.tag;
 
-import com.javamentor.qa.platform.dao.abstracts.dto.TagDtoDao;
+import com.javamentor.qa.platform.dao.abstracts.dto.tag.TagDtoDao;
 import com.javamentor.qa.platform.models.dto.question.TagDto;
 import org.springframework.stereotype.Repository;
 

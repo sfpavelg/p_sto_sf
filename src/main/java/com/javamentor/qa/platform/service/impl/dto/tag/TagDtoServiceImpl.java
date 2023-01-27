@@ -1,8 +1,8 @@
-package com.javamentor.qa.platform.service.impl.dto;
+package com.javamentor.qa.platform.service.impl.dto.tag;
 
-import com.javamentor.qa.platform.dao.abstracts.dto.TagDtoDao;
+import com.javamentor.qa.platform.dao.abstracts.dto.tag.TagDtoDao;
 import com.javamentor.qa.platform.models.dto.question.TagDto;
-import com.javamentor.qa.platform.service.abstracts.dto.TagDtoService;
+import com.javamentor.qa.platform.service.abstracts.dto.tag.TagDtoService;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

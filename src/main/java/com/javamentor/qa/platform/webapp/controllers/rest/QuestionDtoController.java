@@ -1,7 +1,7 @@
 package com.javamentor.qa.platform.webapp.controllers.rest;
 
 import com.javamentor.qa.platform.models.dto.question.QuestionDto;
-import com.javamentor.qa.platform.service.abstracts.dto.QuestionDtoService;
+import com.javamentor.qa.platform.service.abstracts.dto.question.QuestionDtoService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

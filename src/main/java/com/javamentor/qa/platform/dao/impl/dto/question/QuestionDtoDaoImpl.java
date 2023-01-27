@@ -1,6 +1,6 @@
-package com.javamentor.qa.platform.dao.impl.dto;
+package com.javamentor.qa.platform.dao.impl.dto.question;
 
-import com.javamentor.qa.platform.dao.abstracts.dto.QuestionDtoDao;
+import com.javamentor.qa.platform.dao.abstracts.dto.question.QuestionDtoDao;
 import com.javamentor.qa.platform.dao.util.SingleResultUtil;
 import com.javamentor.qa.platform.models.dto.question.QuestionDto;
 import org.springframework.stereotype.Repository;
