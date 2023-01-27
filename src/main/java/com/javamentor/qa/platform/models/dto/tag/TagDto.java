@@ -1,4 +1,4 @@
-package com.javamentor.qa.platform.models.dto.question;
+package com.javamentor.qa.platform.models.dto.tag;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

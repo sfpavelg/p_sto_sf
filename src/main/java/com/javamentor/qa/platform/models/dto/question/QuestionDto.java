@@ -1,5 +1,6 @@
 package com.javamentor.qa.platform.models.dto.question;
 
+import com.javamentor.qa.platform.models.dto.tag.TagDto;
 import lombok.*;
 
 import java.time.LocalDateTime;
