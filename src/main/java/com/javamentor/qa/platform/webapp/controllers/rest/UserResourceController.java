@@ -1,4 +1,4 @@
-package com.javamentor.qa.platform.webapp.controllers.rest.user;
+package com.javamentor.qa.platform.webapp.controllers.rest;
 
 import com.javamentor.qa.platform.models.dto.user.UserDto;
 import com.javamentor.qa.platform.service.abstracts.dto.user.UserDtoService;
