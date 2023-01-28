@@ -4,6 +4,7 @@ import com.javamentor.qa.platform.models.entity.user.User;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
 import java.io.Serializable;
 
 /**
@@ -20,12 +21,4 @@ public class UserDto implements Serializable {
     private String imageLink;
     private int reputation;
 
-    public UserDto(Long id, String email, String fullName, String city, String imageLink, Long reputation) {
-        this.id = id;
-        this.email = email;
-        this.fullName = fullName;
-        this.city = city;
-        this.imageLink = imageLink;
-        this.reputation = reputation.intValue();
-    }
 }
