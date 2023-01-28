@@ -22,7 +22,7 @@ public class IntegrationTestUserDtoGetById {
     private TestRestTemplate testRestTemplate;
 
     @Test
-    @Sql({"/test-user-data.sql"})
+    @Sql({"/script/test-userDto-getId-wihtReputation-data.sql"})
     public void testGetUserById() {
 
         ResponseEntity<String> responseEntity = testRestTemplate
