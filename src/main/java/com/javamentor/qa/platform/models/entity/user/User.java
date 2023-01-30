@@ -1,6 +1,6 @@
 package com.javamentor.qa.platform.models.entity.user;
 
-import io.swagger.annotations.ApiModelProperty;
+
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.Type;
@@ -31,16 +31,13 @@ public class User implements UserDetails {
 
     @Column
     @NonNull
-    @ApiModelProperty(value = "Почта")
     private String email;
 
     @Column
     @NonNull
-    @ApiModelProperty(value = "Пароль")
     private String password;
 
     @Column
-    @ApiModelProperty(value = "Фамилия")
     private String fullName;
 
     @Column(name = "persist_date", updatable = false)
