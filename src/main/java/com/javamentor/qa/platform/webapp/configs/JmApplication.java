@@ -10,8 +10,6 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 @SpringBootApplication
 @ComponentScan("com.javamentor.qa.platform")
 @EntityScan("com.javamentor.qa.platform.models.entity")
-@ComponentScan(basePackageClasses = {JmApplication.class, SwaggerConfig.class})
-@EnableSwagger2
 public class JmApplication {
 
     public static void main(String[] args) {
@@ -19,4 +17,5 @@ public class JmApplication {
     }
 
 }
+
 
