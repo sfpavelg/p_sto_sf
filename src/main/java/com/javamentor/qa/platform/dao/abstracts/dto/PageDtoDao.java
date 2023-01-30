@@ -46,4 +46,26 @@ public interface PageDtoDao<T, P> {
         return page;
     }
 
+    /**
+     * Page constructor, by default, considers elements on page 10
+     * @param param By default, the parameter is the page number
+     * @param query The request to be paginated
+     * @param itemsOnPage Count item's on page
+     * @return Returns a paginated object for the DTO
+     */
+    default PageDto<T> createPage(P param, Query query, int itemsOnPage) {
+        PageDto<T> page = new PageDto<>();
+        page.setTotalResultCount(getTotalResultCount(param));
+        page.setItemsOnPage(itemsOnPage);
+        page.setTotalPageCount(page.getTotalResultCount() / page.getItemsOnPage());
+        page.setCurrentPageNumber(Integer.parseInt(param.toString()));
+        List<T> listForPage = query
+                .setMaxResults(page.getItemsOnPage())
+                .setFirstResult(page.getCurrentPageNumber() * page.getItemsOnPage())
+                .getResultList();
+        page.setItems(listForPage);
+
+        return page;
+    }
+
 }
