@@ -1,9 +1,9 @@
 package com.javamentor.qa.platform.service.abstracts.dto.question;
 
 import com.javamentor.qa.platform.models.dto.question.QuestionDto;
+import javassist.NotFoundException;
 
-import java.util.Optional;
 
 public interface QuestionDtoService {
-    Optional <QuestionDto> getQuestionDtoById(Long id);
+    QuestionDto getQuestionDtoById(Long id) throws NotFoundException;
 }
