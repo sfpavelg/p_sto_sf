@@ -25,11 +25,12 @@ public class QuestionDtoDaoImpl implements QuestionDtoDao {
                                 "u.id, " +
                                 "coalesce(sum(r.count),0), " +
                                 "u.fullName, " +
-                                "coalesce(u.imageLink,'No image link') , " +
+                                "u.imageLink, " +
                                 "q.description , " +
-                                "0, " +
+                                "(select count (qw.question.id) from QuestionViewed qw where qw.question.id = q.id), " +
                                 "(select count (a.question.id) from Answer a where a.question.id = q.id), " +
-                                "(select count (vq.question.id) from VoteQuestion vq where vq.question.id = :id), " +
+                                "(select count(vq.question.id) from VoteQuestion vq where vq.question.id = :id and vq.vote = 'up') - " +
+                                "(select count(vq.question.id) from VoteQuestion vq where vq.question.id = :id and vq.vote = 'down'), " +
                                 "q.persistDateTime, " +
                                 "q.lastUpdateDateTime) " +
 
