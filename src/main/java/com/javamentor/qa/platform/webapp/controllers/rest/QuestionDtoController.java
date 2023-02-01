@@ -1,10 +1,9 @@
 package com.javamentor.qa.platform.webapp.controllers.rest;
 
-import com.javamentor.qa.platform.models.dto.question.QuestionDto;
 import com.javamentor.qa.platform.service.abstracts.dto.question.QuestionDtoService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import org.springframework.http.HttpStatus;
+import javassist.NotFoundException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -23,10 +22,7 @@ public class QuestionDtoController {
 
     @GetMapping("/{id}")
     @ApiOperation("Получение элемента QuestionDto по id")
-    public ResponseEntity<?> getQuestionDtoById(@PathVariable Long id) {
-        QuestionDto questionDto = questionDtoService.getQuestionDtoById(id).orElse(null);
-        return questionDto == null ?
-                ResponseEntity.status(HttpStatus.NOT_FOUND).body("QuestionDto with id = " + id + " not found") :
-                ResponseEntity.ok(questionDto);
+    public ResponseEntity<?> getQuestionDtoById(@PathVariable Long id) throws NotFoundException {
+        return ResponseEntity.ok(questionDtoService.getQuestionDtoById(id));
     }
 }
