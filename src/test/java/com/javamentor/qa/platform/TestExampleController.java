@@ -11,11 +11,11 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.jdbc.Sql;
 
 //Пример написания тестового класса для контроллера
-@Sql(value = {"/script/TestExampleController/testMethod/Before.sql"}, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
-@Sql(value = {"/script/TestExampleController/testMethod/After.sql"}, executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
 class TestExampleController extends AbstractTestApi {
 
     @Test
+    @Sql(value = {"/script/TestExampleController/testMethod/Before.sql"}, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+    @Sql(value = {"/script/TestExampleController/testMethod/After.sql"}, executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
     public void testMethod() throws Exception {
         //correct request
         this.mvc.perform(get("/api/example/user/{id}", 100))
