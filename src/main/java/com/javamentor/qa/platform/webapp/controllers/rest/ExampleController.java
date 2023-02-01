@@ -1,7 +1,8 @@
 package com.javamentor.qa.platform.webapp.controllers.rest;
 
+import com.javamentor.qa.platform.models.dto.user.UserDto;
 import com.javamentor.qa.platform.models.entity.user.User;
-import com.javamentor.qa.platform.service.abstracts.model.UserService;
+import com.javamentor.qa.platform.service.abstracts.dto.user.UserDtoService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.http.HttpStatus;
@@ -14,19 +15,19 @@ import org.springframework.web.bind.annotation.*;
 @Api("Тестовый контроллер для примера тестирования")
 public class ExampleController {
 
-    private final UserService userService;
+    private final UserDtoService userDtoService;
 
-    public ExampleController(UserService userService) {
-        this.userService = userService;
+    public ExampleController(UserDtoService userDtoService) {
+        this.userDtoService = userDtoService;
     }
 
 
     @GetMapping("/{id}")
     @ApiOperation("Получение элемента User по id")
     public ResponseEntity<?> getUserById(@PathVariable Long id) {
-        User user = userService.getById(id).orElse(null);
-        return user == null ?
+        UserDto userDto = userDtoService.getUserDtoById(id).orElse(null);
+        return userDto == null ?
                 ResponseEntity.status(HttpStatus.NOT_FOUND).body("User with id = " + id + " not found") :
-                ResponseEntity.ok(user);
+                ResponseEntity.ok(userDto);
     }
 }

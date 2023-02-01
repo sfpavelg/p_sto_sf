@@ -26,12 +26,8 @@ public abstract class AbstractTestApi {
 //    @Autowired
 //    protected CacheManager cacheManager;
     @Autowired
-
     protected MockMvc mvc;
     @Autowired
     protected ObjectMapper objectMapper;
 
-    public void test() throws Exception {
-
-    }
 }

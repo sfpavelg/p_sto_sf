@@ -13,15 +13,10 @@ import java.util.Optional;
 public class UserDaoImpl extends ReadWriteDaoImpl<User, Long> implements UserDao {
     @PersistenceContext
     private EntityManager entityManager;
+
     public Optional<User> getByEmail(String email) {
         return SingleResultUtil.getSingleResultOrNull(entityManager.createQuery(
                 "SELECT u FROM User u JOIN FETCH u.role WHERE u.email = :email"
                 , User.class).setParameter("email", email));
-    }
-
-    public Optional<User> getById(Long id) {
-        return SingleResultUtil.getSingleResultOrNull(entityManager.createQuery(
-                "SELECT u FROM User u JOIN FETCH u.role WHERE u.id = :id"
-                , User.class).setParameter("id", id));
     }
 }
