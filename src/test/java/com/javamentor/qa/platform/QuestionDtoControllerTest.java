@@ -5,17 +5,18 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 import org.hamcrest.core.Is;
+import org.hamcrest.core.IsNull;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.jdbc.Sql;
 
 
-@Sql(value = {"/question/question-dto-data-create.sql"}, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
-@Sql(value = {"/question/question-dto-data-drop.sql"}, executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
 class QuestionDtoControllerTest extends AbstractTestApi {
 
 
     @Test
+    @Sql(value = {"/question/question-dto-data-create.sql"}, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+    @Sql(value = {"/question/question-dto-data-drop.sql"}, executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
     public void getQuestionDtoByIdTest() throws Exception {
         //success
         this.mvc.perform(get("/api/user/question/{id}", 1))
@@ -30,9 +31,9 @@ class QuestionDtoControllerTest extends AbstractTestApi {
                 .andExpect(jsonPath("$.authorImage", Is.is("http://imagelink1.com")))
                 .andExpect(jsonPath("$.description", Is.is("description1")))
                 .andExpect(jsonPath("$.title", Is.is("title1")))
-                .andExpect(jsonPath("$.viewCount", Is.is(0)))
+                .andExpect(jsonPath("$.viewCount", Is.is(2)))
                 .andExpect(jsonPath("$.countAnswer", Is.is(3)))
-                .andExpect(jsonPath("$.countValuable", Is.is(3)))
+                .andExpect(jsonPath("$.countValuable", Is.is(2)))
                 .andExpect(jsonPath("$.persistDateTime", Is.is("2023-01-27T13:01:11.245126")))
                 .andExpect(jsonPath("$.lastUpdateDateTime", Is.is("2023-01-27T13:01:11.245126")))
                 .andExpect(jsonPath("$.listTagDto[0].id", Is.is(1)))
@@ -58,7 +59,7 @@ class QuestionDtoControllerTest extends AbstractTestApi {
                 .andExpect(jsonPath("$.authorId", Is.is(5)))
                 .andExpect(jsonPath("$.authorReputation", Is.is(0)))
                 .andExpect(jsonPath("$.authorName", Is.is("name5")))
-                .andExpect(jsonPath("$.authorImage", Is.is("No image link")))
+                .andExpect(jsonPath("$.authorImage", IsNull.nullValue()))
                 .andExpect(jsonPath("$.description", Is.is("description5")))
                 .andExpect(jsonPath("$.title", Is.is("title5")))
                 .andExpect(jsonPath("$.viewCount", Is.is(0)))
