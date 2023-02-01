@@ -2,6 +2,8 @@ DELETE FROM reputation where id BETWEEN 1 and 5;
 
 DELETE FROM answer where id BETWEEN 1 and 5;
 
+DELETE FROM question_viewed where id BETWEEN 1 and 5;
+
 DELETE FROM question_has_tag where question_id BETWEEN 1 and 5;
 
 DELETE FROM votes_on_questions where id BETWEEN 1 and 5;
