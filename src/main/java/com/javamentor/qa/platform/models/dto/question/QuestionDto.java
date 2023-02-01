@@ -1,7 +1,10 @@
 package com.javamentor.qa.platform.models.dto.question;
 
 import com.javamentor.qa.platform.models.dto.tag.TagDto;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -29,7 +32,7 @@ public class QuestionDto {
     private List<TagDto> listTagDto = new ArrayList<>();
 
 
-    public QuestionDto(Long id, String title, Long authorId, Long authorReputation, String authorName, String authorImage, String description, int viewCount, Long countAnswer, Long countValuable, LocalDateTime persistDateTime, LocalDateTime lastUpdateDateTime) {
+    public QuestionDto(Long id, String title, Long authorId, Long authorReputation, String authorName, String authorImage, String description, Long viewCount, Long countAnswer, Long countValuable, LocalDateTime persistDateTime, LocalDateTime lastUpdateDateTime) {
         this.id = id;
         this.title = title;
         this.authorId = authorId;
@@ -37,7 +40,7 @@ public class QuestionDto {
         this.authorName = authorName;
         this.authorImage = authorImage;
         this.description = description;
-        this.viewCount = viewCount;
+        this.viewCount = Math.toIntExact(viewCount);
         this.countAnswer = Math.toIntExact(countAnswer);
         this.countValuable = Math.toIntExact(countValuable);
         this.persistDateTime = persistDateTime;
