@@ -11,7 +11,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.jdbc.Sql;
 
 
-class QuestionDtoControllerTest extends AbstractTestApi {
+class QuestionResourceControllerTest extends AbstractTestApi {
 
 
     @Test

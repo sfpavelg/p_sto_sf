@@ -10,12 +10,12 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/user/question")
-@Api("Контроллер для работы с QuestionDto")
-public class QuestionDtoController {
+@Api("Контроллер для работы с Question")
+public class QuestionResourceController {
 
     private final QuestionDtoService questionDtoService;
 
-    public QuestionDtoController(QuestionDtoService questionDtoService) {
+    public QuestionResourceController(QuestionDtoService questionDtoService) {
         this.questionDtoService = questionDtoService;
     }
 
