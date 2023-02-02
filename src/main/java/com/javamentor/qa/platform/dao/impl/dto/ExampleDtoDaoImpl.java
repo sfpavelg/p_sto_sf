@@ -40,7 +40,7 @@ public class ExampleDtoDaoImpl implements ExampleDtoDao {
 
 
     @Override
-    public List<ExampleDto> getPaginatedUser(HashMap<String, Object> param) {
+    public List<ExampleDto> getPaginatedUsers(HashMap<String, Object> param) {
         // Simplest way to use pagination is using createPage() method which accepts parameters
         PageDto<ExampleDto> page = createPage(param, getItems(param),
                 (int) param.get("itemsOnPage"), (int) param.get("pageNumber"));
@@ -49,7 +49,7 @@ public class ExampleDtoDaoImpl implements ExampleDtoDao {
     }
 
     @Override
-    public List<ExampleDto> getAnotherPaginatedUser(HashMap<String, Object> param) {
+    public List<ExampleDto> getAnotherPaginatedUsers(HashMap<String, Object> param) {
         // Another way to use pagination is ignoring createPage() method and creating PageDto
         // by filling in the fields yourself, and if necessary, paginating the request yourself (paginateQuery).
         int pageNumber = (int) param.get("pageNumber");

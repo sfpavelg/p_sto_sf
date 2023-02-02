@@ -13,7 +13,7 @@ import java.util.List;
 @Repository
 public interface ExampleDtoDao extends PageDtoDao<ExampleDto, HashMap<String, Object>> {
 
-    List<ExampleDto> getPaginatedUser(HashMap<String, Object> param);
-    List<ExampleDto> getAnotherPaginatedUser(HashMap<String, Object> param);
+    List<ExampleDto> getPaginatedUsers(HashMap<String, Object> param);
+    List<ExampleDto> getAnotherPaginatedUsers(HashMap<String, Object> param);
 
 }
