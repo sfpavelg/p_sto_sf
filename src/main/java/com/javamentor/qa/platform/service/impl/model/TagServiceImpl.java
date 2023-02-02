@@ -7,6 +7,9 @@ import com.javamentor.qa.platform.service.abstracts.model.ReadWriteService;
 import com.javamentor.qa.platform.service.abstracts.model.TagService;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.Map;
+
 @Service
 public class TagServiceImpl extends ReadWriteServiceImpl<Tag, Long> implements TagService {
     private final TagDao tagDao;
@@ -14,5 +17,10 @@ public class TagServiceImpl extends ReadWriteServiceImpl<Tag, Long> implements T
     public TagServiceImpl(TagDao tagDao) {
         super(tagDao);
         this.tagDao = tagDao;
+    }
+
+    @Override
+    public Map<String, Long> getAllTagNamesAndIds() {
+        return tagDao.getAllTagNamesAndIds();
     }
 }
