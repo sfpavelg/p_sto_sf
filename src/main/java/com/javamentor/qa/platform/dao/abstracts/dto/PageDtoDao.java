@@ -9,63 +9,54 @@ import java.util.List;
 /**
  * Universal pagination for DTO's
  * @param <T> The type of DTO for which we perform pagination
- * @param <P> Type of parameter for page selection
+ * @param <HashMap> Parameter for page selection
  */
 
 @Repository
-public interface PageDtoDao<T, P> {
+public interface PageDtoDao<T, HashMap> {
 
     /**
-     * Get the DTO list
+     * Creating a query to get a list of DTO for it
      */
-    List<T> getItems(P param);
+    Query getItems(HashMap param);
 
     /**
      * Get the total number of values for this DTO
      */
-    int getTotalResultCount(P param);
+    int getTotalResultCount(HashMap param);
 
     /**
      * Page constructor, by default, considers elements on page 10
      * @param param By default, the parameter is the page number
      * @param query The request to be paginated
+     * @param itemsOnPage Count items on page
+     * @param pageNumber Number of page that contains DTO's
      * @return Returns a paginated object for the DTO
      */
-    default PageDto<T> createPage(P param, Query query) {
+    default PageDto<T> createPage(HashMap param, Query query, int itemsOnPage, int pageNumber) {
+
         PageDto<T> page = new PageDto<>();
         page.setTotalResultCount(getTotalResultCount(param));
-        page.setTotalPageCount(page.getTotalResultCount() / 10);
-        page.setItemsOnPage(page.getTotalResultCount() / page.getTotalPageCount());
-        page.setCurrentPageNumber(Integer.parseInt(param.toString()));
-        List<T> listForPage = query
-                .setMaxResults(page.getItemsOnPage())
-                .setFirstResult(page.getCurrentPageNumber() * page.getItemsOnPage())
-                .getResultList();
-        page.setItems(listForPage);
+        page.setItemsOnPage(itemsOnPage);
+        page.setTotalPageCount(page.getTotalResultCount() / page.getItemsOnPage());
+        page.setCurrentPageNumber(pageNumber);
+        page.setItems(paginateQuery(query, page));
 
         return page;
     }
 
     /**
-     * Page constructor, by default, considers elements on page 10
-     * @param param By default, the parameter is the page number
-     * @param query The request to be paginated
-     * @param itemsOnPage Count item's on page
-     * @return Returns a paginated object for the DTO
+     * Query constructor to build List<DTO>
+     * @param query Query  to be paginated
+     * @param page The object of the page from which the pagination parameters are taken
+     * @return List of DTO's
      */
-    default PageDto<T> createPage(P param, Query query, int itemsOnPage) {
-        PageDto<T> page = new PageDto<>();
-        page.setTotalResultCount(getTotalResultCount(param));
-        page.setItemsOnPage(itemsOnPage);
-        page.setTotalPageCount(page.getTotalResultCount() / page.getItemsOnPage());
-        page.setCurrentPageNumber(Integer.parseInt(param.toString()));
-        List<T> listForPage = query
+    default List<T> paginateQuery(Query query, PageDto<T> page) {
+        return query
                 .setMaxResults(page.getItemsOnPage())
                 .setFirstResult(page.getCurrentPageNumber() * page.getItemsOnPage())
                 .getResultList();
-        page.setItems(listForPage);
 
-        return page;
     }
 
 }
