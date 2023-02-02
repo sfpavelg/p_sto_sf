@@ -1,4 +1,4 @@
-package com.javamentor.qa.platform.jwt;
+package com.javamentor.qa.platform.security.jwt;
 
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;

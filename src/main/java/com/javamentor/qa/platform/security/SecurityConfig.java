@@ -1,6 +1,6 @@
 package com.javamentor.qa.platform.security;
 
-import com.javamentor.qa.platform.jwt.JwtAuthenticationFilter;
+import com.javamentor.qa.platform.security.jwt.JwtAuthenticationFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -40,7 +40,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter implements WebM
         filter.setEncoding("UTF-8");
         filter.setForceEncoding(true);
         http.csrf().disable();
-        http.cors().disable();
+        http.cors();
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
         http
                 .authorizeRequests()

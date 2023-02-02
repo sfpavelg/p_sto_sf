@@ -1,6 +1,9 @@
-package com.javamentor.qa.platform.jwt;
+package com.javamentor.qa.platform.security.jwt;
 
-import lombok.*;
+
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
 
 @Getter
 @Setter

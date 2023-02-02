@@ -6,8 +6,6 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 
 import java.util.Optional;
 
-public interface UserService extends ReadWriteService<User, Long>, UserDetailsService {
+public interface UserService extends ReadWriteService<User, Long> {
     Optional<User> getByEmail(String email);
-
-    UserDetails loadUserByUsername(String email);
 }

@@ -1,4 +1,4 @@
-package com.javamentor.qa.platform.jwt;
+package com.javamentor.qa.platform.security.jwt;
 
 import com.javamentor.qa.platform.models.entity.user.User;
 import io.jsonwebtoken.Jwts;

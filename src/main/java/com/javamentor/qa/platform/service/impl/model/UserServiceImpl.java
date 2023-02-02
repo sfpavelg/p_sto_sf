@@ -3,8 +3,6 @@ package com.javamentor.qa.platform.service.impl.model;
 import com.javamentor.qa.platform.dao.abstracts.model.UserDao;
 import com.javamentor.qa.platform.models.entity.user.User;
 import com.javamentor.qa.platform.service.abstracts.model.UserService;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -28,9 +26,4 @@ public class UserServiceImpl extends ReadWriteServiceImpl<User, Long> implements
         return userDao.getByEmail(email);
     }
 
-    @Override
-    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        return userDao.getByEmail(email)
-                .orElseThrow(() -> new UsernameNotFoundException(String.format("Email %s не найден.", email)));
-    }
 }
