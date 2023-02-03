@@ -36,4 +36,11 @@ public class ExceptionController {
                 .body(exception.getMessage());
     }
 
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ResponseEntity<String> handleNullPointerException(NullPointerException exception){
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(exception.getMessage());
+    }
+
 }
