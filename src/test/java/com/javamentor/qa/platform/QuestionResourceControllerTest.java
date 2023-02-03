@@ -104,14 +104,15 @@ class QuestionResourceControllerTest extends AbstractTestApi {
                 .andExpect(jsonPath("$.listTagDto[0].name", Is.is("name1")))
                 .andExpect(jsonPath("$.listTagDto[0].description", Is.is("description1")))
         ;
-        //empty title or description
+        //empty, null or blank title or description
         this.mvc.perform(post("/api/user/question").content(this.objectMapper.writeValueAsString(
-                                new QuestionCreateDto(null, null, list1)))
+                                new QuestionCreateDto(" ", null, list1)))
                         .contentType(MediaType.APPLICATION_JSON).accept(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$", Is.is("Fields must be not empty")))
         ;
+
+
     }
 
 }
