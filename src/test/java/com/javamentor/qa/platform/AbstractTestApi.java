@@ -30,5 +30,4 @@ public abstract class AbstractTestApi {
     @Autowired
     protected ObjectMapper objectMapper;
 
-
 }
