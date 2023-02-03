@@ -15,6 +15,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.ConstraintViolationException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -54,6 +55,9 @@ public class QuestionResourceController {
     @PostMapping
     @ApiOperation("Получение элемента QuestionDto по id")
     public ResponseEntity<?> addQuestion(@RequestBody QuestionCreateDto questionCreateDto) throws NotFoundException {
+        if (questionCreateDto.getTitle() == null || questionCreateDto.getDescription() == null) {
+            throw new NullPointerException("Fields must be not empty");
+        }
         Question question = mapper.map(questionCreateDto, Question.class);
         List<Tag> tagListDto = question.getTags();
         Map<String, Long> map = tagService.getAllTagNamesAndIds();
