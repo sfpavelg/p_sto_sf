@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
@@ -15,14 +16,12 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class QuestionCreateDto {
-    @NotNull
-    @NotEmpty
+
+    @NotBlank
     private String title;
-    @NotNull
-    @NotEmpty
+    @NotBlank
     private String description;
-    @NotNull
-    @NotEmpty
+
     private List<TagDto> tags = new ArrayList<>();
 
 
