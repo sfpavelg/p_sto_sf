@@ -83,6 +83,7 @@ class QuestionResourceControllerTest extends AbstractTestApi {
     public void addQuestionTest() throws Exception {
         List<TagDto> list1 = new ArrayList<>();
         list1.add(new TagDto(null,"name1",null));
+        //success
         this.mvc.perform(post("/api/user/question").content(this.objectMapper.writeValueAsString(
                 new QuestionCreateDto("testTitle1", "testDescription1", list1)))
                         .contentType(MediaType.APPLICATION_JSON).accept(MediaType.APPLICATION_JSON))
@@ -102,6 +103,14 @@ class QuestionResourceControllerTest extends AbstractTestApi {
                 .andExpect(jsonPath("$.listTagDto[0].id", Is.is(100)))
                 .andExpect(jsonPath("$.listTagDto[0].name", Is.is("name1")))
                 .andExpect(jsonPath("$.listTagDto[0].description", Is.is("description1")))
+        ;
+        //empty title or description
+        this.mvc.perform(post("/api/user/question").content(this.objectMapper.writeValueAsString(
+                                new QuestionCreateDto(null, null, list1)))
+                        .contentType(MediaType.APPLICATION_JSON).accept(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$", Is.is("Fields must be not empty")))
         ;
     }
 
