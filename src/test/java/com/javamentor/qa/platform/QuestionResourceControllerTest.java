@@ -15,8 +15,8 @@ class QuestionResourceControllerTest extends AbstractTestApi {
 
 
     @Test
-    @Sql(value = {"/question/question-dto-data-create.sql"}, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
-    @Sql(value = {"/question/question-dto-data-drop.sql"}, executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
+    @Sql(value = {"/script/question/getQuestionDtoByIdTest/question-dto-data-create.sql"}, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+    @Sql(value = {"/script/question/getQuestionDtoByIdTest/question-dto-data-drop.sql"}, executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
     public void getQuestionDtoByIdTest() throws Exception {
         //success
         this.mvc.perform(get("/api/user/question/{id}", 1))
