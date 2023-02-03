@@ -66,9 +66,14 @@ public class QuestionResourceController {
                 tagService.persist(t);
             }
         }
-
         question.setTags(tagListDto);
-        question.setUser(userService.getById(1L).get());
+        //TODO set User from security when feature is ready
+        if (userService.getById(1L).isPresent()) {
+            question.setUser(userService.getById(1L).get());
+        }
+        else {
+            question.setUser(userService.getById(100L).get());
+        }
         questionService.persist(question);
         return ResponseEntity.ok(questionDtoService.getQuestionDtoById(question.getId()));
     }
