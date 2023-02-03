@@ -23,7 +23,7 @@ public class VoteQuestion implements Serializable {
     private static final long serialVersionUID = 6479035497338780810L;
 
     @Id
-    @GeneratedValue(generator = "VoteQuestion_seq")
+    @GeneratedValue(generator = "Votes_on_questions_id_seq")
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)

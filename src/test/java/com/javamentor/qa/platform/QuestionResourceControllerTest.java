@@ -80,7 +80,7 @@ class QuestionResourceControllerTest extends AbstractTestApi {
 
     @Test
     @Sql(value = {"/question/question-add-data-create.sql"}, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
-//    @Sql(value = {"/question/question-add-data-drop.sql"}, executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
+    @Sql(value = {"/question/question-add-data-drop.sql"}, executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
     public void addQuestionTest() throws Exception {
         List<TagDto> list = new ArrayList<>();
         list.add(new TagDto(1L,"name1","description1"));
@@ -88,6 +88,21 @@ class QuestionResourceControllerTest extends AbstractTestApi {
         questionCreateDto.setDescription("testDescription");
         questionCreateDto.setTags(list);
         questionCreateDto.setTitle("testTitle");
+        this.mvc.perform(post("/api/user/question").content(this.objectMapper.writeValueAsString(questionCreateDto))
+                        .contentType(MediaType.APPLICATION_JSON).accept(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON));
+        this.mvc.perform(post("/api/user/question").content(this.objectMapper.writeValueAsString(questionCreateDto))
+                        .contentType(MediaType.APPLICATION_JSON).accept(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON));
+        this.mvc.perform(post("/api/user/question").content(this.objectMapper.writeValueAsString(questionCreateDto))
+                        .contentType(MediaType.APPLICATION_JSON).accept(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON));
         this.mvc.perform(post("/api/user/question").content(this.objectMapper.writeValueAsString(questionCreateDto))
                         .contentType(MediaType.APPLICATION_JSON).accept(MediaType.APPLICATION_JSON))
                 .andDo(print())

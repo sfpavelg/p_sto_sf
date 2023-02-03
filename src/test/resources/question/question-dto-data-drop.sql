@@ -14,7 +14,7 @@ DELETE FROM user_entity where id BETWEEN 1 and 100;
 
 DELETE FROM tag where id BETWEEN 1 and 100;
 
-DELETE FROM "role"where id BETWEEN 1 and 100;
+DELETE FROM role where id BETWEEN 1 and 100;
 
 
 

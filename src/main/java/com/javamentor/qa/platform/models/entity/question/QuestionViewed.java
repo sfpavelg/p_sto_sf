@@ -23,7 +23,7 @@ public class QuestionViewed implements Serializable {
 
 
     @Id
-    @GeneratedValue(generator = "QuestionViewed_seq")
+    @GeneratedValue(generator = "Question_viewed_id_seq")
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
