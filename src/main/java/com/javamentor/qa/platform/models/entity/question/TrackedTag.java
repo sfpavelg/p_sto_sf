@@ -20,7 +20,7 @@ public class TrackedTag implements Serializable {
 
     private static final long serialVersionUID = 6056471660108076229L;
     @Id
-    @GeneratedValue(generator = "TrackedTag_seq")
+    @GeneratedValue(generator = "Tag_tracked_id_seq")
     private Long id;
 
     @ManyToOne(optional = false, fetch = FetchType.LAZY)

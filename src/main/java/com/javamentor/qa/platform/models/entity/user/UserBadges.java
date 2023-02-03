@@ -20,7 +20,7 @@ public class UserBadges implements Serializable {
 
     private static final long serialVersionUID = 7887575908980210093L;
     @Id
-    @GeneratedValue(generator = "UserBadges_seq")
+    @GeneratedValue(generator = "User_badges_id_seq")
     private Long id;
 
     @Column

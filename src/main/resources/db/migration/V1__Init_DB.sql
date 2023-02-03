@@ -1,24 +1,5 @@
-create sequence answer_seq start 1 increment 1;
-create sequence answer_vote_seq start 1 increment 1;
-create sequence badge_seq start 1 increment 1;
-create sequence chat_seq start 1 increment 1;
-create sequence comment_seq start 1 increment 1;
-create sequence ignore_tag_seq start 1 increment 1;
-create sequence message_seq start 1 increment 1;
-create sequence question_seq start 1 increment 1;
-create sequence question_viewed_seq start 1 increment 1;
-create sequence related_tag_seq start 1 increment 1;
-create sequence reputation_seq start 1 increment 1;
-create sequence role_seq start 1 increment 1;
-create sequence tag_seq start 1 increment 1;
-create sequence tracked_tag_seq start 1 increment 1;
-create sequence user_seq start 1 increment 1;
-create sequence user_badges_seq start 1 increment 1;
-create sequence user_favorite_question_seq start 1 increment 1;
-create sequence vote_question_seq start 1 increment 1;
-
 create table answer (
-    id int8 not null,
+    id serial8 not null,
     date_accept_time timestamp,
     html_body text not null,
     is_deleted boolean not null,
@@ -32,7 +13,7 @@ create table answer (
 );
 
 create table badges (
-    id int8 not null,
+    id serial8 not null,
     badge_name varchar(255),
     description varchar(255),
     reputations_for_merit int4,
@@ -40,14 +21,14 @@ create table badges (
 );
 
 create table bookmarks (
-    id  bigserial not null,
+    id  serial8 not null,
     question_id int8 not null,
     user_id int8 not null,
     primary key (id)
 );
 
 create table chat (
-    id int8 not null,
+    id serial8 not null,
     chat_type int2,
     persist_date timestamp,
     title varchar(255),
@@ -55,7 +36,7 @@ create table chat (
 );
 
 create table comment (
-    id int8 not null,
+    id serial8 not null,
     comment_type int2 not null,
     last_redaction_date timestamp,
     persist_date timestamp,
@@ -88,7 +69,7 @@ create table groupchat_has_users (
 );
 
 create table message (
-    id int8 not null,
+    id serial8 not null,
     last_redaction_date timestamp not null,
     message text,
     persist_date timestamp,
@@ -98,7 +79,7 @@ create table message (
 );
 
 create table question (
-    id int8 not null,
+    id serial8 not null,
     description text not null,
     is_deleted boolean,
     last_redaction_date timestamp not null,
@@ -114,7 +95,7 @@ create table question_has_tag (
 );
 
 create table question_viewed (
-    id int8 not null,
+    id serial8 not null,
     persist_date timestamp,
     question_id int8,
     user_id int8,
@@ -122,14 +103,14 @@ create table question_viewed (
 );
 
 create table related_tag (
-    id int8 not null,
+    id serial8 not null,
     child_tag int8 not null,
     main_tag int8 not null,
     primary key (id)
 );
 
 create table reputation (
-    id int8 not null,
+    id serial8 not null,
     count int4,
     persist_date timestamp,
     type int4 not null,
@@ -141,7 +122,7 @@ create table reputation (
 );
 
 create table role (
-    id int8 not null,
+    id serial8 not null,
     name varchar(255),
     primary key (id)
 );
@@ -154,7 +135,7 @@ create table single_chat (
 );
 
 create table tag (
-    id int8 not null,
+    id serial8 not null,
     description varchar(255),
     name varchar(255) not null,
     persist_date timestamp,
@@ -162,7 +143,7 @@ create table tag (
 );
 
 create table tag_ignore (
-    id int8 not null,
+    id serial8 not null,
     persist_date timestamp,
     ignored_tag_id int8 not null,
     user_id int8 not null,
@@ -170,7 +151,7 @@ create table tag_ignore (
 );
 
 create table tag_tracked (
-    id int8 not null,
+    id serial8 not null,
     persist_date timestamp,
     tracked_tag_id int8 not null,
     user_id int8 not null,
@@ -178,7 +159,7 @@ create table tag_tracked (
 );
 
 create table user_badges (
-    id int8 not null,
+    id serial8 not null,
     ready boolean,
     badges_id int8,
     user_id int8,
@@ -186,7 +167,7 @@ create table user_badges (
 );
 
 create table user_entity (
-    id int8 not null,
+    id serial8 not null,
     about varchar(255),
     city varchar(255),
     email varchar(255),
@@ -206,15 +187,15 @@ create table user_entity (
 );
 
 create table user_favorite_question (
-     id int8 not null,
-     persist_date timestamp not null,
-     question_id int8 not null,
-     user_id int8 not null,
-     primary key (id)
+    id serial8 not null,
+    persist_date timestamp not null,
+    question_id int8 not null,
+    user_id int8 not null,
+    primary key (id)
 );
 
 create table votes_on_answers (
-    id int8 not null,
+    id serial8 not null,
     persist_date timestamp,
     vote varchar(255),
     answer_id int8 not null,
@@ -223,7 +204,7 @@ create table votes_on_answers (
 );
 
 create table votes_on_questions (
-    id int8 not null,
+    id serial8 not null,
     persist_date timestamp,
     vote varchar(255),
     question_id int8,
