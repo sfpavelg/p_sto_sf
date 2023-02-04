@@ -16,9 +16,9 @@ public class TestUserResourceController extends AbstractTestApi {
     @Test
     @SqlGroup({
             @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD,
-                    value = {"/script/TestUserDtoController/Before.sql"}),
+                    value = {"/script/TestUserDtoController/testGetUserById/Before.sql"}),
             @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD,
-                    value = {"/script/TestUserDtoController/After.sql"})
+                    value = {"/script/TestUserDtoController/testGetUserById/After.sql"})
     })
     public void testGetUserById() throws Exception {
 
