@@ -25,7 +25,7 @@ public class ExampleController {
     @GetMapping("/{id}")
     @ApiOperation("Получение элемента User по id")
     public ResponseEntity<?> getUserById(@PathVariable Long id) {
-        UserDto userDto = userDtoService.getUserDtoById(id).orElse(null);
+        UserDto userDto = userDtoService.getById(id).orElse(null);
         return userDto == null ?
                 ResponseEntity.status(HttpStatus.NOT_FOUND).body("User with id = " + id + " not found") :
                 ResponseEntity.ok(userDto);
