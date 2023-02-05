@@ -17,11 +17,11 @@ import java.util.List;
 @NoArgsConstructor
 public class QuestionCreateDto {
 
-    @NotBlank
+    @NotBlank (message = "Title can't be empty")
     private String title;
-    @NotBlank
+    @NotBlank (message = "Description can't be empty")
     private String description;
-
+    @NotEmpty (message = "One tag at least must be chosen")
     private List<TagDto> tags = new ArrayList<>();
 
 
