@@ -28,12 +28,13 @@ public class ExamplePaginationController {
     @GetMapping("/pagination")
     @ApiOperation(value = "Get example of paginated Dto",
             notes = "Available parameters and their values:" +
-                    "1. pageNumber is a number of page with dto's." +
+                    "1. currentPageNumber is a number of page with dto's." +
                     "2. itemsOnPage is a number that means the number of elements on the page")
-    public ResponseEntity<?> getAllUsers(@RequestParam(defaultValue = "0") int pageNumber,
+    public ResponseEntity<?> getAllUsers(@RequestParam(defaultValue = "0") int currentPageNumber,
                                          @RequestParam(defaultValue = "10") int itemsOnPage) {
+
         HashMap<String, Object> param = new HashMap<>();
-        param.put("pageNumber", pageNumber);
+        param.put("currentPageNumber", currentPageNumber);
         param.put("itemsOnPage", itemsOnPage);
         // For sortBy default value is "id" sorting/
         param.put("sortBy", "id");
@@ -51,13 +52,14 @@ public class ExamplePaginationController {
     @GetMapping("/anotherPagination")
     @ApiOperation(value = "Get example of another paginated Dto",
             notes = "Available parameters and their values:" +
-                    "1. pageNumber is a number of page with dto's." +
+                    "1. currentPageNumber is a number of page with dto's." +
                     "2. sortBy is the value of a string which in this example" +
                     " can be id, email, fullName, city, imageLink, or reputation")
-    public ResponseEntity<?> getAnotherUsers(@RequestParam(defaultValue = "0") int pageNumber,
+    public ResponseEntity<?> getAnotherUsers(@RequestParam(defaultValue = "0") int currentPageNumber,
                                              @RequestParam(defaultValue = "id") String sortBy) {
+
         HashMap<String, Object> param = new HashMap<>();
-        param.put("pageNumber", pageNumber);
+        param.put("currentPageNumber", currentPageNumber);
         param.put("sortBy", sortBy);
 
         List<ExampleDto> userPage = exampleDtoService.getAnotherListingUsers(param);
