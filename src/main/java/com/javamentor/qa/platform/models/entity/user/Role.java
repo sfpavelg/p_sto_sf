@@ -1,5 +1,6 @@
 package com.javamentor.qa.platform.models.entity.user;
 
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -8,6 +9,7 @@ import org.springframework.security.core.GrantedAuthority;
 
 import javax.persistence.*;
 import java.util.Objects;
+
 
 @Entity
 @Getter
@@ -21,6 +23,7 @@ public class Role implements GrantedAuthority {
     @Id
     @GeneratedValue(generator = "Role_seq")
     private Long id;
+
 
     @Column
     private String name;
