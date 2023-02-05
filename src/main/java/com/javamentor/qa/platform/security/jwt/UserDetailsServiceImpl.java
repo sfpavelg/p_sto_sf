@@ -7,14 +7,15 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 @Service
-public class DetailsService implements UserDetailsService {
+public class UserDetailsServiceImpl implements UserDetailsService {
 
     private final UserDao userDao;
 
-    public DetailsService(UserDao userDao) {
+    public UserDetailsServiceImpl(UserDao userDao) {
         this.userDao = userDao;
     }
 
+    @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
         return userDao.getByEmail(email)
                 .orElseThrow(() -> new UsernameNotFoundException(String.format("Email %s не найден.", email)));
