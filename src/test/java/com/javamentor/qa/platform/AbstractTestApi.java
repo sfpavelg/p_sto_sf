@@ -23,12 +23,11 @@ public abstract class AbstractTestApi {
 
     @PersistenceContext
     protected EntityManager em;
-    @Autowired
-    protected CacheManager cacheManager;
+//    @Autowired
+//    protected CacheManager cacheManager;
     @Autowired
     protected MockMvc mvc;
     @Autowired
     protected ObjectMapper objectMapper;
-
 
 }
