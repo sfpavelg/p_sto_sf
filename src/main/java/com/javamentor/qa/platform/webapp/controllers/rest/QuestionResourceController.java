@@ -3,7 +3,6 @@ package com.javamentor.qa.platform.webapp.controllers.rest;
 import com.javamentor.qa.platform.models.dto.question.QuestionCreateDto;
 import com.javamentor.qa.platform.models.entity.question.Question;
 import com.javamentor.qa.platform.models.entity.question.Tag;
-import com.javamentor.qa.platform.service.abstracts.dto.question.QuestionCreateService;
 import com.javamentor.qa.platform.service.abstracts.dto.question.QuestionDtoService;
 import com.javamentor.qa.platform.service.abstracts.model.QuestionService;
 import com.javamentor.qa.platform.service.abstracts.model.TagService;
@@ -13,7 +12,6 @@ import io.swagger.annotations.ApiOperation;
 import javassist.NotFoundException;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -27,7 +25,6 @@ import java.util.Map;
 public class QuestionResourceController {
 
     private final QuestionDtoService questionDtoService;
-    private final QuestionCreateService questionCreateService;
 
     private final QuestionService questionService;
 
@@ -36,9 +33,8 @@ public class QuestionResourceController {
     private final TagService tagService;
     private ModelMapper mapper = new ModelMapper();
 
-    public QuestionResourceController(QuestionDtoService questionDtoService, QuestionCreateService questionCreateService, QuestionService questionService, UserService userService, TagService tagService) {
+    public QuestionResourceController(QuestionDtoService questionDtoService, QuestionService questionService, UserService userService, TagService tagService) {
         this.questionDtoService = questionDtoService;
-        this.questionCreateService = questionCreateService;
         this.questionService = questionService;
         this.userService = userService;
         this.tagService = tagService;
