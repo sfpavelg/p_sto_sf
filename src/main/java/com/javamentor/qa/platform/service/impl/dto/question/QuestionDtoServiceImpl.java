@@ -7,6 +7,8 @@ import com.javamentor.qa.platform.service.abstracts.dto.question.QuestionDtoServ
 import javassist.NotFoundException;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 
 @Service
 public class QuestionDtoServiceImpl implements QuestionDtoService {
@@ -22,13 +24,13 @@ public class QuestionDtoServiceImpl implements QuestionDtoService {
 
     @Override
     public QuestionDto getQuestionDtoById(Long id) throws NotFoundException {
+        Optional<QuestionDto> questionDtoOptional = questionDtoDao.getQuestionDtoById(id);
 
-        if (questionDtoDao.getQuestionDtoById(id).isPresent()) {
-            QuestionDto questionDto = questionDtoDao.getQuestionDtoById(id).get();
+        if (questionDtoOptional.isPresent()) {
+            QuestionDto questionDto = questionDtoOptional.get();
             questionDto.setListTagDto(tagDtoDao.getTagDtoById(id));
             return questionDto;
-        } else {
-            throw new NotFoundException("QuestionDto with id = " + id + " not found");
         }
+            throw new NotFoundException("QuestionDto with id = " + id + " not found");
     }
 }

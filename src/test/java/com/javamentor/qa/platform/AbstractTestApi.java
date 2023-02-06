@@ -23,13 +23,11 @@ public abstract class AbstractTestApi {
 
     @PersistenceContext
     protected EntityManager em;
-// С наличием данного объекта, тестовый класс наследник не запускается - NoSuchBeanDefinitionException
 //    @Autowired
 //    protected CacheManager cacheManager;
     @Autowired
     protected MockMvc mvc;
     @Autowired
     protected ObjectMapper objectMapper;
-
 
 }
