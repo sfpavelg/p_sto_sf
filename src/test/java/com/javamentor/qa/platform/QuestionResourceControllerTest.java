@@ -85,6 +85,7 @@ class QuestionResourceControllerTest extends AbstractTestApi {
         //Check that Question successfully added in DB if TagDto exist in DB
         List<TagDto> list1 = new ArrayList<>();
         list1.add(new TagDto(null,"name1",null));
+        list1.add(new TagDto(null,"name2",null));
         this.mvc.perform(post("/api/user/question").content(this.objectMapper.writeValueAsString(
                                 new QuestionCreateDto("testTitle1", "testDescription1", list1)))
                         .contentType(MediaType.APPLICATION_JSON).accept(MediaType.APPLICATION_JSON))
@@ -104,11 +105,15 @@ class QuestionResourceControllerTest extends AbstractTestApi {
                 .andExpect(jsonPath("$.listTagDto[0].id", Is.is(100)))
                 .andExpect(jsonPath("$.listTagDto[0].name", Is.is("name1")))
                 .andExpect(jsonPath("$.listTagDto[0].description", Is.is("description1")))
+                .andExpect(jsonPath("$.listTagDto[1].id", Is.is(101)))
+                .andExpect(jsonPath("$.listTagDto[1].name", Is.is("name2")))
+                .andExpect(jsonPath("$.listTagDto[1].description", Is.is("description2")))
         ;
 
         //Check that Question and Tag successfully added in DB If TagDto doesn't exist in DB ,
         List<TagDto> list2 = new ArrayList<>();
         list2.add(new TagDto(null,"name100",null));
+        list2.add(new TagDto(null,"name200",null));
         this.mvc.perform(post("/api/user/question").content(this.objectMapper.writeValueAsString(
                                 new QuestionCreateDto("testTitle2", "testDescription2", list2)))
                         .contentType(MediaType.APPLICATION_JSON).accept(MediaType.APPLICATION_JSON))
@@ -128,6 +133,9 @@ class QuestionResourceControllerTest extends AbstractTestApi {
                 .andExpect(jsonPath("$.listTagDto[0].id", Is.is(1)))
                 .andExpect(jsonPath("$.listTagDto[0].name", Is.is("name100")))
                 .andExpect(jsonPath("$.listTagDto[0].description", IsNull.nullValue()))
+                .andExpect(jsonPath("$.listTagDto[1].id", Is.is(2)))
+                .andExpect(jsonPath("$.listTagDto[1].name", Is.is("name200")))
+                .andExpect(jsonPath("$.listTagDto[1].description", IsNull.nullValue()))
         ;
 
         //blank title
