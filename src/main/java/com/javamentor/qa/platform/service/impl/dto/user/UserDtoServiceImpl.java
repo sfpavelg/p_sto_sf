@@ -3,6 +3,7 @@ package com.javamentor.qa.platform.service.impl.dto.user;
 import com.javamentor.qa.platform.dao.abstracts.dto.user.UserDtoDao;
 import com.javamentor.qa.platform.models.dto.user.UserDto;
 import com.javamentor.qa.platform.service.abstracts.dto.user.UserDtoService;
+import javassist.NotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -17,7 +18,11 @@ public class UserDtoServiceImpl implements UserDtoService {
     }
 
     @Override
-    public Optional<UserDto> getById(Long id) {
-        return userDtoDao.getById(id);
+    public Optional<UserDto> getById(Long id) throws NotFoundException {
+        if (userDtoDao.getById(id).isPresent()) {
+            return userDtoDao.getById(id);
+        }
+
+        throw new NotFoundException("User with id = " + id + " not found");
     }
 }
