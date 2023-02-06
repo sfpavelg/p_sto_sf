@@ -1,13 +1,16 @@
 package com.javamentor.qa.platform.webapp.controllers.rest;
 
-import com.javamentor.qa.platform.models.dto.user.UserDto;
-import com.javamentor.qa.platform.models.entity.user.User;
 import com.javamentor.qa.platform.service.abstracts.dto.user.UserDtoService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import org.springframework.http.HttpStatus;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
+import javassist.NotFoundException;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 
 @RestController
@@ -24,10 +27,12 @@ public class ExampleController {
 
     @GetMapping("/{id}")
     @ApiOperation("Получение элемента User по id")
-    public ResponseEntity<?> getUserById(@PathVariable Long id) {
-        UserDto userDto = userDtoService.getById(id).orElse(null);
-        return userDto == null ?
-                ResponseEntity.status(HttpStatus.NOT_FOUND).body("User with id = " + id + " not found") :
-                ResponseEntity.ok(userDto);
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Success request. UserDto object returned in response"),
+            @ApiResponse(code = 401, message = "Unauthorized request"),
+            @ApiResponse(code = 403, message = "Forbidden"),
+            @ApiResponse(code = 404, message = "Question with such id doesn't exist")})
+    public ResponseEntity<?> getUserById(@PathVariable Long id) throws NotFoundException {
+        return ResponseEntity.ok(userDtoService.getById(id));
     }
 }
