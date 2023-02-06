@@ -82,7 +82,7 @@ class QuestionResourceControllerTest extends AbstractTestApi {
     @Sql(value = {"/script/question/addQuestionTest/question-add-data-drop.sql"}, executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
     public void addQuestionTest() throws Exception {
 
-        //If TagDto exist in DB
+        //Check that Question successfully added in DB if TagDto exist in DB
         List<TagDto> list1 = new ArrayList<>();
         list1.add(new TagDto(null,"name1",null));
         this.mvc.perform(post("/api/user/question").content(this.objectMapper.writeValueAsString(
@@ -106,7 +106,7 @@ class QuestionResourceControllerTest extends AbstractTestApi {
                 .andExpect(jsonPath("$.listTagDto[0].description", Is.is("description1")))
         ;
 
-        //If TagDto doesn't exist in DB ,
+        //Check that Question and Tag successfully added in DB If TagDto doesn't exist in DB ,
         List<TagDto> list2 = new ArrayList<>();
         list2.add(new TagDto(null,"name100",null));
         this.mvc.perform(post("/api/user/question").content(this.objectMapper.writeValueAsString(
