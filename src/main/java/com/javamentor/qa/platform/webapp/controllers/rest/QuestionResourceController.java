@@ -67,6 +67,7 @@ public class QuestionResourceController {
         if (userService.getById(1L).isPresent()) {
             question.setUser(userService.getById(1L).get());
         }
+        // else condition added for tests
         else {
             question.setUser(userService.getById(100L).get());
         }
