@@ -16,7 +16,7 @@ public class TagResourceControllerTest extends AbstractTestApi {
     @Sql(value = {"/script/tag/getRelatedTagsDtoListTest/related-tags-dto-data-create.sql"}, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
     @Sql(value = {"/script/tag/getRelatedTagsDtoListTest/related-tags-dto-data-drop.sql"}, executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
     public void getRelatedTagsDtoListTest() throws Exception {
-        //success getting TOP-10 Tags (ordered by countQuestion)
+        //success getting TOP-10 Tags from 15 in DB (ordered by countQuestion)
         this.mvc.perform(get("/api/user/tag/related"))
                 .andDo(print())
                 .andExpect(status().isOk())
