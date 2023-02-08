@@ -1,7 +1,7 @@
 package com.javamentor.qa.platform.webapp.controllers.rest;
 
 import com.javamentor.qa.platform.models.dto.ExampleDto;
-import com.javamentor.qa.platform.service.abstracts.dto.ExampleDtoService;
+import com.javamentor.qa.platform.service.abstracts.dto.ExamplePaginationDtoService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.http.HttpStatus;
@@ -19,10 +19,10 @@ import java.util.List;
 @Api(value = "Example pagination controller")
 public class ExamplePaginationController {
 
-    private final ExampleDtoService exampleDtoService;
+    private final ExamplePaginationDtoService examplePaginationDtoService;
 
-    public ExamplePaginationController(ExampleDtoService exampleDtoService) {
-        this.exampleDtoService = exampleDtoService;
+    public ExamplePaginationController(ExamplePaginationDtoService examplePaginationDtoService) {
+        this.examplePaginationDtoService = examplePaginationDtoService;
     }
 
     @GetMapping("/pagination")
@@ -39,7 +39,7 @@ public class ExamplePaginationController {
         // For sortBy default value is "id" sorting/
         param.put("sortBy", "id");
 
-        List<ExampleDto> userPage = exampleDtoService.getListingUsers(param);
+        List<ExampleDto> userPage = examplePaginationDtoService.getListingUsers(param);
 
         if (!userPage.isEmpty()) {
             return ResponseEntity.ok(userPage);
@@ -62,7 +62,7 @@ public class ExamplePaginationController {
         param.put("currentPageNumber", currentPageNumber);
         param.put("sortBy", sortBy);
 
-        List<ExampleDto> userPage = exampleDtoService.getAnotherListingUsers(param);
+        List<ExampleDto> userPage = examplePaginationDtoService.getAnotherListingUsers(param);
 
         if (!userPage.isEmpty()) {
             return ResponseEntity.ok(userPage);

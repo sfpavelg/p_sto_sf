@@ -25,6 +25,8 @@ public abstract class PageDtoService<T, Map> {
     public void setPageDtoDao(PageDtoDao<T, Map> dao) {
         this.dao = dao;
     }
+    //        принимать не PageDto а map, spring как-то умеет работать с интерфейсами по стрингам
+    //        map.strins.pagedtodao в параметре будет название dto в mape интерфейсы с реализациями
 
     /**
      * The basic page constructor that takes as a parameter a Map with parameters and
