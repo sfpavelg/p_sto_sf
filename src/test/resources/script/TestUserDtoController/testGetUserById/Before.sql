@@ -1,7 +1,7 @@
 INSERT INTO "role"
 ("id", "name")
-VALUES (1, 'ADMIN'),
-       (2, 'USER');
+VALUES (1, 'ROLE_ADMIN'),
+       (2, 'ROLE_USER');
 
 INSERT INTO "user_entity"
 ("id", "about", "city", "email", "full_name", "image_link", "is_deleted",
