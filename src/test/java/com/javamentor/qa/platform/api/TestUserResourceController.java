@@ -1,12 +1,16 @@
 package com.javamentor.qa.platform.api;
 
 import com.javamentor.qa.platform.AbstractTestApi;
+import com.javamentor.qa.platform.security.jwt.AuthenticationRequest;
 import org.hamcrest.core.Is;
 import org.junit.jupiter.api.Test;
+import org.springframework.boot.json.JacksonJsonParser;
+import org.springframework.http.MediaType;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.jdbc.SqlGroup;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -22,8 +26,18 @@ public class TestUserResourceController extends AbstractTestApi {
     })
     public void testGetUserById() throws Exception {
 
+        JacksonJsonParser jsonParser = new JacksonJsonParser();
+        String jwt = jsonParser.parseMap(this.mvc.perform(post("http://localhost:8091/api/auth/token")
+                                .content(objectMapper.valueToTree(new AuthenticationRequest("email5@domain.com",
+                                        "password")).toString())
+                                .contentType(MediaType.APPLICATION_JSON))
+                        .andExpect(status().is2xxSuccessful())
+                        .andReturn().getResponse().getContentAsString())
+                .get("token").toString();
+
 //        Successfully test's
-        this.mvc.perform(get("/api/user/{id}", 100))
+        this.mvc.perform(get("/api/user/{id}", 100)
+                        .header("Authorization", "Bearer " + jwt))
                 .andExpect(jsonPath("$.id", Is.is(100)))
                 .andExpect(jsonPath("$.email", Is.is("email1@domain.com")))
                 .andExpect(jsonPath("$.fullName", Is.is("name1")))
@@ -32,7 +46,8 @@ public class TestUserResourceController extends AbstractTestApi {
                 .andExpect(jsonPath("$.reputation", Is.is(6)));
 
 
-        this.mvc.perform(get("/api/user/{id}", 101))
+        this.mvc.perform(get("/api/user/{id}", 101)
+                        .header("Authorization", "Bearer " + jwt))
                 .andExpect(jsonPath("$.id", Is.is(101)))
                 .andExpect(jsonPath("$.email", Is.is("email2@domain.com")))
                 .andExpect(jsonPath("$.fullName", Is.is("name2")))
@@ -40,7 +55,8 @@ public class TestUserResourceController extends AbstractTestApi {
                 .andExpect(jsonPath("$.imageLink", Is.is("http://imagelink2.com")))
                 .andExpect(jsonPath("$.reputation", Is.is(14)));
 
-        this.mvc.perform(get("/api/user/{id}", 102))
+        this.mvc.perform(get("/api/user/{id}", 102)
+                        .header("Authorization", "Bearer " + jwt))
                 .andExpect(jsonPath("$.id", Is.is(102)))
                 .andExpect(jsonPath("$.email", Is.is("email3@domain.com")))
                 .andExpect(jsonPath("$.fullName", Is.is("name3")))
@@ -48,7 +64,8 @@ public class TestUserResourceController extends AbstractTestApi {
                 .andExpect(jsonPath("$.imageLink", Is.is("http://imagelink3.com")))
                 .andExpect(jsonPath("$.reputation", Is.is(11)));
 
-        this.mvc.perform(get("/api/user/{id}", 103))
+        this.mvc.perform(get("/api/user/{id}", 103)
+                        .header("Authorization", "Bearer " + jwt))
                 .andExpect(jsonPath("$.id", Is.is(103)))
                 .andExpect(jsonPath("$.email", Is.is("email4@domain.com")))
                 .andExpect(jsonPath("$.fullName", Is.is("name4")))
@@ -57,7 +74,8 @@ public class TestUserResourceController extends AbstractTestApi {
                 .andExpect(jsonPath("$.reputation", Is.is(8)));
 
 //        Successfully test's for user without reputation
-        this.mvc.perform(get("/api/user/{id}", 104))
+        this.mvc.perform(get("/api/user/{id}", 104)
+                        .header("Authorization", "Bearer " + jwt))
                 .andExpect(jsonPath("$.id", Is.is(104)))
                 .andExpect(jsonPath("$.email", Is.is("email5@domain.com")))
                 .andExpect(jsonPath("$.fullName", Is.is("name5")))
@@ -67,7 +85,8 @@ public class TestUserResourceController extends AbstractTestApi {
 
 
 //        By not existing userId test
-        this.mvc.perform(get("/api/user/{id}", 150))
+        this.mvc.perform(get("/api/user/{id}", 150)
+                        .header("Authorization", "Bearer " + jwt))
                 .andExpect(status().isNotFound());
 
     }
