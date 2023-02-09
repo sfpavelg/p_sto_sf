@@ -1,25 +1,18 @@
 package com.javamentor.qa.platform.webapp.controllers.rest;
 
 import com.javamentor.qa.platform.models.dto.question.QuestionCreateDto;
-import com.javamentor.qa.platform.models.entity.question.Question;
-import com.javamentor.qa.platform.models.entity.question.Tag;
 import com.javamentor.qa.platform.models.dto.question.QuestionDto;
 import com.javamentor.qa.platform.service.abstracts.dto.question.QuestionDtoService;
-import com.javamentor.qa.platform.service.abstracts.model.QuestionService;
-import com.javamentor.qa.platform.service.abstracts.model.TagService;
-import com.javamentor.qa.platform.service.abstracts.model.UserService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import javassist.NotFoundException;
-import org.modelmapper.ModelMapper;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.List;
-import java.util.Map;
+import java.security.Principal;
 
 
 @RestController
@@ -29,18 +22,8 @@ public class QuestionResourceController {
 
     private final QuestionDtoService questionDtoService;
 
-    private final QuestionService questionService;
-
-    private final UserService userService;
-
-    private final TagService tagService;
-    private ModelMapper mapper = new ModelMapper();
-
-    public QuestionResourceController(QuestionDtoService questionDtoService, QuestionService questionService, UserService userService, TagService tagService) {
+    public QuestionResourceController(QuestionDtoService questionDtoService) {
         this.questionDtoService = questionDtoService;
-        this.questionService = questionService;
-        this.userService = userService;
-        this.tagService = tagService;
     }
 
     @GetMapping("/{id}")
@@ -55,36 +38,13 @@ public class QuestionResourceController {
     }
 
     @PostMapping
-    @ApiOperation(value = "Добавление вопроса. Ожидает заполненный объект QuestionCreateDto", response = QuestionDto.class)
+    @ApiOperation(value = "Добавление вопроса. Ожидает заполненный объект QuestionCreateDto", response = QuestionDto.class, responseContainer = "List")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Success request. Question added to DB and it's QuestionDto object returned in response"),
             @ApiResponse(code = 401, message = "Unauthorized request"),
             @ApiResponse(code = 403, message = "Forbidden"),
             @ApiResponse(code = 400, message = "Validation failed. Fields of QuestionCreateDto must be not empty or null")})
-    public ResponseEntity<?> addQuestion(@Valid @RequestBody QuestionCreateDto questionCreateDto) throws NotFoundException {
-        Question question = mapper.map(questionCreateDto, Question.class);
-        List<Tag> tagListDto = question.getTags();
-        Map<String, Long> map = tagService.getAllTagNamesAndIds();
-        for (Tag t:tagListDto) {
-            if (map.containsKey(t.getName())) {
-                Long id = map.get(t.getName());
-                tagListDto.set(tagListDto.indexOf(t), tagService.getById(id).get());
-            }
-            else {
-                tagService.persist(t);
-            }
-        }
-        question.setTags(tagListDto);
-        //TODO set User from security when feature is ready
-        if (userService.getById(1L).isPresent()) {
-            question.setUser(userService.getById(1L).get());
-        }
-        // else condition added for tests
-        else {
-            question.setUser(userService.getById(100L).get());
-        }
-        questionService.persist(question);
-        return ResponseEntity.ok(questionDtoService.getQuestionDtoById(question.getId()));
-
+    public ResponseEntity<?> addQuestion(@Valid @RequestBody QuestionCreateDto questionCreateDto, Principal principal) throws NotFoundException {
+        return ResponseEntity.ok(questionDtoService.addQuestion(questionCreateDto, principal));
     }
 }
