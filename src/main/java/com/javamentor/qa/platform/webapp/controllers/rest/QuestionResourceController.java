@@ -2,14 +2,24 @@ package com.javamentor.qa.platform.webapp.controllers.rest;
 
 import com.javamentor.qa.platform.models.dto.question.QuestionCreateDto;
 import com.javamentor.qa.platform.models.dto.question.QuestionDto;
+import com.javamentor.qa.platform.models.entity.user.User;
 import com.javamentor.qa.platform.service.abstracts.dto.question.QuestionDtoService;
+import com.javamentor.qa.platform.service.abstracts.model.QuestionService;
+import com.javamentor.qa.platform.webapp.converters.QuestionConverter;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import javassist.NotFoundException;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+
 
 import javax.validation.Valid;
 import java.security.Principal;
@@ -21,9 +31,13 @@ import java.security.Principal;
 public class QuestionResourceController {
 
     private final QuestionDtoService questionDtoService;
+    private final QuestionConverter questionConverter;
+    private final QuestionService questionService;
 
-    public QuestionResourceController(QuestionDtoService questionDtoService) {
+    public QuestionResourceController(QuestionDtoService questionDtoService, QuestionConverter questionConverter, QuestionService questionService) {
         this.questionDtoService = questionDtoService;
+        this.questionConverter = questionConverter;
+        this.questionService = questionService;
     }
 
     @GetMapping("/{id}")
@@ -45,6 +59,7 @@ public class QuestionResourceController {
             @ApiResponse(code = 403, message = "Forbidden"),
             @ApiResponse(code = 400, message = "Validation failed. Fields of QuestionCreateDto must be not empty or null")})
     public ResponseEntity<?> addQuestion(@Valid @RequestBody QuestionCreateDto questionCreateDto, Principal principal) throws NotFoundException {
-        return ResponseEntity.ok(questionDtoService.addQuestion(questionCreateDto, principal));
+        UsernamePasswordAuthenticationToken token = (UsernamePasswordAuthenticationToken) principal;
+        return ResponseEntity.ok(questionService.addQuestion(questionConverter.questionCreateDtoToQuestion(questionCreateDto), (User) token.getPrincipal()));
     }
 }
