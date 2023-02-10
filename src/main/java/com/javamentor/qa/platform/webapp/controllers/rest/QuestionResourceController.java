@@ -12,7 +12,6 @@ import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import javassist.NotFoundException;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -22,7 +21,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 
 import javax.validation.Valid;
-import java.security.Principal;
 
 
 @RestController
@@ -58,8 +56,7 @@ public class QuestionResourceController {
             @ApiResponse(code = 401, message = "Unauthorized request"),
             @ApiResponse(code = 403, message = "Forbidden"),
             @ApiResponse(code = 400, message = "Validation failed. Fields of QuestionCreateDto must be not empty or null")})
-    public ResponseEntity<?> addQuestion(@Valid @RequestBody QuestionCreateDto questionCreateDto, Principal principal) throws NotFoundException {
-        UsernamePasswordAuthenticationToken token = (UsernamePasswordAuthenticationToken) principal;
-        return ResponseEntity.ok(questionService.addQuestion(questionConverter.questionCreateDtoToQuestion(questionCreateDto), (User) token.getPrincipal()));
+    public ResponseEntity<?> addQuestion(@Valid @RequestBody QuestionCreateDto questionCreateDto) throws NotFoundException {
+        return ResponseEntity.ok(questionService.addQuestion(questionConverter.questionCreateDtoToQuestion(questionCreateDto, new User())));
     }
 }
