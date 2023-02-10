@@ -5,14 +5,12 @@ import com.javamentor.qa.platform.dao.abstracts.model.TagDao;
 import com.javamentor.qa.platform.models.dto.question.QuestionDto;
 import com.javamentor.qa.platform.models.entity.question.Question;
 import com.javamentor.qa.platform.models.entity.question.Tag;
-import com.javamentor.qa.platform.models.entity.user.User;
 import com.javamentor.qa.platform.service.abstracts.dto.question.QuestionDtoService;
 import com.javamentor.qa.platform.service.abstracts.model.QuestionService;
 import javassist.NotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -34,17 +32,14 @@ public class QuestionServiceImpl extends ReadWriteServiceImpl<Question, Long> im
 
     @Override
     @Transactional
-    public QuestionDto addQuestion(Question question, User user) throws NotFoundException {
+    public QuestionDto addQuestion(Question question) throws NotFoundException {
         List<Tag> tagListOrigin = question.getTags();
-        List<String> tagNamesList = new ArrayList<>();
-        tagListOrigin.forEach(tag -> tagNamesList.add(tag.getName()));
-        List<Tag> existsInDbTags = tagDao.getTagsByName(tagNamesList);
+        List<Tag> existsInDbTags = tagDao.getTagsByName(tagListOrigin.stream().map(Tag::getName).collect(Collectors.toList()));
         List<Tag> doesntExistTags = tagListOrigin.stream()
-                .filter(tag -> existsInDbTags.stream().allMatch(t -> t.getName().equals(tag.getName())))
+                .filter(tag -> existsInDbTags.stream().noneMatch(t -> t.getName().equals(tag.getName())))
                 .collect(Collectors.toList());
         tagDao.persistAll(doesntExistTags);
         question.setTags(Stream.of(existsInDbTags, doesntExistTags).flatMap(Collection::stream).collect(Collectors.toList()));
-        question.setUser(user);
         questionDao.persist(question);
         return questionDtoService.getQuestionDtoById(question.getId());
     }
