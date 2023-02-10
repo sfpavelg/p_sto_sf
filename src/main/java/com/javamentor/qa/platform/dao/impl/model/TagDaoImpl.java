@@ -19,8 +19,7 @@ public class TagDaoImpl extends ReadWriteDaoImpl<Tag, Long> implements TagDao {
         if (names != null && names.iterator().hasNext()) {
             return entityManager.createQuery("select t from Tag t WHERE t.name IN :names")
                     .setParameter("names", names).getResultList();
-        } else {
-            return new ArrayList<>();
         }
+        return new ArrayList<>();
     }
 }
