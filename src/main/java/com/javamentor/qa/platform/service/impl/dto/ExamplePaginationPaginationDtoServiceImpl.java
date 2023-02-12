@@ -15,10 +15,9 @@ public class ExamplePaginationPaginationDtoServiceImpl extends PageDtoService<Ex
 
     @Override
     public PageDto<ExampleDto> getListingUsers(HashMap<String, Object> param) throws NotFoundException {
-        param.put("itemsOnPage", 10);
         param.put("DtoType", "ExampleDtoDao");
-        // For sortBy default value is "id" sorting/
         param.put("sortBy", "id");
+        param.put("itemsOnPage", 10);
 
         PageDto<ExampleDto> page = createPage(param);
 
@@ -30,12 +29,13 @@ public class ExamplePaginationPaginationDtoServiceImpl extends PageDtoService<Ex
 
     @Override
     public PageDto<ExampleDto> getAnotherListingUsers(HashMap<String, Object> param) throws NotFoundException {
-        param.put("itemsOnPage", 10);
+        // Here we can define the class that will be used to call the methods, for example we use another dao
+        // implementation where getting dto's for only superusers and specified items on page for 5 elems on page
+        param.put("DtoImpl", "exampleDtoDaoImplAnother");
+
         param.put("DtoType", "ExampleDtoDao");
-        param.put("sortBy", "id");
-        // Here we can define the class that will be used to call the methods
-        // TODO: create a REAL anotherListingUsers
-        param.put("DtoImpl", "exampleDtoDaoImpl");
+        param.put("itemsOnPage", 5);
+
         PageDto<ExampleDto> page = createPage(param);
 
         if (page.getItems().isEmpty()) {
