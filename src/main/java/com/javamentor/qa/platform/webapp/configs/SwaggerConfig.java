@@ -1,4 +1,4 @@
-package com.javamentor.qa.platform.webapp.configs.SpringFoxConfig;
+package com.javamentor.qa.platform.webapp.configs;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
