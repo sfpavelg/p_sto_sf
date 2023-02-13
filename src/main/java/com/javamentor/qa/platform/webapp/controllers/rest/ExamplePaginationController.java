@@ -1,7 +1,7 @@
 package com.javamentor.qa.platform.webapp.controllers.rest;
 
 import com.javamentor.qa.platform.models.dto.ExampleDto;
-import com.javamentor.qa.platform.service.abstracts.dto.ExamplePaginationDtoService;
+import com.javamentor.qa.platform.service.abstracts.dto.ExampleDtoService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
@@ -22,7 +22,7 @@ import java.util.HashMap;
 @Api(value = "Example pagination controller")
 public class ExamplePaginationController {
 
-    private final ExamplePaginationDtoService examplePaginationDtoService;
+    private final ExampleDtoService exampleDtoService;
 
     @GetMapping("/pagination")
     @ApiOperation(value = "Get example of paginated Dto",
@@ -35,7 +35,7 @@ public class ExamplePaginationController {
         HashMap<String, Object> param = new HashMap<>();
         param.put("currentPageNumber", currentPageNumber);
 
-        return ResponseEntity.ok(examplePaginationDtoService.getListingUsers(param).getItems());
+        return ResponseEntity.ok(exampleDtoService.getListingUsers(param).getItems());
     }
 
     @GetMapping("/anotherPagination")
@@ -49,6 +49,6 @@ public class ExamplePaginationController {
         HashMap<String, Object> param = new HashMap<>();
         param.put("currentPageNumber", currentPageNumber);
 
-        return ResponseEntity.ok(examplePaginationDtoService.getAnotherListingUsers(param).getItems());
+        return ResponseEntity.ok(exampleDtoService.getAnotherListingUsers(param).getItems());
     }
 }

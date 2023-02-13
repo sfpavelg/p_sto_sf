@@ -2,7 +2,7 @@ package com.javamentor.qa.platform.service.impl.dto;
 
 import com.javamentor.qa.platform.models.dto.ExampleDto;
 import com.javamentor.qa.platform.models.dto.PageDto;
-import com.javamentor.qa.platform.service.abstracts.dto.ExamplePaginationDtoService;
+import com.javamentor.qa.platform.service.abstracts.dto.ExampleDtoService;
 import com.javamentor.qa.platform.service.abstracts.dto.PageDtoService;
 import javassist.NotFoundException;
 import org.springframework.stereotype.Service;
@@ -11,7 +11,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Service
-public class ExamplePaginationPaginationDtoServiceImpl extends PageDtoService<ExampleDto, Map<String, Object>> implements ExamplePaginationDtoService {
+public class ExampleDtoServiceImpl extends PageDtoService<ExampleDto, Map<String, Object>> implements ExampleDtoService {
 
     @Override
     public PageDto<ExampleDto> getListingUsers(HashMap<String, Object> param) throws NotFoundException {
@@ -19,7 +19,7 @@ public class ExamplePaginationPaginationDtoServiceImpl extends PageDtoService<Ex
         param.put("sortBy", "id");
         param.put("itemsOnPage", 10);
 
-        PageDto<ExampleDto> page = createPage(param);
+        PageDto<ExampleDto> page = PageDto(param);
 
         if (page.getItems().isEmpty()) {
             throw new NotFoundException("Page with params not found");
@@ -36,7 +36,7 @@ public class ExamplePaginationPaginationDtoServiceImpl extends PageDtoService<Ex
         param.put("DtoType", "ExampleDtoDao");
         param.put("itemsOnPage", 5);
 
-        PageDto<ExampleDto> page = createPage(param);
+        PageDto<ExampleDto> page = PageDto(param);
 
         if (page.getItems().isEmpty()) {
             throw new NotFoundException("Page with params not found");

@@ -6,7 +6,7 @@ import javassist.NotFoundException;
 
 import java.util.HashMap;
 
-public interface ExamplePaginationDtoService {
+public interface ExampleDtoService {
     PageDto<ExampleDto> getListingUsers(HashMap<String, Object> param) throws NotFoundException;
 
     PageDto<ExampleDto> getAnotherListingUsers(HashMap<String, Object> param) throws NotFoundException;
