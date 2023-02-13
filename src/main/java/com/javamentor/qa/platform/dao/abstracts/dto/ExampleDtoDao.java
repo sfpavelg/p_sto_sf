@@ -7,5 +7,5 @@ import java.util.Map;
 /**
  * A DTO for the {@link User} entity
  */
-public interface ExampleDtoDao extends PageDtoDao<ExampleDto, Map<String, Object>> {
+public interface ExampleDtoDao extends PageDtoDao<ExampleDto, Map<?, ?>> {
 }

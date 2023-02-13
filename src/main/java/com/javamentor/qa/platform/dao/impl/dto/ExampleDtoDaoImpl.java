@@ -17,7 +17,7 @@ public class ExampleDtoDaoImpl implements ExampleDtoDao {
     private EntityManager entityManager;
 
     @Override
-    public List<ExampleDto> getItems(Map<String, Object> paramToMap) {
+    public List<ExampleDto> getItems(Map<?, ?> paramToMap) {
         //For convenience, we will put the necessary parameters into variables
         int itemsOnPageParam = (int) paramToMap.get("itemsOnPage");
         int itemsPositionParam = (int) paramToMap.get("currentPageNumber") * itemsOnPageParam;
@@ -37,7 +37,7 @@ public class ExampleDtoDaoImpl implements ExampleDtoDao {
     }
 
     @Override
-    public int getTotalResultCount(Map<String, Object> param) {
+    public int getTotalResultCount(Map<?, ?> param) {
         Query query = entityManager.createQuery("SELECT COUNT(p) FROM User p ");
         return Integer.parseInt(query.getSingleResult().toString());
     }
