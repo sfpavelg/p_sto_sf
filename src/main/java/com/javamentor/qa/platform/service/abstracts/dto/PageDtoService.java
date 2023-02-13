@@ -1,8 +1,8 @@
 package com.javamentor.qa.platform.service.abstracts.dto;
 
+import com.javamentor.qa.platform.dao.abstracts.dto.PageDtoDao;
 import com.javamentor.qa.platform.models.dto.PageDto;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
 
 import java.util.HashMap;
 import java.util.List;
@@ -15,11 +15,11 @@ import java.util.List;
  */
 public abstract class PageDtoService<T, Map> {
 
-    private ApplicationContext context;
+    private java.util.Map<String, PageDtoDao<?, ?>> beansMap;
 
     @Autowired
-    public void setContext(ApplicationContext context) {
-        this.context = context;
+    public void setMap(java.util.Map<String, PageDtoDao<?, ?>> beansMap) {
+        this.beansMap = beansMap;
     }
 
 
@@ -42,18 +42,15 @@ public abstract class PageDtoService<T, Map> {
      *               int currentPageNumber - Specifying the page number to be given
      * @return Page of Dto's
      */
-    protected PageDto<T> createPage(Map params) {
+    protected PageDto<T> PageDto(Map params) {
         HashMap<?, ?> paramToMap = (HashMap<?, ?>) params;
         PageDto<T> pageDto = new PageDto<>();
-        String daoAbstractType = "com.javamentor.qa.platform.dao.abstracts.dto." + paramToMap.get("DtoType");
         String beanName = paramToMap.get("DtoImpl") != null ? (String) paramToMap.get("DtoImpl")
                 : paramToMap.get("DtoType").toString().substring(0, 1).toLowerCase()
                 + paramToMap.get("DtoType").toString().substring(1)
                 + "Impl";
 
         try {
-            Class<?> daoAbstractClazz = Class.forName(daoAbstractType);
-            java.util.Map<String, ?> beansMap = context.getBeansOfType(daoAbstractClazz);
             Class<?> BeanClazz = beansMap.get(beanName).getClass();
 
             int totalResultCount = (int) BeanClazz
