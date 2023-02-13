@@ -12,8 +12,29 @@
     <title>Title</title>
 </head>
 <body>
-<h1>Задать вопрос</h1>
+<p class="h1">Задать вопрос</p>
+<form id="createQuestionDto">
+<div class="container-fluid ">
+    <div class="row" style="background-color: #f8f9fa">
+        <div class="d-grid gap-2 col-4 mx-auto p-1 text-center">
+            <div class="mb-3">
+        <label for="title" class="form-label">Название вопроса</label>
+        <input type="text" class="form-control" id="title" placeholder="Напр: Проблема с открытием модального окна">
+            </div>
 
+            <div class="mb-3">
+        <label for="description" class="form-label">Описание</label>
+        <input type="text" class="form-control" id="description" style="height:100px" placeholder="Опишите подробно суть Вашего вопроса">
+            </div>
+
+            <div class="mb-3">
+                <label for="tags" class="form-label">Тэги</label>
+                <input type="text" class="form-control" id="tags" placeholder="Перечислите через ; Напр: Spring; ThymeLeaf; Modal">
+            </div>
+        </div>
+    </div>
+</div>
+</form>
 
 
 
