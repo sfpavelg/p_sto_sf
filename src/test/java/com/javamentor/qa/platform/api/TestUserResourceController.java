@@ -27,7 +27,7 @@ public class TestUserResourceController extends AbstractTestApi {
     public void testGetUserById() throws Exception {
 
         JacksonJsonParser jsonParser = new JacksonJsonParser();
-        String jwt = jsonParser.parseMap(this.mvc.perform(post("http://localhost:8091/api/auth/token")
+        String jwt = jsonParser.parseMap(this.mvc.perform(post("/api/auth/token")
                                 .content(objectMapper.valueToTree(new AuthenticationRequest("email5@domain.com",
                                         "password")).toString())
                                 .contentType(MediaType.APPLICATION_JSON))
