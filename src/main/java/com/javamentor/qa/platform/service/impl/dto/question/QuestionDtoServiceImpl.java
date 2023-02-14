@@ -31,6 +31,6 @@ public class QuestionDtoServiceImpl implements QuestionDtoService {
             questionDto.setListTagDto(tagDtoDao.getTagDtoById(id));
             return questionDto;
         }
-            throw new NotFoundException("QuestionDto with id = " + id + " not found");
+        throw new NotFoundException("QuestionDto with id = " + id + " not found");
     }
 }

@@ -1,30 +1,24 @@
 package com.javamentor.qa.platform.models.dto.user;
 
+import com.javamentor.qa.platform.models.entity.user.User;
 import lombok.AllArgsConstructor;
-import lombok.Getter;
+import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
-import java.time.LocalDateTime;
+import java.io.Serializable;
 
-@Getter
-@Setter
-@AllArgsConstructor
+/**
+ * A DTO for the {@link User} entity
+ */
+@Data
 @NoArgsConstructor
-public class UserDto {
+@AllArgsConstructor
+public class UserDto implements Serializable {
     private Long id;
     private String email;
     private String fullName;
-    private LocalDateTime persistDateTime;
-    private Boolean isEnabled = true;
-    private Boolean isDeleted = false;
     private String city;
-    private String linkSite;
-    private String linkGitHub;
-    private String linkVk;
-    private String about;
     private String imageLink;
-    private LocalDateTime lastUpdateDateTime;
-    private String nickname;
-    private String roleName;
+    private int reputation;
+
 }
