@@ -24,12 +24,13 @@ public class ExampleDtoServiceImpl extends PageDtoService<ExampleDto> implements
 
         param.put("sortBy", "id");
         param.put("itemsOnPage", 10);
-        param.put("daoDtoImpl", "blab-la");
 
         try {
             page = pageDto(param);
-        } catch (NullPointerException e) {
-            throw new NotFoundException("There are no implementations available in the DAO layer with provided daoDtoImpl name");
+            // Here we can catch exception when page not exists
+            // or handle exception when there is no implementation in the DAO layer, but this should not be
+        } catch (NotFoundException | RuntimeException e) {
+            throw new NotFoundException("The page with " + param.get("currentPageNumber") + " number was not found");
         }
 
         return page;
@@ -37,16 +38,20 @@ public class ExampleDtoServiceImpl extends PageDtoService<ExampleDto> implements
 
     @Override
     public PageDto<ExampleDto> getAnotherListingUsers(HashMap<String, Object> param) throws NotFoundException {
+        PageDto<ExampleDto> page;
+
         // Here we can define the class that will be used to call the methods, for example we use another dao
         // implementation where getting dto's for only superusers and specified items on page for 5 elems on page
         param.put("daoDtoImpl", "exampleDtoDaoImplAnother");
         param.put("itemsOnPage", 5);
 
-        PageDto<ExampleDto> page = pageDto(param);
 
-        if (page.getItems().isEmpty()) {
-            throw new NotFoundException("Page with params not found");
+        try {
+            page = pageDto(param);
+        } catch (NotFoundException e) {
+            throw new NotFoundException("The page with " + param.get("currentPageNumber") + " number was not found");
         }
+
         return page;
     }
 }
