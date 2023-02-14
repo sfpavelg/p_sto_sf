@@ -2,5 +2,9 @@ package com.javamentor.qa.platform.dao.abstracts.model;
 
 import com.javamentor.qa.platform.models.entity.question.Tag;
 
-public interface TagDao extends ReadWriteDao<Tag, Long>  {
+import java.util.List;
+
+public interface TagDao extends ReadWriteDao<Tag, Long> {
+
+    List<Tag> getTagsByName(List<String> names);
 }
