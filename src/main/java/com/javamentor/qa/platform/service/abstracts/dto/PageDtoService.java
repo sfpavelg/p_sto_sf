@@ -12,7 +12,7 @@ import java.util.Map;
  *
  * @param <T> The type of DTO.
  */
-public abstract class PageDtoService<T> {
+public class PageDtoService<T> {
 
     private final Map<String, PageDtoDao<T>> beansMap;
 
@@ -27,38 +27,37 @@ public abstract class PageDtoService<T> {
      *               <p>
      *               Required parameters:
      *               <p>
-     *               String DtoType -  Dto, which is used for pagination, for example - ExampleDTO.
-     *               <p>
      *               int itemsOnPage - Specifying the number of elements on the page.
      *               <p>
      *               Optional parameters:
      *               <p>
-     *               String DtoImpl - Name of the implementation from the DAO layer to be used.
-     *               Contains the full name of the class, which begins with a small letter.
+     *               String daoDtoImpl - Name of the implementation from the DAO layer to be used.
+     *               Contains the full name of the class, which begins with a small letter. Example: exampleDtoDaoImpl.
      *               <p>
      *               int totalPageCount - Specifying the number of pages.
      *               <p>
      *               int currentPageNumber - Specifying the page number to be given
      * @return Page of Dto's
      */
-    protected PageDto<T> pageDto(Map<String, Object> params) throws NullPointerException, NotFoundException {
+    protected PageDto<T> pageDto(Map<String, Object> params) throws NotFoundException, RuntimeException {
         PageDto<T> pageDto = new PageDto<>();
-
-        if (beansMap.isEmpty()) {
-            throw new RuntimeException("There are no implementations available in the DAO layer");
-        }
 
         String beanName = params.get("daoDtoImpl") != null ? (String) params.get("daoDtoImpl")
                 : (String) beansMap.keySet().toArray()[0];
 
-        pageDto.setTotalResultCount(beansMap.get(beanName).getTotalResultCount(params));
-        pageDto.setItemsOnPage(params.get("itemsOnPage") != null ? (int) params.get("itemsOnPage") : 10);
-        pageDto.setTotalPageCount(params.get("totalPageCount") != null
-                ? (int) params.get("totalPageCount")
-                : pageDto.getTotalResultCount() / pageDto.getItemsOnPage());
-        pageDto.setCurrentPageNumber(params.get("currentPageNumber") != null
-                ? (int) params.get("currentPageNumber") : 0);
-        pageDto.setItems(beansMap.get(beanName).getItems(params));
+        try {
+            pageDto.setTotalResultCount(beansMap.get(beanName).getTotalResultCount(params));
+            pageDto.setItemsOnPage(params.get("itemsOnPage") != null ? (int) params.get("itemsOnPage") : 10);
+            pageDto.setTotalPageCount(params.get("totalPageCount") != null
+                    ? (int) params.get("totalPageCount")
+                    : pageDto.getTotalResultCount() / pageDto.getItemsOnPage());
+            pageDto.setCurrentPageNumber(params.get("currentPageNumber") != null
+                    ? (int) params.get("currentPageNumber") : 0);
+            pageDto.setItems(beansMap.get(beanName).getItems(params));
+
+        } catch (NullPointerException e) {
+            throw new RuntimeException("There are no implementations available in the DAO layer");
+        }
 
         if (pageDto.getTotalResultCount() < 0 | pageDto.getItemsOnPage() < 0
                 | pageDto.getTotalPageCount() < 0 | pageDto.getCurrentPageNumber() < 0
