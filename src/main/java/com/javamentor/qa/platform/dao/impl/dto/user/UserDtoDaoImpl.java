@@ -11,28 +11,21 @@ import java.util.Optional;
 
 @Repository
 public class UserDtoDaoImpl implements UserDtoDao {
+
     @PersistenceContext
     private EntityManager entityManager;
 
-    public Optional<UserDto> getUserDtoById(Long id) {
-        return SingleResultUtil.getSingleResultOrNull(entityManager.createQuery(
-                "SELECT new com.javamentor.qa.platform.models.dto.user.UserDto (u.id, " +
-                        "u.email, " +
-                        "u.fullName, " +
-                        "u.persistDateTime, " +
-                        "u.isEnabled, " +
-                        "u.isDeleted, " +
-                        "u.city, " +
-                        "u.linkSite, " +
-                        "u.linkGitHub, " +
-                        "u.linkVk, " +
-                        "u.about, " +
-                        "u.imageLink, " +
-                        "u.lastUpdateDateTime, " +
-                        "u.nickname, " +
-                        "u.role.name) " +
-                        "FROM User u JOIN u.role " +
-                        "WHERE u.id = :id"
-                , UserDto.class).setParameter("id", id));
+    @Override
+    public Optional<UserDto> getById(Long id) {
+
+        return SingleResultUtil.getSingleResultOrNull(
+                entityManager.createQuery(
+                                "SELECT new com.javamentor.qa.platform.models.dto.user.UserDto" +
+                                        "(u.id, u.email, u.fullName, u.city, u.imageLink, " +
+                                        "cast(coalesce(sum(r.count), 0) as integer )) " +
+                                        "from User u left join Reputation r " +
+                                        "with r.author.id = u.id where u.id = :id group by u.id",
+                                UserDto.class)
+                        .setParameter("id", id));
     }
 }
