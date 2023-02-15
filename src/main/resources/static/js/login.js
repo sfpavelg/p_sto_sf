@@ -1,33 +1,29 @@
-app.post("/login", async (req, res) => {
+function saveToken(token) {
+    sessionStorage.setItem('tokenData', JSON.stringify(token));
+}
 
-    try {
-         const {email, password} = req.body;
-
-    if (!(email && password)) {
-        res.status(400).send("Требуются все входные данные");
-    }
-
-    const user = await User.findOne({email});
-
-    if (user && (await bcrypt.compare(password, user.password))) {
-        const token = jwt.sign(
-            {user_id: user._id, email},
-            process.env.TOKEN_KEY,
-            {
-                expiresIn: "2h",
+function getTokenData(email, password) {
+    return fetch('api/auth', {
+        method: 'POST',
+        credentials: 'include',
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            email,
+            password,
+        }),
+    })
+        .then((res) => {
+            if (res.status === 200) {
+                const tokenData = res.json();
+                saveToken(JSON.stringify(tokenData));
+                return Promise.resolve()
             }
-        );
+            return Promise.reject();
+        });
 
-        res.cookie('token', token, { httpOnly: true });
+}
 
-        user.token = token;
-
-        res.status(200).json(user);
-    }
-    res.status(400).send("Недействительные учетные данные");
-    } catch (err) {
-    console.log(err);
-    }
-    location.href = "/main";
-});
-
+location.href = "/main";
