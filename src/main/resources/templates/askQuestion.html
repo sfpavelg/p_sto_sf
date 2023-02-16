@@ -7,41 +7,49 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
     <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet"
-          integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous">
-    <title>Title</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.4.1/dist/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.4.1/dist/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="/css/addQuestion/fontAwesome4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="/css/addQuestion/richtext.min.css">
+    <script src="/js/addQuestion/jquery.richtext.min.js"></script>
+
 </head>
 <body>
-<p class="h1">Задать вопрос</p>
 <form id="createQuestionDto">
 <div class="container-fluid ">
-    <div class="row" style="background-color: #f8f9fa">
+    <div class="row">
         <div class="d-grid gap-2 col-4 mx-auto p-1 text-center">
+            <div class="mb-3">
+            <p class="h1">Задать вопрос</p>
+            </div>
+
             <div class="mb-3">
         <label for="title" class="form-label">Название вопроса</label>
         <input type="text" class="form-control" id="title" placeholder="Напр: Проблема с открытием модального окна">
             </div>
 
             <div class="mb-3">
-        <label for="description" class="form-label">Описание</label>
-        <input type="text" class="form-control" id="description" style="height:100px" placeholder="Опишите подробно суть Вашего вопроса">
+        <label for="editor" class="form-label">Описание</label>
+                <textarea class="content" name="editor" id="editor"></textarea>
             </div>
 
             <div class="mb-3">
                 <label for="tags" class="form-label">Тэги</label>
                 <input type="text" class="form-control" id="tags" placeholder="Перечислите через ; Напр: Spring; ThymeLeaf; Modal">
             </div>
+
+            <div class="mb-3">
+                <button type="submit" class="btn btn-primary">Опубликовать</button>
+            </div>
         </div>
     </div>
 </div>
 </form>
-
-
-
-
-
-
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"
-        integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN" crossorigin="anonymous"></script>
 </body>
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('#editor').richText();
+    });
+</script>
 </html>
