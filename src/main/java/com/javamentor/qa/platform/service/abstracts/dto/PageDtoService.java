@@ -2,7 +2,6 @@ package com.javamentor.qa.platform.service.abstracts.dto;
 
 import com.javamentor.qa.platform.dao.abstracts.dto.PageDtoDao;
 import com.javamentor.qa.platform.models.dto.PageDto;
-import javassist.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Map;
@@ -23,48 +22,56 @@ public class PageDtoService<T> {
 
 
     /**
-     * @param params Parameters for pagination
-     *               <p>
-     *               Required parameters:
-     *               <p>
-     *               int itemsOnPage - Specifying the number of elements on the page.
-     *               <p>
-     *               Optional parameters:
+     * @param params Parameters for pagination:
      *               <p>
      *               String daoDtoImpl - Name of the implementation from the DAO layer to be used.
      *               Contains the full name of the class, which begins with a small letter. Example: exampleDtoDaoImpl.
      *               <p>
-     *               int totalPageCount - Specifying the number of pages.
+     *               int itemsOnPage - Specifying the number of elements on the page.
      *               <p>
      *               int currentPageNumber - Specifying the page number to be given
+     *               <p>
      * @return Page of Dto's
      */
-    protected PageDto<T> pageDto(Map<String, Object> params) throws NotFoundException, RuntimeException {
+    protected PageDto<T> pageDto(Map<String, Object> params) {
         PageDto<T> pageDto = new PageDto<>();
+        String beanName = (String) params.get("daoDtoImpl");
 
-        String beanName = params.get("daoDtoImpl") != null ? (String) params.get("daoDtoImpl")
-                : (String) beansMap.keySet().toArray()[0];
+        checkParams(params);
 
-        try {
-            pageDto.setTotalResultCount(beansMap.get(beanName).getTotalResultCount(params));
-            pageDto.setItemsOnPage(params.get("itemsOnPage") != null ? (int) params.get("itemsOnPage") : 10);
-            pageDto.setTotalPageCount(params.get("totalPageCount") != null
-                    ? (int) params.get("totalPageCount")
-                    : pageDto.getTotalResultCount() / pageDto.getItemsOnPage());
-            pageDto.setCurrentPageNumber(params.get("currentPageNumber") != null
-                    ? (int) params.get("currentPageNumber") : 0);
-            pageDto.setItems(beansMap.get(beanName).getItems(params));
-
-        } catch (NullPointerException e) {
-            throw new RuntimeException("There are no implementations available in the DAO layer");
-        }
-
-        if (pageDto.getTotalResultCount() < 0 | pageDto.getItemsOnPage() < 0
-                | pageDto.getTotalPageCount() < 0 | pageDto.getCurrentPageNumber() < 0
-                | pageDto.getItems().isEmpty()) {
-            throw new NotFoundException("The page with the specified parameters was not found");
-        }
+        pageDto.setTotalResultCount(beansMap.get(beanName).getTotalResultCount(params));
+        pageDto.setItemsOnPage((int) params.get("itemsOnPage"));
+        pageDto.setTotalPageCount(pageDto.getTotalResultCount() / pageDto.getItemsOnPage());
+        pageDto.setCurrentPageNumber((int) params.get("currentPageNumber"));
+        pageDto.setItems(beansMap.get(beanName).getItems(params));
 
         return pageDto;
+    }
+
+    private void checkParams(Map<String, Object> params) {
+        if (params.get("daoDtoImpl") == null) {
+            throw new RuntimeException("You must specify the implementation");
+        }
+
+        if (params.get("itemsOnPage") == null) {
+            throw new RuntimeException("The parameter of the number of elements on the page was not found");
+        }
+
+        if ((int) params.get("itemsOnPage") < 1) {
+            throw new RuntimeException("The number of elements on the page cannot be less than 1");
+        }
+
+        if (params.get("currentPageNumber") == null) {
+            throw new RuntimeException("Page number parameter not found");
+        }
+
+        if ((int) params.get("currentPageNumber") < 0) {
+            throw new RuntimeException("The current page cannot be less than 0");
+        }
+
+        if (beansMap.get((String) params.get("daoDtoImpl")) == null) {
+            throw new RuntimeException("The specified implementation does not exist");
+        }
+
     }
 }

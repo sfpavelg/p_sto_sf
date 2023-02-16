@@ -20,16 +20,11 @@ public class ExampleDtoServiceImpl extends PageDtoService<ExampleDto> implements
 
     @Override
     public PageDto<ExampleDto> getListingUsers(HashMap<String, Object> param) throws NotFoundException {
-        PageDto<ExampleDto> page;
-
+        param.put("daoDtoImpl", "exampleDtoDaoImpl");
         param.put("sortBy", "id");
-        param.put("itemsOnPage", 10);
+        PageDto<ExampleDto> page = pageDto(param);
 
-        try {
-            page = pageDto(param);
-            // Here we can catch exception when page not exists
-            // or handle exception when there is no implementation in the DAO layer, but this should not be
-        } catch (NotFoundException | RuntimeException e) {
+        if (page.getItems().isEmpty()) {
             throw new NotFoundException("The page with " + param.get("currentPageNumber") + " number was not found");
         }
 
@@ -38,18 +33,13 @@ public class ExampleDtoServiceImpl extends PageDtoService<ExampleDto> implements
 
     @Override
     public PageDto<ExampleDto> getAnotherListingUsers(HashMap<String, Object> param) throws NotFoundException {
-        PageDto<ExampleDto> page;
-
         // Here we can define the class that will be used to call the methods, for example we use another dao
-        // implementation where getting dto's for only superusers and specified items on page for 5 elems on page
+        // implementation where getting dto's for only superusers
         param.put("daoDtoImpl", "exampleDtoDaoImplAnother");
-        param.put("itemsOnPage", 5);
+        PageDto<ExampleDto> page = pageDto(param);
 
-
-        try {
-            page = pageDto(param);
-        } catch (NotFoundException e) {
-            throw new NotFoundException("The page with " + param.get("currentPageNumber") + " number was not found");
+        if (page.getItems().isEmpty()) {
+            throw new NotFoundException("The page with superusers was not found");
         }
 
         return page;
