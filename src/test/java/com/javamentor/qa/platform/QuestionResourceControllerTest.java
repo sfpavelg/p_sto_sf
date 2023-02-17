@@ -19,13 +19,18 @@ import java.util.List;
 
 class QuestionResourceControllerTest extends AbstractTestApi {
 
-
     @Test
     @Sql(value = {"/script/question/getQuestionDtoByIdTest/question-dto-data-create.sql"}, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
     @Sql(value = {"/script/question/getQuestionDtoByIdTest/question-dto-data-drop.sql"}, executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
     public void getQuestionDtoByIdTest() throws Exception {
+
+        String json = "{\"email\":\"0@gmail.com\",\"password\":\"0pwd\"}";
+        String token = this.mvc.perform(post("/api/auth/token").contentType(MediaType.APPLICATION_JSON)
+                        .content(json)).andExpect(status().isOk())
+                .andReturn().getResponse().getContentAsString().substring(10);
+
         //success
-        this.mvc.perform(get("/api/user/question/{id}", 1))
+        this.mvc.perform(get("/api/user/question/{id}", 1).header("Authorization", "Bearer " + token))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
@@ -50,13 +55,13 @@ class QuestionResourceControllerTest extends AbstractTestApi {
                 .andExpect(jsonPath("$.listTagDto[1].description", Is.is("description2")));
 
         //wrong id
-        this.mvc.perform(get("/api/user/question/{id}", 111))
+        this.mvc.perform(get("/api/user/question/{id}", 111).header("Authorization", "Bearer " + token))
                 .andDo(print())
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$", Is.is("QuestionDto with id = 111 not found")));
 
         //null results in DB (only possible fields like imageLink, rep, counts of answers and valuable)
-        this.mvc.perform(get("/api/user/question/{id}", 5))
+        this.mvc.perform(get("/api/user/question/{id}", 5).header("Authorization", "Bearer " + token))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
@@ -81,12 +86,16 @@ class QuestionResourceControllerTest extends AbstractTestApi {
     @Sql(value = {"/script/question/addQuestionTest/question-add-data-create.sql"}, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
     @Sql(value = {"/script/question/addQuestionTest/question-add-data-drop.sql"}, executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
     public void addQuestionTest() throws Exception {
+        String json = "{\"email\":\"0@gmail.com\",\"password\":\"0pwd\"}";
+        String token = this.mvc.perform(post("/api/auth/token").contentType(MediaType.APPLICATION_JSON)
+                        .content(json)).andExpect(status().isOk())
+                .andReturn().getResponse().getContentAsString().substring(10);
 
         //Check that Question successfully added in DB if TagDto exist in DB
         List<TagDto> list1 = new ArrayList<>();
-        list1.add(new TagDto(null,"name1",null));
-        list1.add(new TagDto(null,"name2",null));
-        this.mvc.perform(post("/api/user/question").content(this.objectMapper.writeValueAsString(
+        list1.add(new TagDto(null, "name1", null));
+        list1.add(new TagDto(null, "name2", null));
+        this.mvc.perform(post("/api/user/question").header("Authorization", "Bearer " + token).content(this.objectMapper.writeValueAsString(
                                 new QuestionCreateDto("testTitle1", "testDescription1", list1)))
                         .contentType(MediaType.APPLICATION_JSON).accept(MediaType.APPLICATION_JSON))
                 .andDo(print())
@@ -112,9 +121,9 @@ class QuestionResourceControllerTest extends AbstractTestApi {
 
         //Check that Question and Tag successfully added in DB If TagDto doesn't exist in DB ,
         List<TagDto> list2 = new ArrayList<>();
-        list2.add(new TagDto(null,"name100",null));
-        list2.add(new TagDto(null,"name200",null));
-        this.mvc.perform(post("/api/user/question").content(this.objectMapper.writeValueAsString(
+        list2.add(new TagDto(null, "name100", null));
+        list2.add(new TagDto(null, "name200", null));
+        this.mvc.perform(post("/api/user/question").header("Authorization", "Bearer " + token).content(this.objectMapper.writeValueAsString(
                                 new QuestionCreateDto("testTitle2", "testDescription2", list2)))
                         .contentType(MediaType.APPLICATION_JSON).accept(MediaType.APPLICATION_JSON))
                 .andDo(print())
@@ -139,7 +148,7 @@ class QuestionResourceControllerTest extends AbstractTestApi {
         ;
 
         //blank title
-        this.mvc.perform(post("/api/user/question").content(this.objectMapper.writeValueAsString(
+        this.mvc.perform(post("/api/user/question").header("Authorization", "Bearer " + token).content(this.objectMapper.writeValueAsString(
                                 new QuestionCreateDto(" ", "testDescription1", list1)))
                         .contentType(MediaType.APPLICATION_JSON).accept(MediaType.APPLICATION_JSON))
                 .andDo(print())
@@ -147,7 +156,7 @@ class QuestionResourceControllerTest extends AbstractTestApi {
                 .andExpect(jsonPath("$", Is.is("Title can't be empty")))
         ;
         //null title
-        this.mvc.perform(post("/api/user/question").content(this.objectMapper.writeValueAsString(
+        this.mvc.perform(post("/api/user/question").header("Authorization", "Bearer " + token).content(this.objectMapper.writeValueAsString(
                                 new QuestionCreateDto(null, "testDescription1", list1)))
                         .contentType(MediaType.APPLICATION_JSON).accept(MediaType.APPLICATION_JSON))
                 .andDo(print())
@@ -156,7 +165,7 @@ class QuestionResourceControllerTest extends AbstractTestApi {
         ;
 
         //blank description
-        this.mvc.perform(post("/api/user/question").content(this.objectMapper.writeValueAsString(
+        this.mvc.perform(post("/api/user/question").header("Authorization", "Bearer " + token).content(this.objectMapper.writeValueAsString(
                                 new QuestionCreateDto("testTitle1", " ", list1)))
                         .contentType(MediaType.APPLICATION_JSON).accept(MediaType.APPLICATION_JSON))
                 .andDo(print())
@@ -164,7 +173,7 @@ class QuestionResourceControllerTest extends AbstractTestApi {
                 .andExpect(jsonPath("$", Is.is("Description can't be empty")))
         ;
         //null description
-        this.mvc.perform(post("/api/user/question").content(this.objectMapper.writeValueAsString(
+        this.mvc.perform(post("/api/user/question").header("Authorization", "Bearer " + token).content(this.objectMapper.writeValueAsString(
                                 new QuestionCreateDto("testTitle", null, list1)))
                         .contentType(MediaType.APPLICATION_JSON).accept(MediaType.APPLICATION_JSON))
                 .andDo(print())
@@ -173,7 +182,7 @@ class QuestionResourceControllerTest extends AbstractTestApi {
         ;
 
         //Empty tags
-        this.mvc.perform(post("/api/user/question").content(this.objectMapper.writeValueAsString(
+        this.mvc.perform(post("/api/user/question").header("Authorization", "Bearer " + token).content(this.objectMapper.writeValueAsString(
                                 new QuestionCreateDto("testTitle1", "testDescription1", new ArrayList<>())))
                         .contentType(MediaType.APPLICATION_JSON).accept(MediaType.APPLICATION_JSON))
                 .andDo(print())
@@ -182,7 +191,7 @@ class QuestionResourceControllerTest extends AbstractTestApi {
         ;
 
         //Null tags
-        this.mvc.perform(post("/api/user/question").content(this.objectMapper.writeValueAsString(
+        this.mvc.perform(post("/api/user/question").header("Authorization", "Bearer " + token).content(this.objectMapper.writeValueAsString(
                                 new QuestionCreateDto("testTitle1", "testDescription1", null)))
                         .contentType(MediaType.APPLICATION_JSON).accept(MediaType.APPLICATION_JSON))
                 .andDo(print())

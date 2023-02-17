@@ -1,9 +1,8 @@
 package com.javamentor.qa.platform.service.abstracts.dto.user;
 
 import com.javamentor.qa.platform.models.dto.user.UserDto;
-
-import java.util.Optional;
+import javassist.NotFoundException;
 
 public interface UserDtoService {
-    Optional<UserDto> getUserDtoById(Long id);
+    UserDto getById(Long id) throws NotFoundException;
 }

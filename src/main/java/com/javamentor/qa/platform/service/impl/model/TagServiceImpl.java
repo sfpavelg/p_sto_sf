@@ -5,7 +5,6 @@ import com.javamentor.qa.platform.models.entity.question.Tag;
 import com.javamentor.qa.platform.service.abstracts.model.TagService;
 import org.springframework.stereotype.Service;
 
-import java.util.Map;
 
 @Service
 public class TagServiceImpl extends ReadWriteServiceImpl<Tag, Long> implements TagService {
@@ -14,10 +13,5 @@ public class TagServiceImpl extends ReadWriteServiceImpl<Tag, Long> implements T
     public TagServiceImpl(TagDao tagDao) {
         super(tagDao);
         this.tagDao = tagDao;
-    }
-
-    @Override
-    public Map<String, Long> getAllTagNamesAndIds() {
-        return tagDao.getAllTagNamesAndIds();
     }
 }
