@@ -1,4 +1,4 @@
-create table answer
+create table if not exists "answer"
 (
     id                      serial8   not null,
     date_accept_time        timestamp,
@@ -13,7 +13,7 @@ create table answer
     primary key (id)
 );
 
-create table badges
+create table if not exists "badges"
 (
     id                    serial8 not null,
     badge_name            varchar(255),
@@ -22,7 +22,7 @@ create table badges
     primary key (id)
 );
 
-create table bookmarks
+create table if not exists "bookmarks"
 (
     id          serial8 not null,
     question_id int8    not null,
@@ -30,7 +30,7 @@ create table bookmarks
     primary key (id)
 );
 
-create table chat
+create table if not exists "chat"
 (
     id           serial8 not null,
     chat_type    int2,
@@ -39,7 +39,7 @@ create table chat
     primary key (id)
 );
 
-create table comment
+create table if not exists "comment"
 (
     id                  serial8      not null,
     comment_type        int2         not null,
@@ -50,34 +50,34 @@ create table comment
     primary key (id)
 );
 
-create table comment_answer
+create table if not exists "comment_answer"
 (
     comment_id int8 not null,
     answer_id  int8 not null,
     primary key (comment_id)
 );
 
-create table comment_question
+create table if not exists "comment_question"
 (
     comment_id  int8 not null,
     question_id int8 not null,
     primary key (comment_id)
 );
 
-create table group_chat
+create table if not exists "group_chat"
 (
     chat_id int8 not null,
     primary key (chat_id)
 );
 
-create table groupchat_has_users
+create table if not exists "groupchat_has_users"
 (
     chat_id int8 not null,
     user_id int8 not null,
     primary key (chat_id, user_id)
 );
 
-create table message
+create table if not exists "message"
 (
     id                  serial8   not null,
     last_redaction_date timestamp not null,
@@ -88,7 +88,7 @@ create table message
     primary key (id)
 );
 
-create table question
+create table if not exists "question"
 (
     id                  serial8      not null,
     description         text         not null,
@@ -100,13 +100,13 @@ create table question
     primary key (id)
 );
 
-create table question_has_tag
+create table if not exists "question_has_tag"
 (
     question_id int8 not null,
     tag_id      int8 not null
 );
 
-create table question_viewed
+create table if not exists "question_viewed"
 (
     id           serial8 not null,
     persist_date timestamp,
@@ -115,7 +115,7 @@ create table question_viewed
     primary key (id)
 );
 
-create table related_tag
+create table if not exists "related_tag"
 (
     id        serial8 not null,
     child_tag int8    not null,
@@ -123,7 +123,7 @@ create table related_tag
     primary key (id)
 );
 
-create table reputation
+create table if not exists "reputation"
 (
     id           serial8 not null,
     count        int4,
@@ -136,14 +136,14 @@ create table reputation
     primary key (id)
 );
 
-create table role
+create table if not exists "role"
 (
     id   serial8 not null,
     name varchar(255),
     primary key (id)
 );
 
-create table single_chat
+create table if not exists "single_chat"
 (
     chat_id     int8 not null,
     use_two_id  int8 not null,
@@ -151,7 +151,7 @@ create table single_chat
     primary key (chat_id)
 );
 
-create table tag
+create table if not exists "tag"
 (
     id           serial8      not null,
     description  varchar(255),
@@ -160,7 +160,7 @@ create table tag
     primary key (id)
 );
 
-create table tag_ignore
+create table if not exists "tag_ignore"
 (
     id             serial8 not null,
     persist_date   timestamp,
@@ -169,7 +169,7 @@ create table tag_ignore
     primary key (id)
 );
 
-create table tag_tracked
+create table if not exists "tag_tracked"
 (
     id             serial8 not null,
     persist_date   timestamp,
@@ -178,7 +178,7 @@ create table tag_tracked
     primary key (id)
 );
 
-create table user_badges
+create table if not exists "user_badges"
 (
     id        serial8 not null,
     ready     boolean,
@@ -187,7 +187,7 @@ create table user_badges
     primary key (id)
 );
 
-create table user_entity
+create table if not exists "user_entity"
 (
     id                  serial8   not null,
     about               varchar(255),
@@ -208,7 +208,7 @@ create table user_entity
     primary key (id)
 );
 
-create table user_favorite_question
+create table if not exists "user_favorite_question"
 (
     id           serial8   not null,
     persist_date timestamp not null,
@@ -217,7 +217,7 @@ create table user_favorite_question
     primary key (id)
 );
 
-create table votes_on_answers
+create table if not exists "votes_on_answers"
 (
     id           serial8 not null,
     persist_date timestamp,
@@ -227,7 +227,7 @@ create table votes_on_answers
     primary key (id)
 );
 
-create table votes_on_questions
+create table if not exists "votes_on_questions"
 (
     id           serial8 not null,
     persist_date timestamp,
