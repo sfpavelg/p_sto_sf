@@ -1,7 +1,7 @@
 const headerText = `
 <header class="navbar navbar-secondary sticky-top bg-secondary p-1 shadow justify-content-center">
     <div class="d-flex p-1" style="width: 75%">
-        <img src="./assets/images/logo.png" style="width: 9%" class="img-fluid mr-1" alt="Responsive image">
+        <img src="./assets/images/logo.png" style="width: 9%" class="img-fluid mr-1" alt="logo img">
         <form class="w-75">
             <input class="form-control" type="text" placeholder="Search">
         </form>
