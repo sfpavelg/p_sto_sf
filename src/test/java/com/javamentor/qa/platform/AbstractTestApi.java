@@ -35,7 +35,7 @@ public abstract class AbstractTestApi {
     protected ObjectMapper objectMapper;
 
     public String getToken(String email, String password) throws Exception {
-        return mvc.perform(post("http://localhost:8091/api/auth/token")
+        return mvc.perform(post("/api/auth/token")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(new AuthenticationRequest(email, password))))
                 .andReturn().getResponse()
