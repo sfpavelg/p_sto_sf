@@ -2,7 +2,8 @@ package com.javamentor.qa.platform.webapp.controllers.rest;
 
 import com.javamentor.qa.platform.models.dto.tag.TagDto;
 import com.javamentor.qa.platform.service.abstracts.dto.tag.TagDtoService;
-import com.javamentor.qa.platform.service.abstracts.model.IgnoredTagService;
+import com.javamentor.qa.platform.service.abstracts.model.tag.IgnoredTagService;
+import com.javamentor.qa.platform.service.abstracts.model.tag.TrackedTagService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
@@ -25,9 +26,12 @@ public class TagResourceController {
     private final TagDtoService tagDtoService;
     private final IgnoredTagService ignoredTagService;
 
-    public TagResourceController(TagDtoService tagDtoService, IgnoredTagService ignoredTagService) {
+    private final TrackedTagService trackedTagService;
+
+    public TagResourceController(TagDtoService tagDtoService, IgnoredTagService ignoredTagService, TrackedTagService trackedTagService) {
         this.tagDtoService = tagDtoService;
         this.ignoredTagService = ignoredTagService;
+        this.trackedTagService = trackedTagService;
     }
 
     @GetMapping("/related")
@@ -43,12 +47,24 @@ public class TagResourceController {
     @PostMapping("/{id}/ignored")
     @ApiOperation(value = "Добавление Tag в Ignored. Возвращает TagDto", response = TagDto.class)
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Success request. List of RelatedTagDto returned"),
+            @ApiResponse(code = 200, message = "Success request. TagDto returned"),
             @ApiResponse(code = 401, message = "Unauthorized request"),
             @ApiResponse(code = 403, message = "Forbidden"),
-            @ApiResponse(code = 404, message = "No tags in DB yet")})
+            @ApiResponse(code = 404, message = "Tag with such id doesn't exist")})
     public ResponseEntity<?> addIgnoredTag (@PathVariable Long id) throws NotFoundException {
         ignoredTagService.persistByTagId(id);
+        return ResponseEntity.ok(tagDtoService.getById(id));
+    }
+
+    @PostMapping("/{id}/tracked")
+    @ApiOperation(value = "Добавление Tag в Tracked. Возвращает TagDto", response = TagDto.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Success request. TagDto returned"),
+            @ApiResponse(code = 401, message = "Unauthorized request"),
+            @ApiResponse(code = 403, message = "Forbidden"),
+            @ApiResponse(code = 404, message = "Tag with such id doesn't exist")})
+    public ResponseEntity<?> addTrackedTag (@PathVariable Long id) throws NotFoundException {
+        trackedTagService.persistByTagId(id);
         return ResponseEntity.ok(tagDtoService.getById(id));
     }
 }
