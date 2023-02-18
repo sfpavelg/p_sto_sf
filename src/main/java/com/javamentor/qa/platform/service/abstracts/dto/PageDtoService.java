@@ -1,6 +1,8 @@
 package com.javamentor.qa.platform.service.abstracts.dto;
 
 import com.javamentor.qa.platform.dao.abstracts.dto.PageDtoDao;
+import com.javamentor.qa.platform.exception.PaginationDtoException;
+import com.javamentor.qa.platform.exception.PaginationDtoIncorrectParametersException;
 import com.javamentor.qa.platform.models.dto.PageDto;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -50,27 +52,27 @@ public class PageDtoService<T> {
 
     private void checkParams(Map<String, Object> params) {
         if (params.get("daoDtoImpl") == null) {
-            throw new RuntimeException("You must specify the implementation");
+            throw new PaginationDtoException("You must specify the implementation");
         }
 
         if (params.get("itemsOnPage") == null) {
-            throw new RuntimeException("The parameter of the number of elements on the page was not found");
+            throw new PaginationDtoIncorrectParametersException("The parameter of the number of elements on the page was not found");
         }
 
         if ((int) params.get("itemsOnPage") < 1) {
-            throw new RuntimeException("The number of elements on the page cannot be less than 1");
+            throw new PaginationDtoIncorrectParametersException("The number of elements on the page cannot be less than 1");
         }
 
         if (params.get("currentPageNumber") == null) {
-            throw new RuntimeException("Page number parameter not found");
+            throw new PaginationDtoIncorrectParametersException("Page number parameter not found");
         }
 
         if ((int) params.get("currentPageNumber") < 0) {
-            throw new RuntimeException("The current page cannot be less than 0");
+            throw new PaginationDtoIncorrectParametersException("The current page cannot be less than 0");
         }
 
         if (beansMap.get((String) params.get("daoDtoImpl")) == null) {
-            throw new RuntimeException("The specified implementation does not exist");
+            throw new PaginationDtoException("The specified implementation does not exist");
         }
 
     }
