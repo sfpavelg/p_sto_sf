@@ -8,18 +8,20 @@ import com.javamentor.qa.platform.models.entity.question.answer.Answer;
 import com.javamentor.qa.platform.models.entity.user.Role;
 import com.javamentor.qa.platform.models.entity.user.User;
 import com.javamentor.qa.platform.service.abstracts.model.AnswerService;
+import com.javamentor.qa.platform.service.abstracts.model.IgnoredTagService;
 import com.javamentor.qa.platform.service.abstracts.model.QuestionService;
 import com.javamentor.qa.platform.service.abstracts.model.RoleService;
-import com.javamentor.qa.platform.service.abstracts.model.IgnoredTagService;
+import com.javamentor.qa.platform.service.abstracts.model.TagService;
 import com.javamentor.qa.platform.service.abstracts.model.TrackedTagService;
 import com.javamentor.qa.platform.service.abstracts.model.UserService;
-import com.javamentor.qa.platform.service.abstracts.model.TagService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -34,7 +36,7 @@ public class TestDataInitService {
     private final AnswerService answerService;
     private final TagService tagService;
     private final IgnoredTagService ignoredTagService;
-    private final  TrackedTagService trackedTagService;
+    private final TrackedTagService trackedTagService;
 
     @Autowired
     public TestDataInitService(RoleService roleService, UserService userService, QuestionService questionService, AnswerService answerService,
@@ -135,42 +137,36 @@ public class TestDataInitService {
         tagService.persist(htmlTag);
     }
 
-    public void createIgnoredTags(int ignoredUser) {
+    public void createIgnoredAndTrackedTags(int ignoredUser) {
         List<User> userList = userService.getAll();
         List<Tag> tagList = tagService.getAll();
 
-        for (User user: userList) {
+        for (User user : userList) {
             if (user.getId() == ignoredUser) {
                 continue;
             }
 
-            List<Integer> uniqueTags = IntStream.range(0, tagList.size()).boxed().collect(Collectors.toList());
-            Collections.shuffle(uniqueTags);
+            Set<Integer> uniqueIgnoredTags = IntStream
+                    .range(0, tagList.size()).boxed()
+                    .sorted((o1, o2) -> o1.equals(o2) ? 0 : (ThreadLocalRandom.current().nextBoolean() ? -1 : 1))
+                    .limit(rand(0, 4)).collect(Collectors.toSet());
+            Set<Integer> uniqueTrackedTags = IntStream
+                    .range(0, tagList.size()).boxed()
+                    .sorted((o1, o2) -> o1.equals(o2) ? 0 : (ThreadLocalRandom.current().nextBoolean() ? -1 : 1))
+                    .limit(rand(0, 4)).collect(Collectors.toSet());
+            uniqueIgnoredTags.removeAll(uniqueTrackedTags);
+            uniqueTrackedTags.removeAll(uniqueIgnoredTags);
 
-            for (int ignoredTagId = 0; ignoredTagId < rand(0, 4); ignoredTagId++) {
+            for (Integer uniqueIgnoredTag : uniqueIgnoredTags) {
                 IgnoredTag ignoredTag = new IgnoredTag();
-                ignoredTag.setIgnoredTag(tagList.get(uniqueTags.get(ignoredTagId)));
+                ignoredTag.setIgnoredTag(tagList.get(uniqueIgnoredTag));
                 ignoredTag.setUser(user);
                 ignoredTagService.persist(ignoredTag);
             }
-        }
-    }
 
-    public void createTrackedTags(int ignoredUser) {
-        List<User> userList = userService.getAll();
-        List<Tag> tagList = tagService.getAll();
-
-        for (User user: userList) {
-            if (user.getId() == ignoredUser) {
-                continue;
-            }
-
-            List<Integer> uniqueTags = IntStream.range(0, tagList.size()).boxed().collect(Collectors.toList());
-            Collections.shuffle(uniqueTags);
-
-            for (int trackedTagId = 0; trackedTagId < rand(0, 4); trackedTagId++) {
+            for (Integer uniqueTrackedTag : uniqueTrackedTags) {
                 TrackedTag trackedTag = new TrackedTag();
-                trackedTag.setTrackedTag(tagList.get(uniqueTags.get(trackedTagId)));
+                trackedTag.setTrackedTag(tagList.get(uniqueTrackedTag));
                 trackedTag.setUser(user);
                 trackedTagService.persist(trackedTag);
             }
@@ -189,7 +185,6 @@ public class TestDataInitService {
         createTags();
         createQuestion(10);
         createAnswer(50);
-        createIgnoredTags(1);
-        createTrackedTags(1);
+        createIgnoredAndTrackedTags(1);
     }
 }
