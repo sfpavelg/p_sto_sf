@@ -1,14 +1,19 @@
 package com.javamentor.qa.platform.webapp.controllers.rest;
 
+import com.javamentor.qa.platform.models.dto.tag.TagDto;
 import com.javamentor.qa.platform.service.abstracts.dto.tag.TagDtoService;
+import com.javamentor.qa.platform.service.abstracts.model.IgnoredTagService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
+import javassist.NotFoundException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.PathVariable;
 
 import java.util.List;
 
@@ -18,9 +23,11 @@ import java.util.List;
 public class TagResourceController {
 
     private final TagDtoService tagDtoService;
+    private final IgnoredTagService ignoredTagService;
 
-    public TagResourceController(TagDtoService tagDtoService) {
+    public TagResourceController(TagDtoService tagDtoService, IgnoredTagService ignoredTagService) {
         this.tagDtoService = tagDtoService;
+        this.ignoredTagService = ignoredTagService;
     }
 
     @GetMapping("/related")
@@ -32,5 +39,16 @@ public class TagResourceController {
             @ApiResponse(code = 404, message = "No tags in DB yet")})
     public ResponseEntity<?> getRelatedTagsDtoList() {
         return ResponseEntity.ok(tagDtoService.getRelatedTagsDto());
+    }
+    @PostMapping("/{id}/ignored")
+    @ApiOperation(value = "Добавление Tag в Ignored. Возвращает TagDto", response = TagDto.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Success request. List of RelatedTagDto returned"),
+            @ApiResponse(code = 401, message = "Unauthorized request"),
+            @ApiResponse(code = 403, message = "Forbidden"),
+            @ApiResponse(code = 404, message = "No tags in DB yet")})
+    public ResponseEntity<?> addIgnoredTag (@PathVariable Long id) throws NotFoundException {
+        ignoredTagService.persistByTagId(id);
+        return ResponseEntity.ok(tagDtoService.getById(id));
     }
 }
