@@ -44,6 +44,7 @@ public class TagResourceController {
     public ResponseEntity<?> getRelatedTagsDtoList() {
         return ResponseEntity.ok(tagDtoService.getRelatedTagsDto());
     }
+
     @PostMapping("/{id}/ignored")
     @ApiOperation(value = "Добавление Tag в Ignored. Возвращает TagDto", response = TagDto.class)
     @ApiResponses(value = {
@@ -51,7 +52,7 @@ public class TagResourceController {
             @ApiResponse(code = 401, message = "Unauthorized request"),
             @ApiResponse(code = 403, message = "Forbidden"),
             @ApiResponse(code = 404, message = "Tag with such id doesn't exist")})
-    public ResponseEntity<?> addIgnoredTag (@PathVariable Long id) throws NotFoundException {
+    public ResponseEntity<?> addIgnoredTag(@PathVariable Long id) throws NotFoundException {
         ignoredTagService.persistByTagId(id);
         return ResponseEntity.ok(tagDtoService.getById(id));
     }
@@ -63,7 +64,7 @@ public class TagResourceController {
             @ApiResponse(code = 401, message = "Unauthorized request"),
             @ApiResponse(code = 403, message = "Forbidden"),
             @ApiResponse(code = 404, message = "Tag with such id doesn't exist")})
-    public ResponseEntity<?> addTrackedTag (@PathVariable Long id) throws NotFoundException {
+    public ResponseEntity<?> addTrackedTag(@PathVariable Long id) throws NotFoundException {
         trackedTagService.persistByTagId(id);
         return ResponseEntity.ok(tagDtoService.getById(id));
     }

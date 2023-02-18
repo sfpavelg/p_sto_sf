@@ -5,5 +5,5 @@ import com.javamentor.qa.platform.service.abstracts.model.ReadWriteService;
 import javassist.NotFoundException;
 
 public interface IgnoredTagService extends ReadWriteService<IgnoredTag, Long> {
-    void persistByTagId (Long id) throws NotFoundException;
+    void persistByTagId(Long id) throws NotFoundException;
 }

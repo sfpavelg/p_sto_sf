@@ -33,10 +33,10 @@ public class TagDtoDaoImpl implements TagDtoDao {
     @Override
     public List<RelatedTagsDto> getRelatedTagsDto() {
         Query query = entityManager.createQuery("select new com.javamentor.qa.platform.models.dto.tag.RelatedTagsDto(" +
-                        "t.id as id, " +
-                        "t.name as title, " +
-                        "(select count (q.id) from Question q join q.tags qt where t.id = qt.id) as countQuestion) " +
-                        "from Tag t order by countQuestion desc ").setMaxResults(10);
+                "t.id as id, " +
+                "t.name as title, " +
+                "(select count (q.id) from Question q join q.tags qt where t.id = qt.id) as countQuestion) " +
+                "from Tag t order by countQuestion desc ").setMaxResults(10);
         return (List<RelatedTagsDto>) query.getResultList();
     }
 
