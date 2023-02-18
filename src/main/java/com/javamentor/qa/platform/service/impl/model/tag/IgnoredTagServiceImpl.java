@@ -1,12 +1,14 @@
-package com.javamentor.qa.platform.service.impl.model;
+package com.javamentor.qa.platform.service.impl.model.tag;
 
-import com.javamentor.qa.platform.dao.abstracts.model.IgnoredTagDao;
+import com.javamentor.qa.platform.dao.abstracts.model.tag.IgnoredTagDao;
 import com.javamentor.qa.platform.dao.abstracts.model.ReadWriteDao;
-import com.javamentor.qa.platform.dao.abstracts.model.TagDao;
+import com.javamentor.qa.platform.dao.abstracts.model.tag.TagDao;
 import com.javamentor.qa.platform.models.entity.question.IgnoredTag;
 import com.javamentor.qa.platform.models.entity.question.Tag;
 import com.javamentor.qa.platform.models.entity.user.User;
-import com.javamentor.qa.platform.service.abstracts.model.IgnoredTagService;
+import com.javamentor.qa.platform.service.abstracts.model.tag.IgnoredTagService;
+import com.javamentor.qa.platform.service.impl.model.ReadWriteServiceImpl;
+import javassist.NotFoundException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,10 +28,13 @@ public class IgnoredTagServiceImpl extends ReadWriteServiceImpl<IgnoredTag, Long
 
     @Override
     @Transactional
-    public void persistByTagId(Long id) {
+    public void persistByTagId(Long id) throws NotFoundException {
         IgnoredTag ignoredTag = new IgnoredTag();
         Optional<Tag> tag = tagDao.getById(id);
-        ignoredTag.setIgnoredTag(tag.orElse(null));
+        if (tag.isEmpty()) {
+            throw new NotFoundException("Tag with id = " + id + " not found");
+        }
+        ignoredTag.setIgnoredTag(tag.get());
         ignoredTag.setUser((User) SecurityContextHolder.getContext().getAuthentication().getPrincipal());
         ignoredTagDao.persist(ignoredTag);
     }
