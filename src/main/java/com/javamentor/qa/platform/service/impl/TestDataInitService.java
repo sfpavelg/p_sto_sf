@@ -9,7 +9,7 @@ import com.javamentor.qa.platform.service.abstracts.model.AnswerService;
 import com.javamentor.qa.platform.service.abstracts.model.QuestionService;
 import com.javamentor.qa.platform.service.abstracts.model.RoleService;
 import com.javamentor.qa.platform.service.abstracts.model.UserService;
-import com.javamentor.qa.platform.service.abstracts.model.TagService;
+import com.javamentor.qa.platform.service.abstracts.model.tag.TagService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
