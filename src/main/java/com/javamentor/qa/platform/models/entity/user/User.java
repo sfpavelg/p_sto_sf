@@ -26,7 +26,7 @@ public class User implements UserDetails {
     private static final long serialVersionUID = 8086496705293852501L;
 
     @Id
-    @GeneratedValue(generator = "User_seq")
+    @GeneratedValue(generator = "User_entity_id_seq")
     private Long id;
 
     @Column
