@@ -1,14 +1,18 @@
 const footerText = `
-<footer class="navbar fixed-bottom navbar-dark bg-secondary">
-    <p class="col-md-4 mb-0 text-white">&copy; 2023 Kata Academy</p>
-    <ul class="nav col-md-4 justify-content-end">
-        <li class="nav-item"><a href="#" class="nav-link px-2 text-white">Home</a></li>
-        <li class="nav-item"><a href="#" class="nav-link px-2 text-white">Questions</a></li>
-        <li class="nav-item"><a href="#" class="nav-link px-2 text-white">Tags</a></li>
-        <li class="nav-item"><a href="#" class="nav-link px-2 text-white">Users</a></li>
-        <li class="nav-item"><a href="#" class="nav-link px-2 text-white">Companies</a></li>
+<footer class="py-3 text-bg-dark">
+    <ul class="nav justify-content-center border-bottom pb-3 mb-3">
+      <li class="nav-item"><a href="#" class="nav-link px-2 text-muted">Home</a></li>
+      <li class="nav-item"><a href="#" class="nav-link px-2 text-muted">Questions</a></li>
+      <li class="nav-item"><a href="#" class="nav-link px-2 text-muted">Tags</a></li>
+      <li class="nav-item"><a href="#" class="nav-link px-2 text-muted">Users</a></li>
+      <li class="nav-item"><a href="#" class="nav-link px-2 text-muted">Companies</a></li>
+      <li class="nav-item"><a href="#" class="nav-link px-2 text-muted">About</a></li>
+      <li class="nav-item"><a href="#" class="nav-link px-2 text-muted">Products</a></li>
+      <li class="nav-item"><a href="#" class="nav-link px-2 text-muted">For Teams</a></li>
+      <li class="nav-item"><a href="#" class="nav-link px-2 text-muted">FAQs</a></li>
     </ul>
-</footer>
+    <p class="text-center text-muted">&copy; 2023 JMStack, Kata Academy</p>
+ </footer>
 `;
 
 let footer = document.createElement("div");
