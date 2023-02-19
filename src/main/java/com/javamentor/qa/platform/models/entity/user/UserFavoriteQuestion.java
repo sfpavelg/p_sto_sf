@@ -23,7 +23,7 @@ public class UserFavoriteQuestion implements Serializable {
 
     private static final long serialVersionUID = 754968028813775944L;
     @Id
-    @GeneratedValue(generator = "UserFavoriteQuestion_seq")
+    @GeneratedValue(generator = "User_favorite_question_id_seq")
     private Long id;
 
     @Column(name = "persist_date", nullable = false, updatable = false)
