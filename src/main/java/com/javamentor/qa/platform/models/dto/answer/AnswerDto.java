@@ -1,7 +1,16 @@
 package com.javamentor.qa.platform.models.dto.answer;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
 import java.time.LocalDateTime;
 
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
 public class AnswerDto {
     private Long id;
     private Long userId;
@@ -14,19 +23,4 @@ public class AnswerDto {
     private Long countValuable;
     private String image;
     private String nickName;
-
-
-    public AnswerDto(Long id, Long userId, Long userReputation, Long questionId, String body, LocalDateTime persistDate, Boolean isHelpful, LocalDateTime dateAccept, Long countValuable, String image, String nickName) {
-        this.id = id;
-        this.userId = userId;
-        this.userReputation = userReputation;
-        this.questionId = questionId;
-        this.body = body;
-        this.persistDate = persistDate;
-        this.isHelpful = isHelpful;
-        this.dateAccept = dateAccept;
-        this.countValuable = countValuable;
-        this.image = image;
-        this.nickName = nickName;
-    }
 }
