@@ -37,4 +37,16 @@ public class TagDtoDaoImpl implements TagDtoDao {
                         "from Tag t order by countQuestion desc ").setMaxResults(10);
         return (List<RelatedTagsDto>) query.getResultList();
     }
+
+    @Override
+    public List<TagDto> getIgnoredTagById(Long id) {
+        Query query = entityManager.createQuery("select new com.javamentor.qa.platform.models.dto.tag.TagDto(" +
+                        "t.id, " +
+                        "t.name) " +
+                        "from Tag t join IgnoredTag it on t.id = it.ignoredTag.id where it.user.id = :id")
+                .setParameter("id", id);
+        return (List<TagDto>) query.getResultList();
+    }
+
+
 }
