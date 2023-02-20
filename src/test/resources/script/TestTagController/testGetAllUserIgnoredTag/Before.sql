@@ -8,7 +8,10 @@ INSERT INTO "user_entity"
  "nickname", "password", "persist_date", "role_id")
 VALUES (100, 'about', 'moscow', '4@gmail.com', 'name4', 'http://imagelink4.com', 'f', 't',
         '2023-01-10 15:17:18.280368', 'http://github.com/4', 'http://site4.com', 'http://vk.com/4',
-        'nickname4', '$2a$10$csoFbLmhKaon8rk5JC/CQ.ZkyE3T5lOwiWB/soHnIbmTqGzDLJknK', '2023-01-21 15:17:18.280368', 200);
+        'nickname4', '$2a$10$csoFbLmhKaon8rk5JC/CQ.ZkyE3T5lOwiWB/soHnIbmTqGzDLJknK', '2023-01-21 15:17:18.280368', 200),
+       (101, 'about', 'moscow', '5@gmail.com', 'name5', 'http://imagelink5.com', 'f', 't',
+        '2023-01-10 15:17:18.280368', 'http://github.com/5', 'http://site4.com', 'http://vk.com/5',
+        'nickname5', '$2a$10$IQ.ixFHfGgq6OGgeJVgG2uyJsycNmCvMlPNA22VOX6J9929td/jDK', '2023-01-21 15:17:18.280368', 200);
 
 INSERT INTO "tag"
 ("id", "description", "name", "persist_date")

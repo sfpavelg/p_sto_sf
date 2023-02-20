@@ -4,6 +4,7 @@ import com.javamentor.qa.platform.dao.abstracts.dto.tag.TagDtoDao;
 import com.javamentor.qa.platform.models.dto.tag.RelatedTagsDto;
 import com.javamentor.qa.platform.models.dto.tag.TagDto;
 import com.javamentor.qa.platform.service.abstracts.dto.tag.TagDtoService;
+import javassist.NotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -23,7 +24,11 @@ public class TagDtoServiceImpl implements TagDtoService {
     }
 
     @Override
-    public List<TagDto> getIgnoredTagById(Long id) {
-        return tagDtoDao.getIgnoredTagById(id);
+    public List<TagDto> getIgnoredTagById(Long id) throws NotFoundException {
+        List<TagDto> ignoredTag = tagDtoDao.getIgnoredTagById(id);
+        if (ignoredTag.isEmpty()) {
+            throw new NotFoundException("User with id " + id + " does not have Ignored Tags");
+        }
+        return ignoredTag;
     }
 }

@@ -1,5 +1,6 @@
 package com.javamentor.qa.platform;
 
+
 import org.hamcrest.core.Is;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
@@ -54,5 +55,34 @@ public class TagResourceControllerTest extends AbstractTestApi {
                 .andExpect(jsonPath("$.[9].title", Is.is("name10")))
                 .andExpect(jsonPath("$.[9].countQuestion", Is.is(1)))
         ;
+    }
+
+    @Test
+    @Sql(value = {"/script/TestTagController/testGetAllUserIgnoredTag/Before.sql"}, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+    @Sql(value = {"/script/TestTagController/testGetAllUserIgnoredTag/After.sql"}, executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
+    public void testGetAllUserIgnoredTag() throws Exception {
+
+        //Successfully
+        String tokenUserHaveTag = getToken("4@gmail.com", "4pwd");
+
+        this.mvc.perform(get("/api/user/tag/ignored")
+                        .header("Authorization", "Bearer " + tokenUserHaveTag))
+                .andExpect(status().is2xxSuccessful())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.[0].id", Is.is(100)))
+                .andExpect(jsonPath("$.[0].name", Is.is("tag1")))
+                .andExpect(jsonPath("$.[1].id", Is.is(101)))
+                .andExpect(jsonPath("$.[1].name", Is.is("tag2")))
+                .andExpect(jsonPath("$.[2].id", Is.is(103)))
+                .andExpect(jsonPath("$.[2].name", Is.is("tag4")));
+
+        //Unsuccessfully
+        String tokenUserDoesntHaveTag = getToken("5@gmail.com", "5pwd");
+
+        this.mvc.perform(get("/api/user/tag/ignored")
+                        .header("Authorization", "Bearer " + tokenUserDoesntHaveTag))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$", Is.is("User with id 101 does not have Ignored Tags")));
+
     }
 }
