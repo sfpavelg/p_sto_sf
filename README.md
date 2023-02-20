@@ -478,3 +478,11 @@ User при регистрации получает все знаки лишь �
 ![](src/main/resources/static/images/jwt_tutor/postman_incorrect_authorization_attempt.png)
 ![](src/main/resources/static/images/jwt_tutor/postman_incorrect_authorization_error.png)
 
+## Как добавить на html страницу header, footer, sidebar
+
+Для добавления хедера, футера и сайдбара в .html файле перед закрывающим тегом ```</body>``` необходимо вставить 3 тега js-скриптов:
+```
+<script type="text/javascript" src="/js/sidebar.js"></script>
+<script type="text/javascript" src="/js/header.js"></script>
+<script type="text/javascript" src="/js/footer.js"></script>
+```
