@@ -1,4 +1,4 @@
-package com.javamentor.qa.platform.webapp.configs;
+package com.javamentor.qa.platform.configs;
 
 import org.flywaydb.core.Flyway;
 import org.springframework.boot.autoconfigure.flyway.FlywayMigrationStrategy;
