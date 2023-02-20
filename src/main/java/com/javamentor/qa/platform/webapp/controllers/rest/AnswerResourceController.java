@@ -40,10 +40,10 @@ public class AnswerResourceController {
             @ApiResponse(code = 200, message = "Success request. AnswerDto objects returned in response"),
             @ApiResponse(code = 401, message = "Unauthorized request"),
             @ApiResponse(code = 403, message = "Forbidden"),
-            @ApiResponse(code = 404, message = "Question with such id doesn't exist")})
+            @ApiResponse(code = 400, message = "Question with such id doesn't exist")})
     public ResponseEntity<List<AnswerDto>> getAllByQuestionId(@PathVariable("questionId") Long questionId) throws NotFoundException {
         if (!questionService.getById(questionId).isPresent()) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
         return new ResponseEntity<>(answerDtoService.getAllByQuestionId(questionId), HttpStatus.OK);
     }

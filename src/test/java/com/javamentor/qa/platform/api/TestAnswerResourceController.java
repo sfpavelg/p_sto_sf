@@ -22,9 +22,9 @@ public class TestAnswerResourceController extends AbstractTestApi {
     @Test
     @SqlGroup({
             @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD,
-                    value = {"script/TestAnswerResourceController.testGetAllByQuestionId/Before.sql"}),
+                    value = {"/script/TestAnswerResourceController/testGetAllByQuestionId/Before.sql"}),
             @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD,
-                    value = {"script/TestAnswerResourceController.testGetAllByQuestionId/After.sql"})
+                    value = {"/script/TestAnswerResourceController/testGetAllByQuestionId/After.sql"})
     })
     public void testGetAllByQuestionId() throws Exception {
 
@@ -34,54 +34,50 @@ public class TestAnswerResourceController extends AbstractTestApi {
                 .andReturn().getResponse().getContentAsString().substring(10);
 
         //success
-        this.mvc.perform(get("/api/user/question/{id}/answer", 1).header("Authorization", "Bearer " + token))
+        this.mvc.perform(get("/api/user/question/{id}/answer", 100).header("Authorization", "Bearer " + token))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.id", Is.is(1)))
-                .andExpect(jsonPath("$.title", Is.is("title1")))
-                .andExpect(jsonPath("$.authorId", Is.is(1)))
-                .andExpect(jsonPath("$.authorReputation", Is.is(6)))
-                .andExpect(jsonPath("$.authorName", Is.is("name1")))
-                .andExpect(jsonPath("$.authorImage", Is.is("http://imagelink1.com")))
-                .andExpect(jsonPath("$.description", Is.is("description1")))
-                .andExpect(jsonPath("$.title", Is.is("title1")))
-                .andExpect(jsonPath("$.viewCount", Is.is(2)))
-                .andExpect(jsonPath("$.countAnswer", Is.is(3)))
-                .andExpect(jsonPath("$.countValuable", Is.is(2)))
-                .andExpect(jsonPath("$.persistDateTime", Is.is("2023-01-27T13:01:11.245126")))
-                .andExpect(jsonPath("$.lastUpdateDateTime", Is.is("2023-01-27T13:01:11.245126")))
-                .andExpect(jsonPath("$.listTagDto[0].id", Is.is(1)))
-                .andExpect(jsonPath("$.listTagDto[0].name", Is.is("name1")))
-                .andExpect(jsonPath("$.listTagDto[0].description", Is.is("description1")))
-                .andExpect(jsonPath("$.listTagDto[1].id", Is.is(2)))
-                .andExpect(jsonPath("$.listTagDto[1].name", Is.is("name2")))
-                .andExpect(jsonPath("$.listTagDto[1].description", Is.is("description2")));
+                .andExpect(jsonPath("$[0].id", Is.is(104)))
+                .andExpect(jsonPath("$[0].userId", Is.is(100)))
+                .andExpect(jsonPath("$[0].userReputation", Is.is(6)))
+                .andExpect(jsonPath("$[0].questionId", Is.is(100)))
+                .andExpect(jsonPath("$[0].body", Is.is("html_body5")))
+                .andExpect(jsonPath("$[0].persistDate", Is.is("2023-01-27T13:01:11.245126")))
+                .andExpect(jsonPath("$[0].isHelpful", Is.is(true)))
+                .andExpect(jsonPath("$[0].dateAccept", Is.is("2023-01-27T13:01:11.245126")))
+                .andExpect(jsonPath("$[0].countValuable", Is.is(0)))
+                .andExpect(jsonPath("$[0].image", Is.is("http://imagelink1.com")))
+                .andExpect(jsonPath("$[0].nickName", Is.is("nickname1")));
+
+        //question with no answers
+        this.mvc.perform(get("/api/user/question/{id}/answer", 103).header("Authorization", "Bearer " + token))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.length()", Is.is(0)));
 
         //wrong id
         this.mvc.perform(get("/api/user/question/{id}/answer", 111).header("Authorization", "Bearer " + token))
                 .andDo(print())
-                .andExpect(status().isNotFound())
-                .andExpect(jsonPath("$", Is.is("Question with such id doesn't exist")));
+                .andExpect(status().isNotFound());
 
         //null results in DB (only possible fields like imageLink, rep, counts of answers and valuable)
-        this.mvc.perform(get("/api/user/question/{id}/answer", 5).header("Authorization", "Bearer " + token))
+        this.mvc.perform(get("/api/user/question/{id}/answer", 102).header("Authorization", "Bearer " + token))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.id", Is.is(5)))
-                .andExpect(jsonPath("$.title", Is.is("title5")))
-                .andExpect(jsonPath("$.authorId", Is.is(5)))
-                .andExpect(jsonPath("$.authorReputation", Is.is(0)))
-                .andExpect(jsonPath("$.authorName", Is.is("name5")))
-                .andExpect(jsonPath("$.authorImage", IsNull.nullValue()))
-                .andExpect(jsonPath("$.description", Is.is("description5")))
-                .andExpect(jsonPath("$.title", Is.is("title5")))
-                .andExpect(jsonPath("$.viewCount", Is.is(0)))
-                .andExpect(jsonPath("$.countAnswer", Is.is(0)))
-                .andExpect(jsonPath("$.countValuable", Is.is(0)))
-                .andExpect(jsonPath("$.persistDateTime", Is.is("2023-01-27T13:01:11.245126")))
-                .andExpect(jsonPath("$.lastUpdateDateTime", Is.is("2023-01-27T13:01:11.245126")));
+                .andExpect(jsonPath("$[0].id", Is.is(102)))
+                .andExpect(jsonPath("$[0].userId", Is.is(104)))
+                .andExpect(jsonPath("$[0].userReputation", Is.is(0)))
+                .andExpect(jsonPath("$[0].questionId", Is.is(102)))
+                .andExpect(jsonPath("$[0].body", Is.is("html_body3")))
+                .andExpect(jsonPath("$[0].persistDate", Is.is("2023-01-27T13:01:11.245126")))
+                .andExpect(jsonPath("$[0].isHelpful", Is.is(true)))
+                .andExpect(jsonPath("$[0].dateAccept", Is.is("2023-01-27T13:01:11.245126")))
+                .andExpect(jsonPath("$[0].countValuable", Is.is(0)))
+                .andExpect(jsonPath("$[0].image", IsNull.nullValue()))
+                .andExpect(jsonPath("$[0].nickName", Is.is("nickname5")));
     }
 
 }
