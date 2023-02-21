@@ -17,10 +17,10 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("api/user/question/{questionId}/answer")
 @Api("Контроллер для работы с Answer")
-public class ResourceAnswerController {
+public class AnswerResourceController {
     private final AnswerService answerService;
 
-    public ResourceAnswerController(AnswerService answerService) {
+    public AnswerResourceController(AnswerService answerService) {
         this.answerService = answerService;
     }
 
@@ -30,10 +30,8 @@ public class ResourceAnswerController {
             @ApiResponse(code = 400, message = "Ответ с указанным уникальным идентификатором (Id) не найден")
     })
     @DeleteMapping("/{answerId}")
-    public ResponseEntity<Void> deleteAnswer(@PathVariable Long answerId,
-                                             @AuthenticationPrincipal User user) {
+    public ResponseEntity<Void> deleteAnswer(@PathVariable Long answerId) {
         if (answerService.getById(answerId).isPresent()) {
-            answerService.deleteByUser(answerId, user.getId());
             return new ResponseEntity<>(HttpStatus.OK);
         }
         return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
