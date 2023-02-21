@@ -1,5 +1,7 @@
 package com.javamentor.qa.platform.webapp.controllers;
 
+import com.javamentor.qa.platform.exception.PaginationDtoException;
+import com.javamentor.qa.platform.exception.PaginationDtoIncorrectParametersException;
 import javassist.NotFoundException;
 
 import org.springframework.http.HttpStatus;
@@ -48,6 +50,20 @@ public class ExceptionController {
     public ResponseEntity<String> handleMethodArgumentNotValidException(MethodArgumentNotValidException exception) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                 .body(exception.getBindingResult().getFieldError().getDefaultMessage());
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public ResponseEntity<String> handlePaginationDtoException(PaginationDtoException exception) {
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(exception.getMessage());
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ResponseEntity<String> handlePaginationDtoIncorrectParametersException(PaginationDtoIncorrectParametersException exception) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(exception.getMessage());
     }
 
     @ExceptionHandler
