@@ -6,7 +6,6 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
-import javassist.NotFoundException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -44,9 +43,9 @@ public class TagResourceController {
             @ApiResponse(code = 200, message = "Success request. List of IgnoredTag returned"),
             @ApiResponse(code = 401, message = "Unauthorized request"),
             @ApiResponse(code = 403, message = "Forbidden")})
-    public ResponseEntity<?> getAllUserIgnoredTag() throws NotFoundException {
+    public ResponseEntity<?> getAllUserIgnoredTag()  {
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        return ResponseEntity.ok(tagDtoService.getIgnoredTagById(user.getId()));
+        return ResponseEntity.ok(tagDtoService.getIgnoredTagByUserId(user.getId()));
     }
 
 

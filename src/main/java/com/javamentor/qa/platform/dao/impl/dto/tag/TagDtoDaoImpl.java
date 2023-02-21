@@ -39,7 +39,7 @@ public class TagDtoDaoImpl implements TagDtoDao {
     }
 
     @Override
-    public List<TagDto> getIgnoredTagById(Long id) {
+    public List<TagDto> getIgnoredTagByUserId(Long id) {
         Query query = entityManager.createQuery("select new com.javamentor.qa.platform.models.dto.tag.TagDto(" +
                         "t.id, " +
                         "t.name) " +

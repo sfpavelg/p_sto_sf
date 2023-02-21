@@ -1,6 +1,7 @@
 package com.javamentor.qa.platform;
 
 
+import org.hamcrest.collection.IsEmptyCollection;
 import org.hamcrest.core.Is;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
@@ -62,7 +63,7 @@ public class TagResourceControllerTest extends AbstractTestApi {
     @Sql(value = {"/script/TestTagController/testGetAllUserIgnoredTag/After.sql"}, executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
     public void testGetAllUserIgnoredTag() throws Exception {
 
-        //Successfully
+        //Successfully (User has IgnoredTag)
         String tokenUserHaveTag = getToken("4@gmail.com", "4pwd");
 
         this.mvc.perform(get("/api/user/tag/ignored")
@@ -76,13 +77,12 @@ public class TagResourceControllerTest extends AbstractTestApi {
                 .andExpect(jsonPath("$.[2].id", Is.is(103)))
                 .andExpect(jsonPath("$.[2].name", Is.is("tag4")));
 
-        //Unsuccessfully
+        //Unsuccessfully (User doesn't have IgnoredTag)
         String tokenUserDoesntHaveTag = getToken("5@gmail.com", "5pwd");
 
         this.mvc.perform(get("/api/user/tag/ignored")
                         .header("Authorization", "Bearer " + tokenUserDoesntHaveTag))
-                .andExpect(status().isNotFound())
-                .andExpect(jsonPath("$", Is.is("User with id 101 does not have Ignored Tags")));
+                .andExpect(jsonPath("$", IsEmptyCollection.empty()));
 
     }
 }
