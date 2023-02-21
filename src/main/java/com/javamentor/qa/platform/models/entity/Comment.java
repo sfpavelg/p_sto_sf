@@ -25,7 +25,7 @@ public class Comment implements Serializable {
 
     private static final long serialVersionUID = -5103534612783672462L;
     @Id
-    @GeneratedValue(generator = "Comment_seq")
+    @GeneratedValue(generator = "Comment_id_seq")
     private Long id;
 
 

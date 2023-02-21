@@ -6,5 +6,4 @@ import javassist.NotFoundException;
 
 public interface QuestionDtoService {
     QuestionDto getQuestionDtoById(Long id) throws NotFoundException;
-
 }

@@ -25,7 +25,7 @@ public class Tag implements Serializable {
 
     private static final long serialVersionUID = 6264105282197120461L;
     @Id
-    @GeneratedValue(generator = "Tag_seq")
+    @GeneratedValue(generator = "Tag_id_seq")
     private Long id;
 
     @NotNull

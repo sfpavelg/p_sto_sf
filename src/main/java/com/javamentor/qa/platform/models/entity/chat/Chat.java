@@ -20,7 +20,7 @@ import java.util.Objects;
 public class Chat {
 
     @Id
-    @GeneratedValue(generator = "Chat_seq")
+    @GeneratedValue(generator = "Chat_id_seq")
     private Long id;
 
     @Column
