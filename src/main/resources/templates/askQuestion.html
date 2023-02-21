@@ -16,36 +16,38 @@
     <script src="/js/addQuestion/jquery.richtext.min.js"></script>
 </head>
 <body>
-<form id="createQuestionDto">
-<div class="container-fluid ">
-    <div class="row">
-        <div class="d-grid gap-2 col-4 mx-auto p-1 text-center">
-            <div class="mb-3">
-            <p class="h1">Задать вопрос</p>
-            </div>
+<div style="flex: 1 0 auto; padding-left: 270px; padding-top: 86px;">
+    <form id="createQuestionDto">
+    <div class="container-fluid ">
+        <div class="row">
+            <div class="d-grid gap-2 col-4 mx-auto p-1 text-center">
+                <div class="mb-3">
+                    <p class="h1">Задать вопрос</p>
+                </div>
 
-            <div class="mb-3">
-        <label for="title" class="form-label">Название вопроса</label>
-        <input type="text" class="form-control" id="title" placeholder="Напр: Проблема с открытием модального окна">
-            </div>
+                <div class="mb-3">
+                    <label for="title" class="form-label">Название вопроса</label>
+                    <input type="text" class="form-control" id="title" placeholder="Напр: Проблема с открытием модального окна">
+                </div>
 
-            <div class="mb-3">
-        <label for="editor" class="form-label">Описание</label>
-                <textarea class="content" name="editor" id="editor"></textarea>
-            </div>
+                <div class="mb-3">
+                    <label for="editor" class="form-label">Описание</label>
+                    <textarea class="content" name="editor" id="editor"></textarea>
+                </div>
 
-            <div class="mb-3">
-                <label for="tags" class="form-label">Тэги</label>
-                <input type="text" class="form-control" id="tags" placeholder="Перечислите через ; Напр: Spring; ThymeLeaf; Modal">
-            </div>
+                <div class="mb-3">
+                    <label for="tags" class="form-label">Тэги</label>
+                    <input type="text" class="form-control" id="tags" placeholder="Перечислите через ; Напр: Spring; ThymeLeaf; Modal">
+                </div>
 
-            <div class="mb-3">
-                <button type="submit" class="btn btn-primary">Опубликовать</button>
+                <div class="mb-3">
+                    <button type="submit" class="btn btn-primary">Опубликовать</button>
+                </div>
             </div>
         </div>
     </div>
+    </form>
 </div>
-</form>
 <script type="text/javascript" src="/js/sidebar.js"></script>
 <script type="text/javascript" src="/js/header.js"></script>
 <script type="text/javascript" src="/js/footer.js"></script>
