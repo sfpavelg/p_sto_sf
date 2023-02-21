@@ -79,6 +79,12 @@ public class TagResourceControllerTest extends AbstractTestApi {
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$", Is.is("Tag with id = 1000 not found")));
 
+        //user already has tag in ignored
+        this.mvc.perform(post("/api/user/tag/{id}/ignored", 100).header("Authorization", "Bearer " + token))
+                .andDo(print())
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$", Is.is("IgnoredTag with id = 100 already added by user with id = 100")));
+
 
     }
 
@@ -102,6 +108,12 @@ public class TagResourceControllerTest extends AbstractTestApi {
                 .andDo(print())
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$", Is.is("Tag with id = 1000 not found")));
+
+        //user already has tag in tracked
+        this.mvc.perform(post("/api/user/tag/{id}/tracked", 101).header("Authorization", "Bearer " + token))
+                .andDo(print())
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$", Is.is("TrackedTag with id = 101 already added by user with id = 100")));
 
 
     }
