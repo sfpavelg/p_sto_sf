@@ -49,6 +49,7 @@ public class TagResourceController {
     @ApiOperation(value = "Добавление Tag в Ignored. Возвращает TagDto", response = TagDto.class)
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Success request. TagDto returned"),
+            @ApiResponse(code = 400, message = "User already has such tag in Ignored"),
             @ApiResponse(code = 401, message = "Unauthorized request"),
             @ApiResponse(code = 403, message = "Forbidden"),
             @ApiResponse(code = 404, message = "Tag with such id doesn't exist")})
@@ -61,6 +62,7 @@ public class TagResourceController {
     @ApiOperation(value = "Добавление Tag в Tracked. Возвращает TagDto", response = TagDto.class)
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Success request. TagDto returned"),
+            @ApiResponse(code = 400, message = "User already has such tag in Tracked"),
             @ApiResponse(code = 401, message = "Unauthorized request"),
             @ApiResponse(code = 403, message = "Forbidden"),
             @ApiResponse(code = 404, message = "Tag with such id doesn't exist")})
