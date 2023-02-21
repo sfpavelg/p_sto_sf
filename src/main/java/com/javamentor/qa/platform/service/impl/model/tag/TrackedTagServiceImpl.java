@@ -35,8 +35,12 @@ public class TrackedTagServiceImpl extends ReadWriteServiceImpl<TrackedTag, Long
         if (tag.isEmpty()) {
             throw new NotFoundException("Tag with id = " + id + " not found");
         }
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        if (trackedTagDao.existsByUserIdAndTagId(user.getId(), id)) {
+            throw new IllegalArgumentException("TrackedTag with id = " + id + " already added by user with id = " + user.getId());
+        }
         trackedTag.setTrackedTag(tag.get());
-        trackedTag.setUser((User) SecurityContextHolder.getContext().getAuthentication().getPrincipal());
+        trackedTag.setUser(user);
         trackedTagDao.persist(trackedTag);
     }
 }

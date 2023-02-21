@@ -34,8 +34,12 @@ public class IgnoredTagServiceImpl extends ReadWriteServiceImpl<IgnoredTag, Long
         if (tag.isEmpty()) {
             throw new NotFoundException("Tag with id = " + id + " not found");
         }
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        if (ignoredTagDao.existsByUserIdAndTagId(user.getId(), id)) {
+            throw new IllegalArgumentException("IgnoredTag with id = " + id + " already added by user with id = " + user.getId());
+        }
         ignoredTag.setIgnoredTag(tag.get());
-        ignoredTag.setUser((User) SecurityContextHolder.getContext().getAuthentication().getPrincipal());
+        ignoredTag.setUser(user);
         ignoredTagDao.persist(ignoredTag);
     }
 }
