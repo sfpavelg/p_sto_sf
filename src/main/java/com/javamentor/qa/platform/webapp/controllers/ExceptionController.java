@@ -50,4 +50,11 @@ public class ExceptionController {
                 .body(exception.getBindingResult().getFieldError().getDefaultMessage());
     }
 
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ResponseEntity<String> handleIllegalArgumentException(IllegalArgumentException exception) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(exception.getMessage());
+    }
+
 }
