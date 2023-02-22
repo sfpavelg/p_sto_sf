@@ -42,9 +42,9 @@ public class AnswerResourceController {
             @ApiResponse(code = 401, message = "Unauthorized request"),
             @ApiResponse(code = 403, message = "Forbidden"),
             @ApiResponse(code = 404, message = "No question with such id")})
-    public ResponseEntity<List<AnswerDto>> getAllByQuestionId(@PathVariable("questionId") Long questionId) throws NotFoundException {
-        if (!questionService.getById(questionId).isPresent()) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    public ResponseEntity<?> getAllByQuestionId(@PathVariable("questionId") Long questionId) throws NotFoundException {
+        if (!questionService.existsById(questionId)) {
+            return new ResponseEntity<>("No question with such id", HttpStatus.NOT_FOUND);
         }
         return new ResponseEntity<>(answerDtoService.getAllByQuestionId(questionId), HttpStatus.OK);
     }
