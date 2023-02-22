@@ -25,11 +25,7 @@ public class TagDtoServiceImpl implements TagDtoService {
     }
 
     @Override
-    public TagDto getById(Long id) throws NotFoundException {
-        Optional<TagDto> tagDto = tagDtoDao.getById(id);
-        if (tagDto.isPresent()) {
-            return tagDto.get();
-        }
-        throw new NotFoundException("Tag with id = " + id + " not found");
+    public Optional<TagDto> getById(Long id) throws NotFoundException {
+        return tagDtoDao.getById(id);
     }
 }

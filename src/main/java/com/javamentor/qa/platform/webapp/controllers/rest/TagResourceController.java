@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.PathVariable;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/user/tag")
@@ -55,7 +56,8 @@ public class TagResourceController {
             @ApiResponse(code = 404, message = "Tag with such id doesn't exist")})
     public ResponseEntity<?> addIgnoredTag(@PathVariable Long id) throws NotFoundException {
         ignoredTagService.persistByTagId(id);
-        return ResponseEntity.ok(tagDtoService.getById(id));
+        Optional<TagDto> tagDto = tagDtoService.getById(id);
+        return tagDto.isPresent() ? ResponseEntity.ok(tagDto.get()) : ResponseEntity.notFound().build();
     }
 
     @PostMapping("/{id}/tracked")

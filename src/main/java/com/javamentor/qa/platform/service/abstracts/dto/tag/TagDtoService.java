@@ -5,8 +5,9 @@ import com.javamentor.qa.platform.models.dto.tag.TagDto;
 import javassist.NotFoundException;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface TagDtoService {
     List<RelatedTagsDto> getRelatedTagsDto();
-    TagDto getById(Long id) throws NotFoundException;
+    Optional<TagDto> getById(Long id) throws NotFoundException;
 }
