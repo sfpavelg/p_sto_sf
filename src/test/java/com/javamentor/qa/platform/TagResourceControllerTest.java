@@ -6,18 +6,20 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.jdbc.Sql;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 
 public class TagResourceControllerTest extends AbstractTestApi {
-
-    private final String token = "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIwQGdtYWlsLmNvbSIsInJvbGVzIjpbIlJPTEVfVVNFUiJdfQ.wFDvuH9IMzLYyJ6HX8L-JNYp5rrTdLZDO8aRhR_IJ8FxDkTUiyRkXwdesm9BEbJYZdjCesNoA6dfrtnj3NMMqg";
 
     @Test
     @Sql(value = {"/script/tag/getRelatedTagsDtoListTest/related-tags-dto-data-create.sql"}, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
     @Sql(value = {"/script/tag/getRelatedTagsDtoListTest/related-tags-dto-data-drop.sql"}, executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
     public void getRelatedTagsDtoListTest() throws Exception {
+        String token = getToken("0@gmail.com", "0pwd");
         //success getting TOP-10 Tags from 15 in DB (ordered by countQuestion)
         this.mvc.perform(get("/api/user/tag/related").header("Authorization", "Bearer " + token))
                 .andDo(print())
@@ -54,5 +56,77 @@ public class TagResourceControllerTest extends AbstractTestApi {
                 .andExpect(jsonPath("$.[9].title", Is.is("name10")))
                 .andExpect(jsonPath("$.[9].countQuestion", Is.is(1)))
         ;
+    }
+
+    @Test
+    @Sql(value = {"/script/tag/addIgnoredTag/add-ignored-tag-data-create.sql"}, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+    @Sql(value = {"/script/tag/addIgnoredTag/add-ignored-tag-data-drop.sql"}, executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
+    public void addIgnoredTag() throws Exception {
+        String token = getToken("0@gmail.com", "0pwd");
+
+        //success adding ignored tag and returning TagDto
+        this.mvc.perform(post("/api/user/tag/{id}/ignored", 100).header("Authorization", "Bearer " + token))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.id", Is.is(100)))
+                .andExpect(jsonPath("$.name", Is.is("name1")))
+                .andExpect(jsonPath("$.description", Is.is("description1")));
+
+        //wrong id
+        this.mvc.perform(post("/api/user/tag/{id}/ignored", 1000).header("Authorization", "Bearer " + token))
+                .andDo(print())
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$", Is.is("Tag with id = 1000 not found")));
+
+        //user already has tag in ignored
+        this.mvc.perform(post("/api/user/tag/{id}/ignored", 100).header("Authorization", "Bearer " + token))
+                .andDo(print())
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$", Is.is("Tag with id = 100 already added by user with id = 100 in Ignored")));
+
+        //user already has tag in checked
+        this.mvc.perform(post("/api/user/tag/{id}/ignored", 101).header("Authorization", "Bearer " + token))
+                .andDo(print())
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$", Is.is("Tag with id = 101 already added by user with id = 100 in Tracked")));
+
+
+    }
+
+    @Test
+    @Sql(value = {"/script/tag/addTrackedTag/add-tracked-tag-data-create.sql"}, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+    @Sql(value = {"/script/tag/addTrackedTag/add-tracked-tag-data-drop.sql"}, executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
+    public void addTrackedTag() throws Exception {
+        String token = getToken("0@gmail.com", "0pwd");
+
+        //success adding tracked tag and returning TagDto
+        this.mvc.perform(post("/api/user/tag/{id}/tracked", 101).header("Authorization", "Bearer " + token))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.id", Is.is(101)))
+                .andExpect(jsonPath("$.name", Is.is("name2")))
+                .andExpect(jsonPath("$.description", Is.is("description2")));
+
+        //wrong id
+        this.mvc.perform(post("/api/user/tag/{id}/tracked", 1000).header("Authorization", "Bearer " + token))
+                .andDo(print())
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$", Is.is("Tag with id = 1000 not found")));
+
+        //user already has tag in tracked
+        this.mvc.perform(post("/api/user/tag/{id}/tracked", 101).header("Authorization", "Bearer " + token))
+                .andDo(print())
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$", Is.is("Tag with id = 101 already added by user with id = 100 in Tracked")));
+
+        //user already has tag in ignored
+        this.mvc.perform(post("/api/user/tag/{id}/ignored", 100).header("Authorization", "Bearer " + token))
+                .andDo(print())
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$", Is.is("Tag with id = 100 already added by user with id = 100 in Ignored")));
+
+
     }
 }
