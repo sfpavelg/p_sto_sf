@@ -1,5 +1,6 @@
 package com.javamentor.qa.platform.service.impl.model.tag;
 
+import com.javamentor.qa.platform.dao.abstracts.model.tag.IgnoredTagDao;
 import com.javamentor.qa.platform.dao.abstracts.model.ReadWriteDao;
 import com.javamentor.qa.platform.dao.abstracts.model.tag.TagDao;
 import com.javamentor.qa.platform.dao.abstracts.model.tag.TrackedTagDao;
@@ -19,11 +20,14 @@ import java.util.Optional;
 public class TrackedTagServiceImpl extends ReadWriteServiceImpl<TrackedTag, Long> implements TrackedTagService {
 
     private final TrackedTagDao trackedTagDao;
+
+    private final IgnoredTagDao ignoredTagDao;
     private final TagDao tagDao;
 
-    public TrackedTagServiceImpl(ReadWriteDao<TrackedTag, Long> readWriteDao, TrackedTagDao trackedTagDao, TagDao tagDao) {
+    public TrackedTagServiceImpl(ReadWriteDao<TrackedTag, Long> readWriteDao, TrackedTagDao trackedTagDao, IgnoredTagDao ignoredTagDao, TagDao tagDao) {
         super(readWriteDao);
         this.trackedTagDao = trackedTagDao;
+        this.ignoredTagDao = ignoredTagDao;
         this.tagDao = tagDao;
     }
 
@@ -37,7 +41,10 @@ public class TrackedTagServiceImpl extends ReadWriteServiceImpl<TrackedTag, Long
         }
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         if (trackedTagDao.existsByUserIdAndTagId(user.getId(), id)) {
-            throw new IllegalArgumentException("TrackedTag with id = " + id + " already added by user with id = " + user.getId());
+            throw new IllegalArgumentException("Tag with id = " + id + " already added by user with id = " + user.getId() + " in Tracked");
+        }
+        if (ignoredTagDao.existsByUserIdAndTagId(user.getId(), id)) {
+            throw new IllegalArgumentException("Tag with id = " + id + " already added by user with id = " + user.getId()+ " in Ignored");
         }
         trackedTag.setTrackedTag(tag.get());
         trackedTag.setUser(user);
