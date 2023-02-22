@@ -3,6 +3,7 @@ package com.javamentor.qa.platform.service.impl.model.tag;
 import com.javamentor.qa.platform.dao.abstracts.model.tag.IgnoredTagDao;
 import com.javamentor.qa.platform.dao.abstracts.model.ReadWriteDao;
 import com.javamentor.qa.platform.dao.abstracts.model.tag.TagDao;
+import com.javamentor.qa.platform.dao.abstracts.model.tag.TrackedTagDao;
 import com.javamentor.qa.platform.models.entity.question.IgnoredTag;
 import com.javamentor.qa.platform.models.entity.question.Tag;
 import com.javamentor.qa.platform.models.entity.user.User;
@@ -18,11 +19,13 @@ import java.util.Optional;
 @Service
 public class IgnoredTagServiceImpl extends ReadWriteServiceImpl<IgnoredTag, Long> implements IgnoredTagService {
     private final IgnoredTagDao ignoredTagDao;
+    private final TrackedTagDao trackedTagDao;
     private final TagDao tagDao;
 
-    public IgnoredTagServiceImpl(ReadWriteDao<IgnoredTag, Long> readWriteDao, IgnoredTagDao ignoredTagDao, TagDao tagDao) {
+    public IgnoredTagServiceImpl(ReadWriteDao<IgnoredTag, Long> readWriteDao, IgnoredTagDao ignoredTagDao, TrackedTagDao trackedTagDao, TagDao tagDao) {
         super(readWriteDao);
         this.ignoredTagDao = ignoredTagDao;
+        this.trackedTagDao = trackedTagDao;
         this.tagDao = tagDao;
     }
 
@@ -36,7 +39,10 @@ public class IgnoredTagServiceImpl extends ReadWriteServiceImpl<IgnoredTag, Long
         }
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         if (ignoredTagDao.existsByUserIdAndTagId(user.getId(), id)) {
-            throw new IllegalArgumentException("IgnoredTag with id = " + id + " already added by user with id = " + user.getId());
+            throw new IllegalArgumentException("Tag with id = " + id + " already added by user with id = " + user.getId()+ " in Ignored");
+        }
+        if (trackedTagDao.existsByUserIdAndTagId(user.getId(), id)) {
+            throw new IllegalArgumentException("Tag with id = " + id + " already added by user with id = " + user.getId() + " in Tracked");
         }
         ignoredTag.setIgnoredTag(tag.get());
         ignoredTag.setUser(user);
