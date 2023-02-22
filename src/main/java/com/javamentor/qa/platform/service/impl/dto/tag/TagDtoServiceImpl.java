@@ -4,7 +4,6 @@ import com.javamentor.qa.platform.dao.abstracts.dto.tag.TagDtoDao;
 import com.javamentor.qa.platform.models.dto.tag.RelatedTagsDto;
 import com.javamentor.qa.platform.models.dto.tag.TagDto;
 import com.javamentor.qa.platform.service.abstracts.dto.tag.TagDtoService;
-import javassist.NotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -25,7 +24,7 @@ public class TagDtoServiceImpl implements TagDtoService {
     }
 
     @Override
-    public Optional<TagDto> getById(Long id) throws NotFoundException {
+    public Optional<TagDto> getById(Long id) {
         return tagDtoDao.getById(id);
     }
 }
