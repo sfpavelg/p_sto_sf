@@ -1,8 +1,9 @@
-package com.javamentor.qa.platform.service.impl.model;
+package com.javamentor.qa.platform.service.impl.model.tag;
 
-import com.javamentor.qa.platform.dao.abstracts.model.TagDao;
+import com.javamentor.qa.platform.dao.abstracts.model.tag.TagDao;
 import com.javamentor.qa.platform.models.entity.question.Tag;
-import com.javamentor.qa.platform.service.abstracts.model.TagService;
+import com.javamentor.qa.platform.service.abstracts.model.tag.TagService;
+import com.javamentor.qa.platform.service.impl.model.ReadWriteServiceImpl;
 import org.springframework.stereotype.Service;
 
 
