@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.Collections;
 import java.util.List;
 
 @RestController
@@ -37,10 +38,10 @@ public class AnswerResourceController {
     @GetMapping()
     @ApiOperation(value = "Получение всех элементов AnswerDto по id элемента Question", response = AnswerDto.class)
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Success request. AnswerDto objects returned in response"),
+            @ApiResponse(code = 200, message = "Success request. AnswerDto objects returned in response (May be empty list)"),
             @ApiResponse(code = 401, message = "Unauthorized request"),
             @ApiResponse(code = 403, message = "Forbidden"),
-            @ApiResponse(code = 400, message = "Question with such id doesn't exist")})
+            @ApiResponse(code = 404, message = "No question with such id")})
     public ResponseEntity<List<AnswerDto>> getAllByQuestionId(@PathVariable("questionId") Long questionId) throws NotFoundException {
         if (!questionService.getById(questionId).isPresent()) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
