@@ -83,7 +83,13 @@ public class TagResourceControllerTest extends AbstractTestApi {
         this.mvc.perform(post("/api/user/tag/{id}/ignored", 100).header("Authorization", "Bearer " + token))
                 .andDo(print())
                 .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$", Is.is("IgnoredTag with id = 100 already added by user with id = 100")));
+                .andExpect(jsonPath("$", Is.is("Tag with id = 100 already added by user with id = 100 in Ignored")));
+
+        //user already has tag in checked
+        this.mvc.perform(post("/api/user/tag/{id}/ignored", 101).header("Authorization", "Bearer " + token))
+                .andDo(print())
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$", Is.is("Tag with id = 101 already added by user with id = 100 in Tracked")));
 
 
     }
@@ -94,7 +100,7 @@ public class TagResourceControllerTest extends AbstractTestApi {
     public void addTrackedTag() throws Exception {
         String token = getToken("0@gmail.com", "0pwd");
 
-        //success adding ignored tag and returning TagDto
+        //success adding tracked tag and returning TagDto
         this.mvc.perform(post("/api/user/tag/{id}/tracked", 101).header("Authorization", "Bearer " + token))
                 .andDo(print())
                 .andExpect(status().isOk())
@@ -113,7 +119,13 @@ public class TagResourceControllerTest extends AbstractTestApi {
         this.mvc.perform(post("/api/user/tag/{id}/tracked", 101).header("Authorization", "Bearer " + token))
                 .andDo(print())
                 .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$", Is.is("TrackedTag with id = 101 already added by user with id = 100")));
+                .andExpect(jsonPath("$", Is.is("Tag with id = 101 already added by user with id = 100 in Tracked")));
+
+        //user already has tag in ignored
+        this.mvc.perform(post("/api/user/tag/{id}/ignored", 100).header("Authorization", "Bearer " + token))
+                .andDo(print())
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$", Is.is("Tag with id = 100 already added by user with id = 100 in Ignored")));
 
 
     }
