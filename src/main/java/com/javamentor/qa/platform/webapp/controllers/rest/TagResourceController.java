@@ -50,7 +50,7 @@ public class TagResourceController {
     @ApiOperation(value = "Добавление Tag в Ignored. Возвращает TagDto", response = TagDto.class)
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Success request. TagDto returned"),
-            @ApiResponse(code = 400, message = "User already has such tag in Ignored"),
+            @ApiResponse(code = 400, message = "User already has such tag in Ignored or Tracked"),
             @ApiResponse(code = 401, message = "Unauthorized request"),
             @ApiResponse(code = 403, message = "Forbidden"),
             @ApiResponse(code = 404, message = "Tag with such id doesn't exist")})
@@ -64,12 +64,13 @@ public class TagResourceController {
     @ApiOperation(value = "Добавление Tag в Tracked. Возвращает TagDto", response = TagDto.class)
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Success request. TagDto returned"),
-            @ApiResponse(code = 400, message = "User already has such tag in Tracked"),
+            @ApiResponse(code = 400, message = "User already has such tag in Tracked or Ignored"),
             @ApiResponse(code = 401, message = "Unauthorized request"),
             @ApiResponse(code = 403, message = "Forbidden"),
             @ApiResponse(code = 404, message = "Tag with such id doesn't exist")})
     public ResponseEntity<?> addTrackedTag(@PathVariable Long id) throws NotFoundException {
         trackedTagService.persistByTagId(id);
-        return ResponseEntity.ok(tagDtoService.getById(id));
+        Optional<TagDto> tagDto = tagDtoService.getById(id);
+        return tagDto.isPresent() ? ResponseEntity.ok(tagDto.get()) : ResponseEntity.notFound().build();
     }
 }
