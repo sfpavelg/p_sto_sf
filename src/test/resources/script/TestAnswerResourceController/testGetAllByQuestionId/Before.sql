@@ -15,13 +15,13 @@ VALUES (100, 'about', 'moscow', '0@gmail.com', 'name1', 'http://imagelink1.com',
        (101, 'about', 'spb', 'email2@domain.com', 'name2', 'http://imagelink2.com', 'f', 't',
         '2023-01-10 15:17:18.280368', 'http://github.com/4', 'http://site2.com', 'http://vk.com/2',
         'nickname2', 'password', '2023-01-21 15:17:18.280368', 200),
-       (102, 'about', 'NY', 'email3@domain.com', 'name3', 'http://imagelink3.com', 'f', 't',
+       (102, 'about', 'NY', 'email3@domain.com', 'name3', null, 'f', 't',
         '2023-01-10 15:17:18.280368', 'http://github.com/3', 'http://site3.com', 'http://vk.com/3',
         'nickname3', 'password', '2023-01-21 15:17:18.280368', 100),
        (103, 'about', 'spb', 'email4@domain.com', 'name4', 'http://imagelink4.com', 'f', 't',
         '2023-01-10 15:17:18.280368', 'http://github.com/4', 'http://site4.com', 'http://vk.com/4',
         'nickname4', 'password', '2023-01-21 15:17:18.280368', 200),
-       (104, 'about', 'spb', 'email5@domain.com', 'name5', null, 'f', 't',
+       (104, 'about', 'spb', 'email5@domain.com', 'name5', 'http://imagelink5.com', 'f', 't',
         '2023-01-10 15:17:18.280368', 'http://github.com/5', 'http://site5.com', 'http://vk.com/5',
         'nickname5', 'password', '2023-01-21 15:17:18.280368', 100);
 
@@ -61,19 +61,19 @@ VALUES (100,100),
 
 INSERT INTO "answer"
 ("id", "date_accept_time", "html_body", "is_deleted", "is_deleted_by_moderator", "is_helpful", "persist_date", "update_date", "question_id", "user_id" )
-VALUES (100, '2023-01-27 13:01:11.245126', 'html_body1', 'false', 'false', 'true', '2023-01-27 13:01:11.245126', '2023-01-27 13:01:11.245126', 104, 101),
+VALUES (100, '2023-01-27 13:01:11.245126', 'html_body1', 'false', 'false', 'true', '2023-01-27 13:01:11.245126', '2023-01-27 13:01:11.245126', 104, 102),
        (101, '2023-01-27 13:01:11.245126', 'html_body2', 'false', 'false', 'true', '2023-01-27 13:01:11.245126', '2023-01-27 13:01:11.245126', 101, 103),
        (102, '2023-01-27 13:01:11.245126', 'html_body3', 'false', 'false', 'true', '2023-01-27 13:01:11.245126', '2023-01-27 13:01:11.245126', 102, 104),
        (103, '2023-01-27 13:01:11.245126', 'html_body4', 'false', 'false', 'true', '2023-01-27 13:01:11.245126', '2023-01-27 13:01:11.245126', 100, 101),
        (104, '2023-01-27 13:01:11.245126', 'html_body5', 'false', 'false', 'true', '2023-01-27 13:01:11.245126', '2023-01-27 13:01:11.245126', 100, 100);
 
-INSERT INTO "votes_on_questions"
-("id", "persist_date", "vote", "question_id", "user_id")
-VALUES (100, '2023-01-27 13:01:11.245126', 'up', 100, 101),
-       (101, '2023-01-27 13:01:11.245126', 'up', 100, 103),
-       (102, '2023-01-27 13:01:11.245126', 'up', 100, 102),
-       (103, '2023-01-27 13:01:11.245126', 'down', 100, 101),
-       (104, '2023-01-27 13:01:11.245126', 'up', 102, 100);
+INSERT INTO "votes_on_answers"
+("id", "persist_date", "vote", "answer_id", "user_id")
+VALUES (100, '2023-01-27 13:01:11.245126', 'UP', 102, 101),
+       (101, '2023-01-27 13:01:11.245126', 'UP', 102, 103),
+       (102, '2023-01-27 13:01:11.245126', 'UP', 102, 102),
+       (103, '2023-01-27 13:01:11.245126', 'DOWN', 102, 101),
+       (104, '2023-01-27 13:01:11.245126', 'UP', 101, 100);
 
 INSERT INTO "reputation"
 ("id", "count", "persist_date", "type", "answer_id", "author_id", "question_id", "sender_id")
