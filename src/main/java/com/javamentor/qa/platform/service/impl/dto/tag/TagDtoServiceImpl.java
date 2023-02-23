@@ -27,4 +27,9 @@ public class TagDtoServiceImpl implements TagDtoService {
     public Optional<TagDto> getById(Long id) {
         return tagDtoDao.getById(id);
     }
+
+    @Override
+    public List<TagDto> getIgnoredTagByUserId(Long id) {
+        return tagDtoDao.getIgnoredTagByUserId(id);
+    }
 }

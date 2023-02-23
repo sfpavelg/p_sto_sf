@@ -50,4 +50,16 @@ public class TagDtoDaoImpl implements TagDtoDao {
                 .setParameter("id", id);
         return SingleResultUtil.getSingleResultOrNull(query);
     }
+
+    @Override
+    public List<TagDto> getIgnoredTagByUserId(Long id) {
+        Query query = entityManager.createQuery("select new com.javamentor.qa.platform.models.dto.tag.TagDto(" +
+                        "t.id, " +
+                        "t.name) " +
+                        "from Tag t join IgnoredTag it on t.id = it.ignoredTag.id where it.user.id = :id")
+                .setParameter("id", id);
+        return (List<TagDto>) query.getResultList();
+    }
+
+
 }
