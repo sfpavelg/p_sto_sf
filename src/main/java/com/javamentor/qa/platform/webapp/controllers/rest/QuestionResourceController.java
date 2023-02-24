@@ -12,7 +12,9 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import javassist.NotFoundException;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -61,5 +63,35 @@ public class QuestionResourceController {
         Question question = questionConverter.questionCreateDtoToQuestion(questionCreateDto, new User());
         questionService.persist(question);
         return ResponseEntity.ok(questionDtoService.getQuestionDtoById(question.getId()));
+    }
+
+    @PostMapping("/{questionId}/upVote")
+    @ApiOperation(value = "api возвращает общее количество голосов, сумму up vote")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "голос За учтен"),
+            @ApiResponse(code = 400, message = "Голос За не учтен"),
+            @ApiResponse(code = 404, message = "Вопрос не найден")})
+    public ResponseEntity<Long> upVote(@PathVariable("questionId") Long id,
+                                       @AuthenticationPrincipal User user) {
+
+        if (questionService.getById(id).isPresent()) {
+            return ResponseEntity.ok(questionService.voteUpQuestion(user.getId(), id));
+        }
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    }
+
+    @PostMapping("/{questionId}/downVote")
+    @ApiOperation(value = "api возвращает общее количество голосов, сумму down vote")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "голос Против учтен"),
+            @ApiResponse(code = 400, message = "Голос Против не учтен"),
+            @ApiResponse(code = 404, message = "Вопрос не найден")})
+    public ResponseEntity<Long> downVote(@PathVariable("questionId") Long id,
+                                       @AuthenticationPrincipal User user) {
+
+        if (questionService.getById(id).isPresent()) {
+            return ResponseEntity.ok(questionService.voteDownQuestion(user.getId(), id));
+        }
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 }

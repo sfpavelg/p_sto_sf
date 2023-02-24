@@ -201,4 +201,98 @@ class QuestionResourceControllerTest extends AbstractTestApi {
 
     }
 
+    @Test
+    @Sql(value = {"/script/question/getQuestionDtoByIdTest/question-dto-data-create.sql"}, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+    @Sql(value = {"/script/question/getQuestionDtoByIdTest/question-dto-data-drop.sql"}, executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
+    public void upVoteTest() throws Exception {
+
+        String json = "{\"email\":\"0@gmail.com\",\"password\":\"0pwd\"}";
+        String token = this.mvc.perform(post("/api/auth/token").contentType(MediaType.APPLICATION_JSON)
+                        .content(json)).andExpect(status().isOk())
+                .andReturn().getResponse().getContentAsString().substring(10);
+
+        //success
+        this.mvc.perform(get("/api/user/question/{questionId}/upVote", 1).header("Authorization", "Bearer " + token))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.authorId", Is.is(1)))
+                .andExpect(jsonPath("$.authorReputation", Is.is(6)))
+                .andExpect(jsonPath("$.authorName", Is.is("name1")))
+                .andExpect(jsonPath("$.authorImage", Is.is("http://imagelink1.com")))
+                .andExpect(jsonPath("$.countAnswer", Is.is(3)))
+                .andExpect(jsonPath("$.vote", Is.is(1)))
+                .andExpect(jsonPath("$.localDateTime", Is.is("2023-01-27T13:01:11.245126")))
+                .andExpect(jsonPath("$.questionId", Is.is(1)));
+
+        //wrong id
+        this.mvc.perform(get("/api/user/question/{questionId}/upVote", 111).header("Authorization", "Bearer " + token))
+                .andDo(print())
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$", Is.is("QuestionDto with id = 111 not found")));
+
+        //null results in DB
+        this.mvc.perform(get("/api/user/question/{questionId}/upVote", 5).header("Authorization", "Bearer " + token))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.id", Is.is(5)))
+                .andExpect(jsonPath("$.authorId", Is.is(5)))
+                .andExpect(jsonPath("$.authorReputation", Is.is(0)))
+                .andExpect(jsonPath("$.authorName", Is.is("name5")))
+                .andExpect(jsonPath("$.countAnswer", Is.is(0)))
+                .andExpect(jsonPath("$.vote", Is.is(5)))
+                .andExpect(jsonPath("$.localDateTime", Is.is("2023-01-27T13:01:11.245126")))
+                .andExpect(jsonPath("$.questionId", Is.is(5)));
+
+    }
+
+    @Test
+    @Sql(value = {"/script/question/getQuestionDtoByIdTest/question-dto-data-create.sql"}, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+    @Sql(value = {"/script/question/getQuestionDtoByIdTest/question-dto-data-drop.sql"}, executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
+    public void downVoteTest() throws Exception {
+
+        String json = "{\"email\":\"0@gmail.com\",\"password\":\"0pwd\"}";
+        String token = this.mvc.perform(post("/api/auth/token").contentType(MediaType.APPLICATION_JSON)
+                        .content(json)).andExpect(status().isOk())
+                .andReturn().getResponse().getContentAsString().substring(10);
+
+        //success
+        this.mvc.perform(get("/api/user/question/{questionId}/upVote", 1).header("Authorization", "Bearer " + token))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.authorId", Is.is(1)))
+                .andExpect(jsonPath("$.authorReputation", Is.is(6)))
+                .andExpect(jsonPath("$.authorName", Is.is("name1")))
+                .andExpect(jsonPath("$.authorImage", Is.is("http://imagelink1.com")))
+                .andExpect(jsonPath("$.countAnswer", Is.is(3)))
+                .andExpect(jsonPath("$.vote", Is.is(1)))
+                .andExpect(jsonPath("$.localDateTime", Is.is("2023-01-27T13:01:11.245126")))
+                .andExpect(jsonPath("$.questionId", Is.is(1)));
+
+        //wrong id
+        this.mvc.perform(get("/api/user/question/{questionId}/upVote", 111).header("Authorization", "Bearer " + token))
+                .andDo(print())
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$", Is.is("QuestionDto with id = 111 not found")));
+
+        //null results in DB
+        this.mvc.perform(get("/api/user/question/{questionId}/upVote", 5).header("Authorization", "Bearer " + token))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.id", Is.is(5)))
+                .andExpect(jsonPath("$.authorId", Is.is(5)))
+                .andExpect(jsonPath("$.authorReputation", Is.is(0)))
+                .andExpect(jsonPath("$.authorName", Is.is("name5")))
+                .andExpect(jsonPath("$.countAnswer", Is.is(0)))
+                .andExpect(jsonPath("$.vote", Is.is(5)))
+                .andExpect(jsonPath("$.localDateTime", Is.is("2023-01-27T13:01:11.245126")))
+                .andExpect(jsonPath("$.questionId", Is.is(5)));
+
+    }
+
+
+
 }
