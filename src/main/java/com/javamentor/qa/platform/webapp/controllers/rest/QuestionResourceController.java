@@ -65,5 +65,4 @@ public class QuestionResourceController {
         return ResponseEntity.ok(questionDtoService.getQuestionDtoById(question.getId()));
     }
 
-
 }
