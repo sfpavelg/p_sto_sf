@@ -17,7 +17,7 @@ public class AnswerServiceImpl extends ReadWriteServiceImpl<Answer, Long> implem
 
     @Transactional
     @Override
-    public void deleteByUser(Long id, Long userId) {
-        answerDao.deleteByUser(id, userId);
+    public void deleteByUser(Long id) {
+        answerDao.deleteByUser(id);
     }
 }
