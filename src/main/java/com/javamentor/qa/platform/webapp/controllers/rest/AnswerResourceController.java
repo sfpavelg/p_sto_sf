@@ -25,8 +25,9 @@ public class AnswerResourceController {
     }
 
 
-    @ApiOperation(value = "Удаление ответа ")
+    @ApiOperation(value = "Удаление ответа")
     @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Запрос успешно выполнен"),
             @ApiResponse(code = 400, message = "Ответ с указанным уникальным идентификатором (Id) не найден")
     })
     @DeleteMapping("/{answerId}")
