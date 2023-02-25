@@ -33,8 +33,8 @@ public class UserServiceImpl extends ReadWriteServiceImpl<User, Long> implements
 
     @Override
     @Transactional
-    public void changeUserPassword(String userPassword, Long userId) {
-        userDao.changeUserPassword(passwordEncoder.encode(userPassword), userId);
+    public void changeUserPassword(String userPassword, User user) {
+        userDao.changeUserPassword(passwordEncoder.encode(userPassword), user);
     }
 
 

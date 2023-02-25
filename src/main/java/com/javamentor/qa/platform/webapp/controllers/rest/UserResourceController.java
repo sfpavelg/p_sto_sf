@@ -1,6 +1,7 @@
 package com.javamentor.qa.platform.webapp.controllers.rest;
 
 import com.javamentor.qa.platform.models.dto.user.UserDto;
+import com.javamentor.qa.platform.models.entity.user.User;
 import com.javamentor.qa.platform.service.abstracts.dto.user.UserDtoService;
 import com.javamentor.qa.platform.service.abstracts.model.UserService;
 import io.swagger.annotations.Api;
@@ -11,7 +12,14 @@ import javassist.NotFoundException;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
 
 @RestController
 @AllArgsConstructor
@@ -33,11 +41,21 @@ public class UserResourceController {
         return ResponseEntity.ok(userDtoService.getById(id));
     }
 
-    @PatchMapping("/changePassword/{id}")
-    public ResponseEntity<?> changeUserPassword(@RequestBody String userPassword, @PathVariable("id") Long userId) {
-
-        userService.changeUserPassword(userPassword, userId);
-
-        return new ResponseEntity<>(HttpStatus.OK);
+    @PatchMapping("/changePassword")
+    @ApiOperation(value = "Change user password")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Success request. User password has been successfully changed"),
+            @ApiResponse(code = 400, message = "Invalid password"),
+            @ApiResponse(code = 403, message = "Forbidden")})
+    public ResponseEntity<?> changeUserPassword(@RequestBody(required = false) String userPassword) {
+        if (userPassword == null || userPassword.isEmpty()) {
+            return new ResponseEntity<>("The password must not be empty", HttpStatus.BAD_REQUEST);
+        } else if (userPassword.length() < 6) {
+            return new ResponseEntity<>("The password must be at least 6 characters long", HttpStatus.BAD_REQUEST);
+        } else if (userPassword.matches("[0-9]+")) {
+            return new ResponseEntity<>("The password should not consist only of numbers", HttpStatus.BAD_REQUEST);
+        }
+        userService.changeUserPassword(userPassword, (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal());
+        return new ResponseEntity<>("Password changed successfully", HttpStatus.OK);
     }
 }
