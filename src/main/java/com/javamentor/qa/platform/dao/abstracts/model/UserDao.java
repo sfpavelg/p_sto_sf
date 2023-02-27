@@ -7,5 +7,5 @@ import java.util.Optional;
 public interface UserDao extends ReadWriteDao<User, Long> {
     Optional<User> getByEmail(String email);
 
-    void changeUserPassword(String userPassword, User user);
+    void changeUserPassword(User user);
 }

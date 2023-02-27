@@ -21,8 +21,7 @@ public class UserDaoImpl extends ReadWriteDaoImpl<User, Long> implements UserDao
     }
 
     @Override
-    public void changeUserPassword(String userPassword, User user) {
-        user.setPassword(userPassword);
+    public void changeUserPassword(User user) {
         entityManager.merge(user);
     }
 

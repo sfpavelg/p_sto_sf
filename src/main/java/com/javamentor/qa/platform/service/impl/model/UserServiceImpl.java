@@ -33,8 +33,18 @@ public class UserServiceImpl extends ReadWriteServiceImpl<User, Long> implements
 
     @Override
     @Transactional
-    public void changeUserPassword(String userPassword, User user) {
-        userDao.changeUserPassword(passwordEncoder.encode(userPassword), user);
+    public void changeUserPassword(String userPassword, User user)  {
+        if (userPassword == null || userPassword.isEmpty()) {
+            throw new RuntimeException("The password must not be empty");
+        }
+        if (userPassword.length() < 6) {
+            throw new RuntimeException("The password must be at least 6 characters long");
+        }
+        if (userPassword.matches("[0-9]+")) {
+            throw new RuntimeException("The password should not consist only of numbers");
+        }
+        user.setPassword(passwordEncoder.encode(userPassword));
+        userDao.changeUserPassword(user);
     }
 
 
