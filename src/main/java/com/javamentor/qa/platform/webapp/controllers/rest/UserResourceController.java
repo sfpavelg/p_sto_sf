@@ -45,15 +45,10 @@ public class UserResourceController {
     @ApiOperation(value = "Change user password")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Success request. User password has been successfully changed"),
-            @ApiResponse(code = 403, message = "Forbidden"),
-            @ApiResponse(code = 500, message = "Invalid password")})
-    public ResponseEntity<?> changeUserPassword(@RequestBody(required = false) String userPassword) throws RuntimeException {
-        try {
-            userService.changeUserPassword(userPassword, (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal());
-            return new ResponseEntity<>("Password changed successfully", HttpStatus.OK);
-        } catch (RuntimeException e) {
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
-        }
-
+            @ApiResponse(code = 400, message = "Invalid password"),
+            @ApiResponse(code = 403, message = "Forbidden")})
+    public ResponseEntity<?> changeUserPassword(@RequestBody(required = false) String userPassword) {
+        userService.changeUserPassword(userPassword, (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal());
+        return new ResponseEntity<>("Password changed successfully", HttpStatus.OK);
     }
 }

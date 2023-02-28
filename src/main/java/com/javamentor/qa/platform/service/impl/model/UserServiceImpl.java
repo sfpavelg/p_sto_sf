@@ -1,6 +1,7 @@
 package com.javamentor.qa.platform.service.impl.model;
 
 import com.javamentor.qa.platform.dao.abstracts.model.UserDao;
+import com.javamentor.qa.platform.exception.ApiChangeUserPasswordException;
 import com.javamentor.qa.platform.models.entity.user.User;
 import com.javamentor.qa.platform.service.abstracts.model.UserService;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -35,13 +36,13 @@ public class UserServiceImpl extends ReadWriteServiceImpl<User, Long> implements
     @Transactional
     public void changeUserPassword(String userPassword, User user)  {
         if (userPassword == null || userPassword.isEmpty()) {
-            throw new RuntimeException("The password must not be empty");
+            throw new ApiChangeUserPasswordException("The password must not be empty");
         }
         if (userPassword.length() < 6) {
-            throw new RuntimeException("The password must be at least 6 characters long");
+            throw new ApiChangeUserPasswordException("The password must be at least 6 characters long");
         }
         if (userPassword.matches("[0-9]+")) {
-            throw new RuntimeException("The password should not consist only of numbers");
+            throw new ApiChangeUserPasswordException("The password should not consist only of numbers");
         }
         user.setPassword(passwordEncoder.encode(userPassword));
         userDao.changeUserPassword(user);
