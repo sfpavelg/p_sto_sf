@@ -91,4 +91,61 @@ public class TestUserResourceController extends AbstractTestApi {
 
     }
 
+
+    @Test
+    @SqlGroup({
+            @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD,
+                    value = {"/script/TestUserResourceController.testGetUsersByPersistDateAndTime/Before.sql"}),
+            @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD,
+                    value = {"/script/TestUserResourceController.testGetUsersByPersistDateAndTime/After.sql"})
+    })
+    public void testGetAllUsersByPersistDateAndTime() throws Exception {
+
+        JacksonJsonParser jsonParser = new JacksonJsonParser();
+        String jwt = jsonParser.parseMap(this.mvc.perform(post("/api/auth/token")
+                                .content(objectMapper.valueToTree(new AuthenticationRequest("email5@domain.com",
+                                        "password")).toString())
+                                .contentType(MediaType.APPLICATION_JSON))
+                        .andExpect(status().is2xxSuccessful())
+                        .andReturn().getResponse().getContentAsString())
+                .get("token").toString();
+
+//        Successful test (The newest user shown first)
+        this.mvc.perform(get("/api/user/new")
+                        .header("Authorization", "Bearer " + jwt))
+                .andExpect(jsonPath("$.items[0].id", Is.is(104)))
+                .andExpect(jsonPath("$.items[0].email", Is.is("email5@domain.com")))
+                .andExpect(jsonPath("$.items[0].fullName", Is.is("name5")))
+                .andExpect(jsonPath("$.items[0].city", Is.is("moscow")))
+                .andExpect(jsonPath("$.items[0].imageLink", Is.is("http://imagelink5.com")))
+                .andExpect(jsonPath("$.items[0].reputation", Is.is(0)))
+
+                .andExpect(jsonPath("$.items[1].id", Is.is(103)))
+                .andExpect(jsonPath("$.items[1].email", Is.is("email4@domain.com")))
+                .andExpect(jsonPath("$.items[1].fullName", Is.is("name4")))
+                .andExpect(jsonPath("$.items[1].city", Is.is("spb")))
+                .andExpect(jsonPath("$.items[1].imageLink", Is.is("http://imagelink4.com")))
+                .andExpect(jsonPath("$.items[1].reputation", Is.is(8)))
+
+                .andExpect(jsonPath("$.items[2].id", Is.is(102)))
+                .andExpect(jsonPath("$.items[2].email", Is.is("email3@domain.com")))
+                .andExpect(jsonPath("$.items[2].fullName", Is.is("name3")))
+                .andExpect(jsonPath("$.items[2].city", Is.is("NY")))
+                .andExpect(jsonPath("$.items[2].imageLink", Is.is("http://imagelink3.com")))
+                .andExpect(jsonPath("$.items[2].reputation", Is.is(11)))
+
+                .andExpect(jsonPath("$.items[3].id", Is.is(101)))
+                .andExpect(jsonPath("$.items[3].email", Is.is("email2@domain.com")))
+                .andExpect(jsonPath("$.items[3].fullName", Is.is("name2")))
+                .andExpect(jsonPath("$.items[3].city", Is.is("spb")))
+                .andExpect(jsonPath("$.items[3].imageLink", Is.is("http://imagelink2.com")))
+                .andExpect(jsonPath("$.items[3].reputation", Is.is(14)))
+
+                .andExpect(jsonPath("$.items[4].id", Is.is(100)))
+                .andExpect(jsonPath("$.items[4].email", Is.is("email1@domain.com")))
+                .andExpect(jsonPath("$.items[4].fullName", Is.is("name1")))
+                .andExpect(jsonPath("$.items[4].city", Is.is("moscow")))
+                .andExpect(jsonPath("$.items[4].imageLink", Is.is("http://imagelink1.com")))
+                .andExpect(jsonPath("$.items[4].reputation", Is.is(6)));
+    }
 }
