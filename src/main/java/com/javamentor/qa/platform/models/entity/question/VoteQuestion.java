@@ -18,7 +18,7 @@ import java.time.LocalDateTime;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class VoteQuestion extends Question implements Serializable {
+public class VoteQuestion  implements Serializable {
 
     private static final long serialVersionUID = 6479035497338780810L;
 

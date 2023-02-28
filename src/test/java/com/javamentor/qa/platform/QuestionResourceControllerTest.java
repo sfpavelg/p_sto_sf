@@ -206,10 +206,7 @@ class QuestionResourceControllerTest extends AbstractTestApi {
     @Sql(value = {"/script/question/getQuestionDtoByIdTest/question-dto-data-drop.sql"}, executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
     public void upVoteTest() throws Exception {
 
-        String json = "{\"email\":\"0@gmail.com\",\"password\":\"0pwd\"}";
-        String token = this.mvc.perform(post("/api/auth/token").contentType(MediaType.APPLICATION_JSON)
-                        .content(json)).andExpect(status().isOk())
-                .andReturn().getResponse().getContentAsString().substring(10);
+        String token = getToken("0@gmail.com", "0pwd");
 
         //success
         this.mvc.perform(get("/api/user/question/{questionId}/upVote", 1).header("Authorization", "Bearer " + token))
@@ -252,10 +249,7 @@ class QuestionResourceControllerTest extends AbstractTestApi {
     @Sql(value = {"/script/question/getQuestionDtoByIdTest/question-dto-data-drop.sql"}, executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
     public void downVoteTest() throws Exception {
 
-        String json = "{\"email\":\"0@gmail.com\",\"password\":\"0pwd\"}";
-        String token = this.mvc.perform(post("/api/auth/token").contentType(MediaType.APPLICATION_JSON)
-                        .content(json)).andExpect(status().isOk())
-                .andReturn().getResponse().getContentAsString().substring(10);
+        String token = getToken("0@gmail.com", "0pwd");
 
         //success
         this.mvc.perform(get("/api/user/question/{questionId}/upVote", 1).header("Authorization", "Bearer " + token))

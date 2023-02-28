@@ -2,6 +2,7 @@ package com.javamentor.qa.platform.service.impl.model;
 
 import com.javamentor.qa.platform.dao.abstracts.model.UserDao;
 import com.javamentor.qa.platform.models.entity.user.User;
+import com.javamentor.qa.platform.models.entity.user.reputation.Reputation;
 import com.javamentor.qa.platform.service.abstracts.model.UserService;
 import org.springframework.stereotype.Service;
 
@@ -17,7 +18,7 @@ public class UserServiceImpl extends ReadWriteServiceImpl<User, Long> implements
     }
 
     @Override
-    public void persist(User user) {
+    public void persist(Reputation user) {
         super.persist(user);
     }
 

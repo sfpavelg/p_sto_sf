@@ -6,6 +6,7 @@ import com.javamentor.qa.platform.models.entity.question.Question;
 import com.javamentor.qa.platform.models.entity.user.User;
 import com.javamentor.qa.platform.service.abstracts.dto.question.QuestionDtoService;
 import com.javamentor.qa.platform.service.abstracts.model.QuestionService;
+import com.javamentor.qa.platform.service.abstracts.model.VoteQuestionService;
 import com.javamentor.qa.platform.webapp.converters.QuestionConverter;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -35,10 +36,13 @@ public class QuestionResourceController {
     private final QuestionConverter questionConverter;
     private final QuestionService questionService;
 
-    public QuestionResourceController(QuestionDtoService questionDtoService, QuestionConverter questionConverter, QuestionService questionService) {
+    private final VoteQuestionService voteQuestionService;
+
+    public QuestionResourceController(QuestionDtoService questionDtoService, QuestionConverter questionConverter, QuestionService questionService, VoteQuestionService voteQuestionService) {
         this.questionDtoService = questionDtoService;
         this.questionConverter = questionConverter;
         this.questionService = questionService;
+        this.voteQuestionService = voteQuestionService;
     }
 
     @GetMapping("/{id}")
@@ -74,8 +78,8 @@ public class QuestionResourceController {
     public ResponseEntity<Long> upVote(@PathVariable("questionId") Long id,
                                        @AuthenticationPrincipal User user) {
 
-        if (questionService.getById(id).isPresent()) {
-            return ResponseEntity.ok(questionService.voteUpQuestion(user.getId(), id));
+        if (voteQuestionService.getById(id).isPresent()) {
+            return ResponseEntity.ok(voteQuestionService.voteUpQuestion(user.getId(), id));
         }
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
@@ -89,8 +93,8 @@ public class QuestionResourceController {
     public ResponseEntity<Long> downVote(@PathVariable("questionId") Long id,
                                        @AuthenticationPrincipal User user) {
 
-        if (questionService.getById(id).isPresent()) {
-            return ResponseEntity.ok(questionService.voteDownQuestion(user.getId(), id));
+        if (voteQuestionService.getById(id).isPresent()) {
+            return ResponseEntity.ok(voteQuestionService.voteDownQuestion(user.getId(), id));
         }
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
