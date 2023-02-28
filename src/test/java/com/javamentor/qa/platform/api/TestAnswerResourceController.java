@@ -27,10 +27,7 @@ public class TestAnswerResourceController extends AbstractTestApi {
     })
     public void testDeleteAnswer() throws Exception {
 
-        String json = "{\"email\":\"0@gmail.com\",\"password\":\"0pwd\"}";
-        String token = this.mvc.perform(post("/api/auth/token").contentType(MediaType.APPLICATION_JSON)
-                        .content(json)).andExpect(status().isOk())
-                .andReturn().getResponse().getContentAsString().substring(10);
+        String token = getToken("0@gmail.com", "0pwd");
 
         //success
         this.mvc.perform(get("/api/user/question/{id}/answer", 100).header("Authorization", "Bearer " + token))
