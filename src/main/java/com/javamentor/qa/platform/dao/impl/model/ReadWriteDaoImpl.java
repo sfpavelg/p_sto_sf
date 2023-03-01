@@ -114,7 +114,4 @@ public abstract class ReadWriteDaoImpl<E, K> extends ReadOnlyDaoImpl<E, K> {
         }
     }
 
-    public abstract Optional<Reputation> getReputationByAnswerAndUser(Long answerId, Long userId);
-
-    public abstract Optional<Reputation> getReputationByVoteQuestion(Long userId, Long questionId);
 }

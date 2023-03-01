@@ -26,32 +26,27 @@ public class VoteQuestionServiceImpl extends ReadWriteServiceImpl<VoteQuestion, 
     }
 
 
-
     @Override
     public Long voteUpQuestion(Long userId, Long questionId) {
         voteQuestionDao.persist(new VoteQuestion(userService.getById(userId).get(), questionService.getById(questionId).get(), VoteType.UP_VOTE));
         Reputation reputation = new Reputation();
-        reputation.setCount(reputation.getCount()+10);
-        super.persist(reputation);
+        reputation.setCount(+10);
 
-        return getSumVoteUpAndDown(questionId);
+
+        return voteQuestionDao.getSumVoteUpAndDown(questionId);
 
     }
+
 
     @Override
     public Long voteDownQuestion(Long userId, Long questionId) {
         voteQuestionDao.persist(new VoteQuestion(userService.getById(userId).get(), questionService.getById(questionId).get(), VoteType.DOWN_VOTE));
         Reputation reputation = new Reputation();
-        reputation.setCount(reputation.getCount()-5);
-        super.persist(reputation);
+        reputation.setCount(-5);
 
-        return getSumVoteUpAndDown(questionId);
-
-    }
-
-    @Override
-    public Long getSumVoteUpAndDown(Long questionId) {
         return voteQuestionDao.getSumVoteUpAndDown(questionId);
+
     }
+
 }
 
