@@ -11,6 +11,7 @@ import org.springframework.test.context.jdbc.SqlGroup;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -92,6 +93,7 @@ public class TestUserResourceController extends AbstractTestApi {
     }
 
 
+
     @Test
     @SqlGroup({
             @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD,
@@ -101,18 +103,18 @@ public class TestUserResourceController extends AbstractTestApi {
     })
     public void testGetAllUsersByPersistDateAndTime() throws Exception {
 
-        JacksonJsonParser jsonParser = new JacksonJsonParser();
-        String jwt = jsonParser.parseMap(this.mvc.perform(post("/api/auth/token")
-                                .content(objectMapper.valueToTree(new AuthenticationRequest("email5@domain.com",
-                                        "password")).toString())
-                                .contentType(MediaType.APPLICATION_JSON))
-                        .andExpect(status().is2xxSuccessful())
-                        .andReturn().getResponse().getContentAsString())
-                .get("token").toString();
+        String token = getToken("email5@domain.com", "password");
 
-//        Successful test (The newest user shown first)
+//  Successful test (The newest user shown first). Works with null reg date. User with null reg date shown first
         this.mvc.perform(get("/api/user/new")
-                        .header("Authorization", "Bearer " + jwt))
+                        .header("Authorization", "Bearer " + token)
+                        .param("currentPageNumber", "0"))
+                .andDo(print())
+                .andExpect(jsonPath("$.currentPageNumber", Is.is(0)))
+                .andExpect(jsonPath("$.totalPageCount", Is.is(0)))
+                .andExpect(jsonPath("$.totalResultCount", Is.is(5)))
+                .andExpect(jsonPath("$.itemsOnPage", Is.is(10)))
+
                 .andExpect(jsonPath("$.items[0].id", Is.is(104)))
                 .andExpect(jsonPath("$.items[0].email", Is.is("email5@domain.com")))
                 .andExpect(jsonPath("$.items[0].fullName", Is.is("name5")))
@@ -147,5 +149,20 @@ public class TestUserResourceController extends AbstractTestApi {
                 .andExpect(jsonPath("$.items[4].city", Is.is("moscow")))
                 .andExpect(jsonPath("$.items[4].imageLink", Is.is("http://imagelink1.com")))
                 .andExpect(jsonPath("$.items[4].reputation", Is.is(6)));
+
+//  Successful test on not existing page
+        this.mvc.perform(get("/api/user/new")
+                        .header("Authorization", "Bearer " + token)
+                        .param("currentPageNumber", "5"))
+                .andDo(print())
+                .andExpect(jsonPath("$.items").isEmpty())
+                .andExpect(status().isOk());
+
+//  Page with negative number can not be found
+        this.mvc.perform(get("/api/user/new")
+                        .header("Authorization", "Bearer " + token)
+                        .param("currentPageNumber", "-1"))
+                .andDo(print())
+                .andExpect(status().isBadRequest());
     }
 }

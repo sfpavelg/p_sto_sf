@@ -9,8 +9,11 @@ import io.swagger.annotations.ApiResponses;
 import javassist.NotFoundException;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestParam;
 import java.util.HashMap;
 
 @RestController
@@ -32,7 +35,7 @@ public class UserResourceController {
     }
 
     @GetMapping("/new")
-    @ApiOperation(value = "Get all users by persist date and time (DESC). First shown the newest user",
+    @ApiOperation(value = "Get all users by registration date and time (DESC). First shown the newest user",
             notes = "currentPageNumber is a number of page with dto's.", response = UserDto.class)
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Success request. UserDto object returned in response"),

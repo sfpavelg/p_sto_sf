@@ -34,15 +34,10 @@ public class UserDtoServiceImpl extends PageDtoService<UserDto> implements UserD
     }
 
     @Override
-    public PageDto<UserDto> getUsersByPersistDateTime(HashMap<String, Object> param) throws NotFoundException {
-        param.put("daoDtoImpl", "userDtoDaoImpl");
+    public PageDto<UserDto> getUsersByPersistDateTime(HashMap<String, Object> param) {
+        param.put("daoDtoImpl", "paginationUserDtoDaoByRegDateImpl");
         param.put("sortBy", "persistDateTime");
-        PageDto<UserDto> page = pageDto(param);
 
-        if (page.getItems().isEmpty()) {
-            throw new NotFoundException("The page with " + param.get("currentPageNumber") + " number was not found");
-        }
-
-        return page;
+        return pageDto(param);
     }
 }

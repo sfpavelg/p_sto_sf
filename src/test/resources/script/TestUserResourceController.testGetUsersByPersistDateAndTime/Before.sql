@@ -21,7 +21,7 @@ VALUES (100, 'about', 'moscow', 'email1@domain.com', 'name1', 'http://imagelink1
         'nickname4', '$2a$12$4HMf/TZerIaDSGG24Eoa3.mDx.UB6bdb6fGkWIU55rj7wRLgCgYVC', '2023-01-21 15:17:21.000000', 200),
        (104, 'about', 'moscow', 'email5@domain.com', 'name5', 'http://imagelink5.com', 'f', 't',
         '2023-01-10 15:17:18.280368', 'http://github.com/5', 'http://site5.com', 'http://vk.com/5',
-        'nickname5', '$2a$12$4HMf/TZerIaDSGG24Eoa3.mDx.UB6bdb6fGkWIU55rj7wRLgCgYVC', '2023-01-21 15:17:22.000000', 200);
+        'nickname5', '$2a$12$4HMf/TZerIaDSGG24Eoa3.mDx.UB6bdb6fGkWIU55rj7wRLgCgYVC', null, 200);
 
 INSERT INTO "reputation"
 ("id", "count", "persist_date", "type", "answer_id", "author_id", "question_id", "sender_id")
