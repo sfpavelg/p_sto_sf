@@ -9,10 +9,14 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.jdbc.SqlGroup;
 
+import static org.hamcrest.Matchers.containsString;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 
 
 public class TestUserResourceController extends AbstractTestApi {
@@ -88,6 +92,47 @@ public class TestUserResourceController extends AbstractTestApi {
         this.mvc.perform(get("/api/user/{id}", 150)
                         .header("Authorization", "Bearer " + jwt))
                 .andExpect(status().isNotFound());
+
+    }
+
+    @Test
+    @SqlGroup({
+            @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD,
+                    value = {"/script/TestUserResourceController/testChangeUserPassword/Before.sql"}),
+            @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD,
+                    value = {"/script/TestUserResourceController/testChangeUserPassword/After.sql"})
+    })
+    public void testChangeUserPassword() throws Exception {
+
+        String userToken = getToken("4@gmail.com", "4pwd");
+
+        // Empty password
+        this.mvc.perform(patch("/api/user/changePassword").header("Authorization", "Bearer " + userToken)
+                        .content("").contentType(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(status().isBadRequest())
+                .andExpect(content().string(containsString("The password must not be empty")));
+
+        // Short password
+        this.mvc.perform(patch("/api/user/changePassword").header("Authorization", "Bearer " + userToken)
+                        .content("1pwd").contentType(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(status().isBadRequest())
+                .andExpect(content().string("The password must be at least 6 characters long"));
+//
+        // Password of numbers
+        this.mvc.perform(patch("/api/user/changePassword").header("Authorization", "Bearer " + userToken)
+                        .content("123456").contentType(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(status().isBadRequest())
+                .andExpect(content().string("The password should not consist only of numbers"));
+
+        // Correct password
+        this.mvc.perform(patch("/api/user/changePassword").header("Authorization", "Bearer " + userToken)
+                        .content("pwd456").contentType(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().string("Password changed successfully"));
 
     }
 
