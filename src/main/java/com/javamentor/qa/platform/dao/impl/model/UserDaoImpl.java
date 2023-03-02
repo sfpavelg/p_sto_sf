@@ -19,4 +19,11 @@ public class UserDaoImpl extends ReadWriteDaoImpl<User, Long> implements UserDao
                 "SELECT u FROM User u JOIN FETCH u.role WHERE u.email = :email"
                 , User.class).setParameter("email", email));
     }
+
+    @Override
+    public void changeUserPassword(User user) {
+        entityManager.merge(user);
+    }
+
+
 }
