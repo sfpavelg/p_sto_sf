@@ -40,6 +40,7 @@ public class VoteQuestion  implements Serializable {
     @Enumerated(EnumType.STRING)
     private VoteType vote;
 
+
     public VoteQuestion(User user, Question question, VoteType vote) {
         this.user = user;
         this.question = question;

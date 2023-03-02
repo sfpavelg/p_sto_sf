@@ -209,7 +209,7 @@ class QuestionResourceControllerTest extends AbstractTestApi {
         String token = getToken("0@gmail.com", "0pwd");
 
         //success
-        this.mvc.perform(get("/api/user/question/{questionId}/upVote", 1).header("Authorization", "Bearer " + token))
+        this.mvc.perform(post("/api/user/question/{questionId}/upVote", 1).header("Authorization", "Bearer " + token))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
@@ -223,13 +223,13 @@ class QuestionResourceControllerTest extends AbstractTestApi {
                 .andExpect(jsonPath("$.questionId", Is.is(1)));
 
         //wrong id
-        this.mvc.perform(get("/api/user/question/{questionId}/upVote", 111).header("Authorization", "Bearer " + token))
+        this.mvc.perform(post("/api/user/question/{questionId}/upVote", 111).header("Authorization", "Bearer " + token))
                 .andDo(print())
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$", Is.is("QuestionDto with id = 111 not found")));
 
         //null results in DB
-        this.mvc.perform(get("/api/user/question/{questionId}/upVote", 5).header("Authorization", "Bearer " + token))
+        this.mvc.perform(post("/api/user/question/{questionId}/upVote", 5).header("Authorization", "Bearer " + token))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
@@ -252,7 +252,7 @@ class QuestionResourceControllerTest extends AbstractTestApi {
         String token = getToken("0@gmail.com", "0pwd");
 
         //success
-        this.mvc.perform(get("/api/user/question/{questionId}/upVote", 1).header("Authorization", "Bearer " + token))
+        this.mvc.perform(post("/api/user/question/{questionId}/upVote", 1).header("Authorization", "Bearer " + token))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
@@ -266,13 +266,13 @@ class QuestionResourceControllerTest extends AbstractTestApi {
                 .andExpect(jsonPath("$.questionId", Is.is(1)));
 
         //wrong id
-        this.mvc.perform(get("/api/user/question/{questionId}/upVote", 111).header("Authorization", "Bearer " + token))
+        this.mvc.perform(post("/api/user/question/{questionId}/upVote", 111).header("Authorization", "Bearer " + token))
                 .andDo(print())
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$", Is.is("QuestionDto with id = 111 not found")));
 
         //null results in DB
-        this.mvc.perform(get("/api/user/question/{questionId}/upVote", 5).header("Authorization", "Bearer " + token))
+        this.mvc.perform(post("/api/user/question/{questionId}/upVote", 5).header("Authorization", "Bearer " + token))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))

@@ -1,19 +1,21 @@
 package com.javamentor.qa.platform.webapp.controllers.rest;
 
+import com.javamentor.qa.platform.exception.VoteException;
 import com.javamentor.qa.platform.models.dto.question.QuestionCreateDto;
 import com.javamentor.qa.platform.models.dto.question.QuestionDto;
+import com.javamentor.qa.platform.models.dto.question.VoteQuestionDto;
 import com.javamentor.qa.platform.models.entity.question.Question;
+import com.javamentor.qa.platform.models.entity.question.VoteQuestion;
 import com.javamentor.qa.platform.models.entity.user.User;
+import com.javamentor.qa.platform.security.jwt.UserDetailsServiceImpl;
 import com.javamentor.qa.platform.service.abstracts.dto.question.QuestionDtoService;
 import com.javamentor.qa.platform.service.abstracts.model.QuestionService;
+import com.javamentor.qa.platform.service.abstracts.model.ReputationService;
 import com.javamentor.qa.platform.service.abstracts.model.VoteQuestionService;
 import com.javamentor.qa.platform.webapp.converters.QuestionConverter;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
+import com.javamentor.qa.platform.webapp.converters.VoteQuestionConverter;
+import io.swagger.annotations.*;
 import javassist.NotFoundException;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -25,6 +27,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 
 import javax.validation.Valid;
+import java.util.Optional;
 
 
 @RestController
@@ -35,14 +38,18 @@ public class QuestionResourceController {
     private final QuestionDtoService questionDtoService;
     private final QuestionConverter questionConverter;
     private final QuestionService questionService;
-
+    private final ReputationService reputationService;
     private final VoteQuestionService voteQuestionService;
 
-    public QuestionResourceController(QuestionDtoService questionDtoService, QuestionConverter questionConverter, QuestionService questionService, VoteQuestionService voteQuestionService) {
+    private final VoteQuestionConverter voteQuestionConverter;
+
+    public QuestionResourceController(QuestionDtoService questionDtoService, QuestionConverter questionConverter, QuestionService questionService, ReputationService reputationService, VoteQuestionService voteQuestionService, VoteQuestionConverter voteQuestionConverter) {
         this.questionDtoService = questionDtoService;
         this.questionConverter = questionConverter;
         this.questionService = questionService;
+        this.reputationService = reputationService;
         this.voteQuestionService = voteQuestionService;
+        this.voteQuestionConverter = voteQuestionConverter;
     }
 
     @GetMapping("/{id}")
@@ -75,13 +82,27 @@ public class QuestionResourceController {
             @ApiResponse(code = 200, message = "голос За учтен"),
             @ApiResponse(code = 400, message = "Голос За не учтен"),
             @ApiResponse(code = 404, message = "Вопрос не найден")})
-    public ResponseEntity<Long> upVote(@PathVariable("questionId") Long id,
-                                       @AuthenticationPrincipal User user) {
+    public ResponseEntity<?> upVote(
+            @ApiParam(name = "questionId", value = "type Long", required = true, example = "0")
+            @PathVariable Long questionId,
+            @AuthenticationPrincipal User user) {
 
-        if (voteQuestionService.getById(id).isPresent()) {
-            return ResponseEntity.ok(voteQuestionService.voteUpQuestion(user.getId(), id));
+        Optional<Question> questionOptional = questionService.getById(questionId);
+        if (!questionOptional.isPresent()) {
+            return ResponseEntity.badRequest().body("Question was not found");
         }
-        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+
+        Question question = questionOptional.get();
+        VoteQuestion voteQuestion;
+        try {
+            voteQuestion = voteQuestionService.voteUpQuestion(question, user);
+        }  catch (VoteException e) {
+            return ResponseEntity.ok(e.getMessage());
+        }
+        VoteQuestionDto responseBody = voteQuestionConverter.voteQuestionToVoteQuestionDto(voteQuestion);
+        reputationService.increaseReputationByQuestionVoteUp(question, user);
+
+        return ResponseEntity.ok(responseBody);
     }
 
     @PostMapping("/{questionId}/downVote")
@@ -90,12 +111,26 @@ public class QuestionResourceController {
             @ApiResponse(code = 200, message = "голос Против учтен"),
             @ApiResponse(code = 400, message = "Голос Против не учтен"),
             @ApiResponse(code = 404, message = "Вопрос не найден")})
-    public ResponseEntity<Long> downVote(@PathVariable("questionId") Long id,
-                                       @AuthenticationPrincipal User user) {
+    public ResponseEntity<?> downVote(
+            @ApiParam(name = "questionId", value = "type Long", required = true, example = "0")
+            @PathVariable Long questionId,
+            @AuthenticationPrincipal User user) {
 
-        if (voteQuestionService.getById(id).isPresent()) {
-            return ResponseEntity.ok(voteQuestionService.voteDownQuestion(user.getId(), id));
+        Optional<Question> questionOptional = questionService.getById(questionId);
+        if (!questionOptional.isPresent()) {
+            return ResponseEntity.badRequest().body("Question was not found");
         }
-        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+
+        Question question = questionOptional.get();
+        VoteQuestion voteQuestion;
+        try {
+            voteQuestion = voteQuestionService.voteDownQuestion(question, user);
+        }  catch (VoteException e) {
+            return ResponseEntity.ok(e.getMessage());
+        }
+        VoteQuestionDto responseBody = voteQuestionConverter.voteQuestionToVoteQuestionDto(voteQuestion);
+        reputationService.decreaseReputationByQuestionVoteDown(question, user);
+
+        return ResponseEntity.ok(responseBody);
     }
 }
