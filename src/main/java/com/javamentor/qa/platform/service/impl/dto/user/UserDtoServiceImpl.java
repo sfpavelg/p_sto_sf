@@ -36,7 +36,6 @@ public class UserDtoServiceImpl extends PageDtoService<UserDto> implements UserD
     @Override
     public PageDto<UserDto> getUsersByPersistDateTime(HashMap<String, Object> param) {
         param.put("daoDtoImpl", "paginationUserDtoDaoByRegDateImpl");
-        param.put("sortBy", "persistDateTime");
 
         return pageDto(param);
     }

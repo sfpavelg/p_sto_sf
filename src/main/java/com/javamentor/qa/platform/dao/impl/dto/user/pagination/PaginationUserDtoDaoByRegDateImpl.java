@@ -20,14 +20,13 @@ public class PaginationUserDtoDaoByRegDateImpl implements PaginationUserDtoDaoBy
     public List<UserDto> getItems(Map<String, Object> param) {
         int itemsOnPageParam = (int) param.get("itemsOnPage");
         int itemsPositionParam = (int) param.get("currentPageNumber") * itemsOnPageParam;
-        String sortParam = (String) param.get("sortBy");
 
         Query query = entityManager.createQuery(
                         "SELECT new com.javamentor.qa.platform.models.dto.user.UserDto" +
                                 "(u.id, u.email, u.fullName, u.city, u.imageLink, " +
                                 "cast(coalesce(sum(r.count), 0) as integer )) " +
                                 "from User u left join Reputation r " +
-                                "with r.author.id = u.id group by u.id order by u." + sortParam + " DESC",
+                                "with r.author.id = u.id group by u.id order by u.persistDateTime DESC",
                         UserDto.class)
                 .setMaxResults(itemsOnPageParam)
                 .setFirstResult(itemsPositionParam);

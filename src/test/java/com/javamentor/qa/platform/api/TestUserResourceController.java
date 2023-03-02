@@ -111,7 +111,7 @@ public class TestUserResourceController extends AbstractTestApi {
                         .param("currentPageNumber", "0"))
                 .andDo(print())
                 .andExpect(jsonPath("$.currentPageNumber", Is.is(0)))
-                .andExpect(jsonPath("$.totalPageCount", Is.is(0)))
+                .andExpect(jsonPath("$.totalPageCount", Is.is(1)))
                 .andExpect(jsonPath("$.totalResultCount", Is.is(5)))
                 .andExpect(jsonPath("$.itemsOnPage", Is.is(10)))
 
