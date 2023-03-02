@@ -1,19 +1,37 @@
 package com.javamentor.qa.platform.service.impl.dto.user;
 
+import com.javamentor.qa.platform.dao.abstracts.dto.PageDtoDao;
 import com.javamentor.qa.platform.dao.abstracts.dto.user.UserDtoDao;
+import com.javamentor.qa.platform.models.dto.PageDto;
 import com.javamentor.qa.platform.models.dto.user.UserDto;
+import com.javamentor.qa.platform.service.abstracts.dto.PageDtoService;
 import com.javamentor.qa.platform.service.abstracts.dto.user.UserDtoService;
 import javassist.NotFoundException;
-import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 
 @Service
-@AllArgsConstructor
-public class UserDtoServiceImpl implements UserDtoService {
+public class UserDtoServiceImpl extends PageDtoService<UserDto> implements UserDtoService {
 
     private final UserDtoDao userDtoDao;
+
+    public UserDtoServiceImpl(Map<String, PageDtoDao<UserDto>> beansMap, UserDtoDao userDtoDao) {
+        super(beansMap);
+        this.userDtoDao = userDtoDao;
+    }
+    @Override
+    public PageDto<UserDto> getAllUsersByVotes(HashMap<String, Object> param) throws NotFoundException {
+        param.put("daoDtoImpl", "userPageByVoteDtoImpl");
+        PageDto<UserDto> page = pageDto(param);
+
+        if (page.getItems().isEmpty()) {
+            throw new NotFoundException("Страница с номером " + param.get("currentPageNumber") + " не найдена");
+        }
+        return page;
+    }
 
     @Override
     public UserDto getById(Long id) throws NotFoundException {
@@ -24,4 +42,5 @@ public class UserDtoServiceImpl implements UserDtoService {
 
         throw new NotFoundException("User with id = " + id + " not found");
     }
+
 }
