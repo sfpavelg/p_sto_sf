@@ -16,6 +16,7 @@ import com.javamentor.qa.platform.webapp.converters.QuestionConverter;
 import com.javamentor.qa.platform.webapp.converters.VoteQuestionConverter;
 import io.swagger.annotations.*;
 import javassist.NotFoundException;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -133,4 +134,5 @@ public class QuestionResourceController {
 
         return ResponseEntity.ok(responseBody);
     }
+
 }
