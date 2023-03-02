@@ -11,19 +11,12 @@ import io.swagger.annotations.ApiResponses;
 import javassist.NotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-
-import java.util.Collections;
-import java.util.List;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/user/question/{questionId}/answer")
+@RequestMapping("api/user/question/{questionId}/answer")
 @Api("Контроллер для работы с Answer")
 public class AnswerResourceController {
-
     private final AnswerDtoService answerDtoService;
     private final AnswerService answerService;
 
@@ -48,4 +41,23 @@ public class AnswerResourceController {
         }
         return new ResponseEntity<>(answerDtoService.getAllByQuestionId(questionId), HttpStatus.OK);
     }
+
+
+
+    @ApiOperation(value = "Удаление ответа")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Запрос успешно выполнен"),
+            @ApiResponse(code = 400, message = "Ответ с указанным уникальным идентификатором (Id) не найден")
+    })
+    @DeleteMapping("/{answerId}")
+    public ResponseEntity<Void> deleteAnswer(@PathVariable Long answerId) {
+        if (answerService.getById(answerId).isPresent()) {
+            answerService.deleteById(answerId);
+            return new ResponseEntity<>(HttpStatus.OK);
+        }
+        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+
+    }
 }
+
+

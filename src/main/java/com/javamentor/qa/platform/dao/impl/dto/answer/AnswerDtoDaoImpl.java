@@ -13,8 +13,6 @@ import java.util.List;
 public class AnswerDtoDaoImpl implements AnswerDtoDao {
     @PersistenceContext
     private EntityManager entityManager;
-
-
     @Override
     public List<AnswerDto> getAllByQuestionId(Long id) {
         List<AnswerDto> answerDtoList = entityManager.createQuery("select new com.javamentor.qa.platform.models.dto.answer.AnswerDto(" +
