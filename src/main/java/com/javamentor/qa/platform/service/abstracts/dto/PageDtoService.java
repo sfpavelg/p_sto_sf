@@ -38,7 +38,6 @@ public class PageDtoService<T> {
     protected PageDto<T> pageDto(Map<String, Object> params) {
         PageDto<T> pageDto = new PageDto<>();
         String beanName = (String) params.get("daoDtoImpl");
-
         checkParams(params);
 
         pageDto.setTotalResultCount(beansMap.get(beanName).getTotalResultCount(params));
@@ -74,6 +73,7 @@ public class PageDtoService<T> {
         if (beansMap.get((String) params.get("daoDtoImpl")) == null) {
             throw new PaginationDtoException("The specified implementation does not exist");
         }
+
 
     }
 }

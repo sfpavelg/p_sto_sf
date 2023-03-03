@@ -136,4 +136,78 @@ public class TestUserResourceController extends AbstractTestApi {
 
     }
 
+    @Test
+    @SqlGroup({
+            @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD,
+                    value = {"/script/TestUserResourceController.testGetPageWithListUsersSortedByReputation/Before.sql"}),
+            @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD,
+                    value = {"/script/TestUserResourceController.testGetPageWithListUsersSortedByReputation/After.sql"})
+    })
+    public void testGetPageWithListUsersSortedByReputation() throws Exception {
+        JacksonJsonParser jsonParser = new JacksonJsonParser();
+        String jwt = jsonParser.parseMap(this.mvc.perform(post("/api/auth/token")
+                                .content(objectMapper.valueToTree(new AuthenticationRequest("5@gmail.com",
+                                        "5pwd")).toString())
+                                .contentType(MediaType.APPLICATION_JSON))
+                        .andExpect(status().is2xxSuccessful())
+                        .andReturn().getResponse().getContentAsString())
+                .get("token").toString();
+
+        // Positive Test. Output of the second page in order with two elements
+        this.mvc.perform(get("/api/user/reputation")
+                        .header("Authorization", "Bearer " + jwt)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .param("page", "1")
+                        .param("items", "2")
+                )
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.currentPageNumber", Is.is(1)))
+                .andExpect(jsonPath("$.totalPageCount", Is.is(25)))
+                .andExpect(jsonPath("$.totalResultCount", Is.is(50)))
+                .andExpect(jsonPath("$.itemsOnPage", Is.is(2)))
+                .andExpect(jsonPath("$.items[0].id", Is.is(103)))
+                .andExpect(jsonPath("$.items[0].email", Is.is("super2@gmail.com")))
+                .andExpect(jsonPath("$.items[0].fullName", Is.is("superfullname2")))
+                .andExpect(jsonPath("$.items[0].city", Is.is("city2")))
+                .andExpect(jsonPath("$.items[0].imageLink", Is.is("https://img.com/2")))
+                .andExpect(jsonPath("$.items[1].id", Is.is(104)))
+                .andExpect(jsonPath("$.items[1].email", Is.is("super3@gmail.com")))
+                .andExpect(jsonPath("$.items[1].fullName", Is.is("superfullname3")))
+                .andExpect(jsonPath("$.items[1].city", Is.is("city3")))
+                .andExpect(jsonPath("$.items[1].imageLink", Is.is("https://img.com/3")));
+
+        // Positive Test. Output of the second page in order without specifying the optional parameter "items"
+        this.mvc.perform(get("/api/user/reputation")
+                        .header("Authorization", "Bearer " + jwt)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .param("page", "1")
+                )
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.currentPageNumber", Is.is(1)))
+                .andExpect(jsonPath("$.totalPageCount", Is.is(5)))
+                .andExpect(jsonPath("$.totalResultCount", Is.is(50)))
+                .andExpect(jsonPath("$.itemsOnPage", Is.is(10)))
+                .andExpect(jsonPath("$.items[0].id", Is.is(111)))
+                .andExpect(jsonPath("$.items[0].email", Is.is("5@gmail.com")))
+                .andExpect(jsonPath("$.items[0].fullName", Is.is("fullname5")))
+                .andExpect(jsonPath("$.items[0].city", Is.is("city5")))
+                .andExpect(jsonPath("$.items[0].imageLink", Is.is("https://img.com/5")));
+
+        // Negative Test. A negative page is set
+        this.mvc.perform(get("/api/user/reputation")
+                        .header("Authorization", "Bearer " + jwt)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .param("page", "-1")
+                        .param("items", "1")
+                )
+                .andExpect(status().isBadRequest());
+
+        // Negative Test. GET request parameters are not set
+        this.mvc.perform(get("/api/user/reputation")
+                        .header("Authorization", "Bearer " + jwt)
+                        .contentType(MediaType.APPLICATION_JSON)
+                )
+                .andExpect(status().is4xxClientError());
+    }
+
 }
