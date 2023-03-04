@@ -12,9 +12,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Класс для возвращения PageDto<UserDto> отсортированных по количеству голосов в вопросах и ответах
- * @author Шапедько Андрей
- *  @since 02/03/2023
+ * Class for returning PageDto<UserDto> sorted by votes on Questions and Answers
  */
 @Repository
 public class UserPageByVoteDtoImpl implements UserPageByVoteDto {
@@ -28,7 +26,12 @@ public class UserPageByVoteDtoImpl implements UserPageByVoteDto {
 
         return entityManager.createQuery(
                         "SELECT new com.javamentor.qa.platform.models.dto.user.UserDto" +
-                                "(u.id, u.email, u.fullName, u.city, u.imageLink, 0) " +
+                                "(u.id, u.email, u.fullName, u.city, u.imageLink, " +
+                                "cast(coalesce((" +
+                                "       select sum(r.count) from User u2 " +
+                                "       left join Reputation r " +
+                                "       with r.author.id=u2.id and u2.id=u.id)," +
+                                "0) as integer )) " +
                                 "FROM User u " +
                                 "LEFT JOIN VoteQuestion vq1 " +
                                 "WITH vq1.vote = :up AND vq1.user.id = u.id " +
@@ -50,9 +53,6 @@ public class UserPageByVoteDtoImpl implements UserPageByVoteDto {
                 .getResultList();
     }
 
-    /**
-     * @return возвращает общее число страниц
-     */
     @Override
     public int getTotalResultCount(Map<String, Object> param) {
         Query query = entityManager.createQuery("SELECT COUNT(p) FROM User p ");

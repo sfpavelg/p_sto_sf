@@ -23,14 +23,9 @@ public class UserDtoServiceImpl extends PageDtoService<UserDto> implements UserD
         this.userDtoDao = userDtoDao;
     }
     @Override
-    public PageDto<UserDto> getAllUsersByVotes(HashMap<String, Object> param) throws NotFoundException {
+    public PageDto<UserDto> getAllUsersByVotes(HashMap<String, Object> param) {
         param.put("daoDtoImpl", "userPageByVoteDtoImpl");
-        PageDto<UserDto> page = pageDto(param);
-
-        if (page.getItems().isEmpty()) {
-            throw new NotFoundException("Страница с номером " + param.get("currentPageNumber") + " не найдена");
-        }
-        return page;
+        return pageDto(param);
     }
 
     @Override

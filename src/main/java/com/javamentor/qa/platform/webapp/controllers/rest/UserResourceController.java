@@ -14,7 +14,13 @@ import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.HashMap;
 
@@ -51,17 +57,17 @@ public class UserResourceController {
 
     @GetMapping("/vote")
     @ApiOperation(
-            value = "Получение пагинации пользователей отсортированных по количеству голосов во всех вопросах и ответах",
+            value = "Getting pagination of users sorted by the number of votes in all questions and answers",
             response = PageDto.class)
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Запрос успешно выполнен. Возвращен объект PageDto<UserDto>"),
-            @ApiResponse(code = 403, message = "Нет доступа"),
-            @ApiResponse(code = 404, message = "Запрашиваемая страница не найдена / находится вне диапазона всех страниц")})
+            @ApiResponse(code = 200, message = "Success request. PageDto has been successfully returned"),
+            @ApiResponse(code = 400, message = "Invalid password"),
+            @ApiResponse(code = 403, message = "Forbidden")})
     public ResponseEntity<PageDto<UserDto>> getUsersSortedByVote(@RequestParam(value = "page", defaultValue = "0") int currentPage,
                                                                  @RequestParam(value = "items", defaultValue = "10") int items) throws NotFoundException {
         HashMap<String, Object> parameters = new HashMap<>();
-        parameters.put("currentPageNumber", currentPage);
-        parameters.put("itemsOnPage", items);
+        parameters.put("currentPageNumber", currentPage < 0 ? 0 : currentPage);
+        parameters.put("itemsOnPage", items < 1 ? 10 : items);
         return ResponseEntity.ok(userDtoService.getAllUsersByVotes(parameters));
     }
 }

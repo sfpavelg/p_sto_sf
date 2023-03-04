@@ -43,6 +43,10 @@ public class PageDtoService<T> {
 
         pageDto.setTotalResultCount(beansMap.get(beanName).getTotalResultCount(params));
         pageDto.setItemsOnPage((int) params.get("itemsOnPage"));
+
+        if (pageDto.getItemsOnPage() > pageDto.getTotalResultCount()) {
+            pageDto.setItemsOnPage(pageDto.getTotalResultCount());
+        }
         pageDto.setTotalPageCount(pageDto.getTotalResultCount() / pageDto.getItemsOnPage());
         pageDto.setCurrentPageNumber((int) params.get("currentPageNumber"));
         pageDto.setItems(beansMap.get(beanName).getItems(params));

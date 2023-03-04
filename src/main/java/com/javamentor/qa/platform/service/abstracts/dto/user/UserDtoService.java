@@ -10,11 +10,8 @@ public interface UserDtoService {
     UserDto getById(Long id) throws NotFoundException;
 
     /**
-     * Получение пагинации всех пользователей отсортированных по голосам
-     *
-     * @param param - обязательные параметры (daoDtoImpl, itemsOnPage, currentPageNumber)
-     * @author Шапедько Андрей
-     * @since 02/03/2023
+     * @return sorted Page<UserDto> sorted by votes on Questions and Answers
+     * @param param required parameters (daoDtoImpl, itemsOnPage, currentPageNumber)
      */
     PageDto<UserDto> getAllUsersByVotes(HashMap<String, Object> param) throws NotFoundException;
 }

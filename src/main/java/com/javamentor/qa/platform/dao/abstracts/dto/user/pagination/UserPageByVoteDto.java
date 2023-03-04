@@ -4,9 +4,7 @@ import com.javamentor.qa.platform.dao.abstracts.dto.PageDtoDao;
 import com.javamentor.qa.platform.models.dto.user.UserDto;
 
 /**
- * Интерфейс для возвращения PageDto<UserDto> отсортированных по количеству голосов в вопросах и ответах
- * @author Шапедько Андрей
- * @since 02/03/2023
+ * Interface for returning PageDto<UserDto> sorted by votes on Questions and Answers
  */
 public interface UserPageByVoteDto extends PageDtoDao<UserDto> {
 }
