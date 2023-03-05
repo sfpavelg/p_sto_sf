@@ -144,15 +144,8 @@ public class TestUserResourceController extends AbstractTestApi {
                     value = {"/script/TestUserResourceController.testGetPageWithListUsersSortedByReputation/After.sql"})
     })
     public void testGetPageWithListUsersSortedByReputation() throws Exception {
-        JacksonJsonParser jsonParser = new JacksonJsonParser();
-        String jwt = jsonParser.parseMap(this.mvc.perform(post("/api/auth/token")
-                                .content(objectMapper.valueToTree(new AuthenticationRequest("5@gmail.com",
-                                        "5pwd")).toString())
-                                .contentType(MediaType.APPLICATION_JSON))
-                        .andExpect(status().is2xxSuccessful())
-                        .andReturn().getResponse().getContentAsString())
-                .get("token").toString();
-
+        // Get token
+        String jwt = getToken("5@gmail.com", "5pwd");
         // Positive Test. Output of the second page in order with two elements
         this.mvc.perform(get("/api/user/reputation")
                         .header("Authorization", "Bearer " + jwt)
@@ -170,11 +163,13 @@ public class TestUserResourceController extends AbstractTestApi {
                 .andExpect(jsonPath("$.items[0].fullName", Is.is("superfullname2")))
                 .andExpect(jsonPath("$.items[0].city", Is.is("city2")))
                 .andExpect(jsonPath("$.items[0].imageLink", Is.is("https://img.com/2")))
+                .andExpect(jsonPath("$.items[0].reputation", Is.is(3)))
                 .andExpect(jsonPath("$.items[1].id", Is.is(104)))
                 .andExpect(jsonPath("$.items[1].email", Is.is("super3@gmail.com")))
                 .andExpect(jsonPath("$.items[1].fullName", Is.is("superfullname3")))
                 .andExpect(jsonPath("$.items[1].city", Is.is("city3")))
-                .andExpect(jsonPath("$.items[1].imageLink", Is.is("https://img.com/3")));
+                .andExpect(jsonPath("$.items[1].imageLink", Is.is("https://img.com/3")))
+                .andExpect(jsonPath("$.items[1].reputation", Is.is(4)));
 
         // Positive Test. Output of the second page in order without specifying the optional parameter "items"
         this.mvc.perform(get("/api/user/reputation")
@@ -191,9 +186,10 @@ public class TestUserResourceController extends AbstractTestApi {
                 .andExpect(jsonPath("$.items[0].email", Is.is("5@gmail.com")))
                 .andExpect(jsonPath("$.items[0].fullName", Is.is("fullname5")))
                 .andExpect(jsonPath("$.items[0].city", Is.is("city5")))
-                .andExpect(jsonPath("$.items[0].imageLink", Is.is("https://img.com/5")));
+                .andExpect(jsonPath("$.items[0].imageLink", Is.is("https://img.com/5")))
+                .andExpect(jsonPath("$.items[0].reputation", Is.is(11)));
 
-        // Negative Test. A negative page is set
+        // Negative Test. A negative page number is set incorrect
         this.mvc.perform(get("/api/user/reputation")
                         .header("Authorization", "Bearer " + jwt)
                         .contentType(MediaType.APPLICATION_JSON)
@@ -209,5 +205,4 @@ public class TestUserResourceController extends AbstractTestApi {
                 )
                 .andExpect(status().is4xxClientError());
     }
-
 }

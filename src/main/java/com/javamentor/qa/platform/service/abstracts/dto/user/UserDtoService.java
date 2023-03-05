@@ -9,5 +9,5 @@ import java.util.HashMap;
 public interface UserDtoService {
     UserDto getById(Long id) throws NotFoundException;
 
-    PageDto<UserDto> getItems(HashMap<String, Object> param) throws NotFoundException;
+    PageDto<UserDto> getPageWithListUsersSortedByReputation(HashMap<String, Object> param);
 }

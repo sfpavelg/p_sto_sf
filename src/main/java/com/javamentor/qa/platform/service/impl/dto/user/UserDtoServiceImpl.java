@@ -17,10 +17,11 @@ import java.util.Optional;
 public class UserDtoServiceImpl extends PageDtoService<UserDto> implements UserDtoService {
     private final UserDtoDao userDtoDao;
 
-    public UserDtoServiceImpl(UserDtoDao userDtoDao, Map<String, PageDtoDao<UserDto>> beansMap) {
+    public UserDtoServiceImpl(Map<String, PageDtoDao<UserDto>> beansMap, UserDtoDao userDtoDao) {
         super(beansMap);
         this.userDtoDao = userDtoDao;
     }
+
 
     @Override
     public UserDto getById(Long id) throws NotFoundException {
@@ -28,20 +29,13 @@ public class UserDtoServiceImpl extends PageDtoService<UserDto> implements UserD
         if (userDtoOptional.isPresent()) {
             return userDtoOptional.get();
         }
-
         throw new NotFoundException("User with id = " + id + " not found");
     }
 
     @Override
-    public PageDto<UserDto> getItems(HashMap<String, Object> param)
-            throws NotFoundException {
-        param.put("daoDtoImpl", "userDtoDaoImpl");
-        param.put("sortBy", "count");
-        System.out.println(param);
+    public PageDto<UserDto> getPageWithListUsersSortedByReputation(HashMap<String, Object> param) {
+        param.put("daoDtoImpl", "userDtoPaginationSortedByReputationDaoImpl");
         PageDto<UserDto> page = pageDto(param);
-        if (page.getItems().isEmpty()) {
-            throw new NotFoundException("The page with " + param.get("currentPageNumber") + " number was not found");
-        }
         return page;
     }
 }
