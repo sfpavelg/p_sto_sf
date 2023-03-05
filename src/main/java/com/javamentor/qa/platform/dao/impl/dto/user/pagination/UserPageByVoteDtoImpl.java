@@ -28,9 +28,8 @@ public class UserPageByVoteDtoImpl implements UserPageByVoteDto {
                         "SELECT new com.javamentor.qa.platform.models.dto.user.UserDto" +
                                 "(u.id, u.email, u.fullName, u.city, u.imageLink, " +
                                 "cast(coalesce((" +
-                                "       select sum(r.count) from User u2 " +
-                                "       left join Reputation r " +
-                                "       with r.author.id=u2.id and u2.id=u.id)," +
+                                "       select sum(r.count) from Reputation r " +
+                                "       where r.author.id=u.id)," +
                                 "0) as integer )) " +
                                 "FROM User u " +
                                 "LEFT JOIN VoteQuestion vq1 " +
