@@ -1,13 +1,10 @@
 package com.javamentor.qa.platform.webapp.controllers.rest;
 
-import com.javamentor.qa.platform.exception.VoteException;
+
 import com.javamentor.qa.platform.models.dto.question.QuestionCreateDto;
 import com.javamentor.qa.platform.models.dto.question.QuestionDto;
-import com.javamentor.qa.platform.models.dto.question.VoteQuestionDto;
 import com.javamentor.qa.platform.models.entity.question.Question;
-import com.javamentor.qa.platform.models.entity.question.VoteQuestion;
 import com.javamentor.qa.platform.models.entity.user.User;
-import com.javamentor.qa.platform.security.jwt.UserDetailsServiceImpl;
 import com.javamentor.qa.platform.service.abstracts.dto.question.QuestionDtoService;
 import com.javamentor.qa.platform.service.abstracts.model.QuestionService;
 import com.javamentor.qa.platform.service.abstracts.model.ReputationService;
@@ -16,7 +13,6 @@ import com.javamentor.qa.platform.webapp.converters.QuestionConverter;
 import com.javamentor.qa.platform.webapp.converters.VoteQuestionConverter;
 import io.swagger.annotations.*;
 import javassist.NotFoundException;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -94,16 +90,11 @@ public class QuestionResourceController {
         }
 
         Question question = questionOptional.get();
-        VoteQuestion voteQuestion;
-        try {
-            voteQuestion = voteQuestionService.voteUpQuestion(question, user);
-        }  catch (VoteException e) {
-            return ResponseEntity.ok(e.getMessage());
-        }
-        VoteQuestionDto responseBody = voteQuestionConverter.voteQuestionToVoteQuestionDto(voteQuestion);
+        voteQuestionService.voteUpQuestion(question, user);
+        voteQuestionConverter.voteQuestionToVoteQuestionDto(voteQuestionService.voteUpQuestion(question, user));
         reputationService.increaseReputationByQuestionVoteUp(question, user);
 
-        return ResponseEntity.ok(responseBody);
+        return ResponseEntity.ok(voteQuestionService.voteDownQuestion(question, user));
     }
 
     @PostMapping("/{questionId}/downVote")
@@ -121,18 +112,11 @@ public class QuestionResourceController {
         if (!questionOptional.isPresent()) {
             return ResponseEntity.badRequest().body("Question was not found");
         }
-
         Question question = questionOptional.get();
-        VoteQuestion voteQuestion;
-        try {
-            voteQuestion = voteQuestionService.voteDownQuestion(question, user);
-        }  catch (VoteException e) {
-            return ResponseEntity.ok(e.getMessage());
-        }
-        VoteQuestionDto responseBody = voteQuestionConverter.voteQuestionToVoteQuestionDto(voteQuestion);
+        voteQuestionConverter.voteQuestionToVoteQuestionDto(voteQuestionService.voteDownQuestion(question, user));
         reputationService.decreaseReputationByQuestionVoteDown(question, user);
 
-        return ResponseEntity.ok(responseBody);
-    }
 
+        return ResponseEntity.ok(voteQuestionService.voteDownQuestion(question, user));
+        }
 }

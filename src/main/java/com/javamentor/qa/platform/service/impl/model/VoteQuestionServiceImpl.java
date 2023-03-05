@@ -8,7 +8,6 @@ import com.javamentor.qa.platform.models.entity.question.Question;
 import com.javamentor.qa.platform.models.entity.question.VoteQuestion;
 import com.javamentor.qa.platform.models.entity.question.answer.VoteType;
 import com.javamentor.qa.platform.models.entity.user.User;
-import com.javamentor.qa.platform.models.entity.user.reputation.Reputation;
 import com.javamentor.qa.platform.service.abstracts.dto.answer.VoteQuestionDtoService;
 import com.javamentor.qa.platform.service.abstracts.model.VoteQuestionService;
 import org.springframework.stereotype.Service;
@@ -46,26 +45,22 @@ public class VoteQuestionServiceImpl extends ReadWriteServiceImpl<VoteQuestion, 
     @Transactional
     public VoteQuestion voteUpQuestion(Question question, User user) {
 
-        VoteQuestion voteQuestion = null;
-
         if (isUserAlreadyVoted(question, user)) {
             Optional<VoteQuestionDto> optionalVoteQuestion = voteQuestionDtoService.getVoteByQuestionIdAndUserId(question.getId(), user.getId());
             if (optionalVoteQuestion.isPresent()) {
                 int voteValue = optionalVoteQuestion.get().getVote();
-                if (voteValue == 1) {
+                VoteQuestion voteQuestion = new VoteQuestion(user, question, VoteType.UP_VOTE);
+                if (voteValue == -1) {
                     voteQuestionDao.deleteById(optionalVoteQuestion.get().getId());
-                } else if (voteValue == -1) {
-                    voteQuestionDao.deleteById(optionalVoteQuestion.get().getId());
-                    voteQuestion = new VoteQuestion(user, question, VoteType.UP_VOTE);
                     voteQuestionDao.persist(voteQuestion);
                 }
                 return voteQuestion;
+
             }
             throw new VoteException("Can't change vote");
         }
 
-
-        voteQuestion = new VoteQuestion(user, question, VoteType.UP_VOTE);
+        VoteQuestion voteQuestion = new VoteQuestion(user, question, VoteType.UP_VOTE);
         voteQuestionDao.persist(voteQuestion);
 
         return voteQuestion;
@@ -78,17 +73,13 @@ public class VoteQuestionServiceImpl extends ReadWriteServiceImpl<VoteQuestion, 
     @Transactional
     public VoteQuestion voteDownQuestion(Question question, User user) {
 
-        VoteQuestion voteQuestion = null;
-
-        if(isUserAlreadyVoted(question, user)) {
+        if (isUserAlreadyVoted(question, user)) {
             Optional<VoteQuestionDto> optionalVoteQuestion = voteQuestionDtoService.getVoteByQuestionIdAndUserId(question.getId(), user.getId());
             if (optionalVoteQuestion.isPresent()) {
                 int voteValue = optionalVoteQuestion.get().getVote();
-                if (voteValue == -1) {
-                    voteQuestionDao.deleteById((optionalVoteQuestion.get().getId()));
-                } else if (voteValue == 1) {
+                VoteQuestion voteQuestion = new VoteQuestion(user, question, VoteType.DOWN_VOTE);
+                if (voteValue == 1) {
                     voteQuestionDao.deleteById(optionalVoteQuestion.get().getId());
-                    voteQuestion = new VoteQuestion(user, question, VoteType.DOWN_VOTE);
                     voteQuestionDao.persist(voteQuestion);
                 }
                 return voteQuestion;
@@ -96,7 +87,7 @@ public class VoteQuestionServiceImpl extends ReadWriteServiceImpl<VoteQuestion, 
             throw new VoteException("Can't change vote");
         }
 
-        voteQuestion = new VoteQuestion(user, question, VoteType.DOWN_VOTE);
+        VoteQuestion voteQuestion = new VoteQuestion(user, question, VoteType.DOWN_VOTE);
         voteQuestionDao.persist(voteQuestion);
 
         return voteQuestion;
