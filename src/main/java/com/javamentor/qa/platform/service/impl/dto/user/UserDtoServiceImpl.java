@@ -15,6 +15,7 @@ import java.util.Optional;
 
 @Service
 public class UserDtoServiceImpl extends PageDtoService<UserDto> implements UserDtoService {
+
     private final UserDtoDao userDtoDao;
 
     public UserDtoServiceImpl(Map<String, PageDtoDao<UserDto>> beansMap, UserDtoDao userDtoDao) {
@@ -22,13 +23,13 @@ public class UserDtoServiceImpl extends PageDtoService<UserDto> implements UserD
         this.userDtoDao = userDtoDao;
     }
 
-
     @Override
     public UserDto getById(Long id) throws NotFoundException {
         Optional<UserDto> userDtoOptional = userDtoDao.getById(id);
         if (userDtoOptional.isPresent()) {
             return userDtoOptional.get();
         }
+
         throw new NotFoundException("User with id = " + id + " not found");
     }
 
@@ -37,5 +38,12 @@ public class UserDtoServiceImpl extends PageDtoService<UserDto> implements UserD
         param.put("daoDtoImpl", "userDtoPaginationSortedByReputationDaoImpl");
         PageDto<UserDto> page = pageDto(param);
         return page;
+    }
+
+    @Override
+    public PageDto<UserDto> getUsersByPersistDateTime(HashMap<String, Object> param) {
+        param.put("daoDtoImpl", "paginationUserDtoDaoByRegDateImpl");
+
+        return pageDto(param);
     }
 }

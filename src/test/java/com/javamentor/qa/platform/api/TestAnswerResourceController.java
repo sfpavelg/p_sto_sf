@@ -1,20 +1,16 @@
 package com.javamentor.qa.platform.api;
 
 import com.javamentor.qa.platform.AbstractTestApi;
-import com.javamentor.qa.platform.security.jwt.AuthenticationRequest;
 import org.hamcrest.core.Is;
 import org.hamcrest.core.IsNull;
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.json.JacksonJsonParser;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.jdbc.SqlGroup;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 
 public class TestAnswerResourceController extends AbstractTestApi {
 
