@@ -58,6 +58,7 @@ public class TestPaginationUserByVotes extends AbstractTestApi {
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.totalPageCount", Is.is(1)))
+                .andExpect(jsonPath("$.totalResultCount", Is.is(5)))
                 .andExpect(jsonPath("$.currentPageNumber", Is.is(0)))
                 .andExpect(jsonPath("$.items.size()", Is.is(5)))
                 .andExpect(jsonPath("$.items[0].id", Is.is(dto3.getId().intValue())))
@@ -100,6 +101,7 @@ public class TestPaginationUserByVotes extends AbstractTestApi {
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.totalPageCount", Is.is(5)))
+                .andExpect(jsonPath("$.totalResultCount", Is.is(5)))
                 .andExpect(jsonPath("$.currentPageNumber", Is.is(4)))
                 .andExpect(jsonPath("$.items[0].id", Is.is(dto0.getId().intValue())))
                 .andExpect(jsonPath("$.items[0].email", Is.is(dto0.getEmail())))
@@ -116,7 +118,8 @@ public class TestPaginationUserByVotes extends AbstractTestApi {
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.totalPageCount", Is.is(2)))
+                .andExpect(jsonPath("$.totalPageCount", Is.is(3)))
+                .andExpect(jsonPath("$.totalResultCount", Is.is(5)))
                 .andExpect(jsonPath("$.currentPageNumber", Is.is(1)))
                 .andExpect(jsonPath("$.items.size()", Is.is(2)))
                 .andExpect(jsonPath("$.items[0].id", Is.is(dto4.getId().intValue())))
@@ -146,6 +149,7 @@ public class TestPaginationUserByVotes extends AbstractTestApi {
                         .header("Authorization", "Bearer " + token))
                 .andDo(print())
                 .andExpect(jsonPath("$.totalPageCount", Is.is(1)))
+                .andExpect(jsonPath("$.totalResultCount", Is.is(5)))
                 .andExpect(jsonPath("$.currentPageNumber", Is.is(0)));
     }
 }
