@@ -8,7 +8,9 @@ import com.javamentor.qa.platform.models.entity.question.Question;
 import com.javamentor.qa.platform.models.entity.question.VoteQuestion;
 import com.javamentor.qa.platform.models.entity.question.answer.VoteType;
 import com.javamentor.qa.platform.models.entity.user.User;
+import com.javamentor.qa.platform.models.entity.user.reputation.Reputation;
 import com.javamentor.qa.platform.service.abstracts.dto.answer.VoteQuestionDtoService;
+import com.javamentor.qa.platform.service.abstracts.model.ReputationService;
 import com.javamentor.qa.platform.service.abstracts.model.VoteQuestionService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,17 +24,19 @@ public class VoteQuestionServiceImpl extends ReadWriteServiceImpl<VoteQuestion, 
 
     private final VoteQuestionDtoService voteQuestionDtoService;
     private final VoteQuestionDao voteQuestionDao;
+    private final ReputationService reputationService;
 
 
-    public VoteQuestionServiceImpl(ReadWriteDao<VoteQuestion, Long> readWriteDao,   VoteQuestionDtoService voteQuestionDtoService,  VoteQuestionDao voteQuestionDao) {
+    public VoteQuestionServiceImpl(ReadWriteDao<VoteQuestion, Long> readWriteDao, VoteQuestionDtoService voteQuestionDtoService, VoteQuestionDao voteQuestionDao, ReputationService reputationService) {
         super(readWriteDao);
         this.voteQuestionDtoService = voteQuestionDtoService;
         this.voteQuestionDao = voteQuestionDao;
+        this.reputationService = reputationService;
     }
 
     @Override
     public boolean isUserAlreadyVoted(Question question, User user) {
-        List<VoteQuestion> list = question.getVoteQuestions();
+        List<VoteQuestion> list = question.getVoteQuestions(); // не понимаю тогда как проверить голосовал ли пользователь
         for (VoteQuestion voteQuestion : list) {
             if (voteQuestion.getUser().getId().equals(user.getId())) {
                 return true;
@@ -44,7 +48,6 @@ public class VoteQuestionServiceImpl extends ReadWriteServiceImpl<VoteQuestion, 
     @Override
     @Transactional
     public VoteQuestion voteUpQuestion(Question question, User user) {
-
         if (isUserAlreadyVoted(question, user)) {
             Optional<VoteQuestionDto> optionalVoteQuestion = voteQuestionDtoService.getVoteByQuestionIdAndUserId(question.getId(), user.getId());
             if (optionalVoteQuestion.isPresent()) {
@@ -53,6 +56,8 @@ public class VoteQuestionServiceImpl extends ReadWriteServiceImpl<VoteQuestion, 
                 if (voteValue == -1) {
                     voteQuestionDao.deleteById(optionalVoteQuestion.get().getId());
                     voteQuestionDao.persist(voteQuestion);
+                    reputationService.deleteReputationByQuestionVoteDown(question, user);
+
                 }
                 return voteQuestion;
 
@@ -81,6 +86,7 @@ public class VoteQuestionServiceImpl extends ReadWriteServiceImpl<VoteQuestion, 
                 if (voteValue == 1) {
                     voteQuestionDao.deleteById(optionalVoteQuestion.get().getId());
                     voteQuestionDao.persist(voteQuestion);
+                    reputationService.deleteReputationByQuestionVoteUp(question, user);
                 }
                 return voteQuestion;
             }

@@ -47,4 +47,29 @@ public class ReputationServiceImpl extends ReadWriteServiceImpl<Reputation, Long
         return reputation;
     }
 
+    @Override
+    public Reputation deleteReputationByQuestionVoteUp(Question question, User voteSender) {
+        Reputation reputation = new Reputation();
+        reputation.setType(ReputationType.VoteQuestion);
+        reputation.setQuestion(question);
+        reputation.setAuthor(question.getUser());
+        reputation.setSender(voteSender);
+        reputation.setCount(-10);
+
+        return reputation;
+    }
+
+    @Override
+    public Reputation deleteReputationByQuestionVoteDown(Question question, User voteSender) {
+        Reputation reputation = new Reputation();
+        reputation.setType(ReputationType.VoteQuestion);
+        reputation.setQuestion(question);
+        reputation.setAuthor(question.getUser());
+        reputation.setSender(voteSender);
+        reputation.setCount(+5);
+
+        return reputation;
+
+    }
+
 }
