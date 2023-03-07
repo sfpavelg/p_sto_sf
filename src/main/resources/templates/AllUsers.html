@@ -8,8 +8,8 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet"
           integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous">
 </head>
-<body>
-<div style="flex: 1 0 auto; padding-left: 270px; padding-top: 86px;">
+<body class="d-flex flex-column min-vh-100">
+<div style="flex: 1 0 auto; padding-left: 270px; padding-top: 86px; min-height: 100%; position:relative;">
     <div class="mb-3">
         <h1>Пользователи</h1>
     </div>
@@ -64,7 +64,65 @@
         </ul>
     </div>
 
-    <div class="container-fluid mb-3" id="users">
+    <div class="row mb-3">
+        <div class="d-flex gap-3" id="users">
+            <div class="card">
+                <div class="row" >
+                    <div class="col">
+                        <img src="https://lh3.googleusercontent.com/a/ALm5wu178B8Q96YQnkY2nxqK1oDsIGz4D3dcpioLXxai=k-s256" width="50" height="50">
+                    </div>
+                    <div class="col">
+                        <a href="#">Имя пользователя</a>
+                        <a>131</a>
+                        <a>tag</a>
+                        ", "
+                        <a>tag</a>
+                    </div>
+                </div>
+            </div>
+            <div class="card">
+                <div class="row" >
+                    <div class="col">
+                        <img src="https://stackoverflow.com/users/20292772/albert-shown" width="50" height="50">
+                    </div>
+                    <div class="col">
+                        <a href="#">Имя пользователя</a>
+                        <a>131</a>
+                        <a>tag</a>
+                        ", "
+                        <a>tag</a>
+                    </div>
+                </div>
+            </div>
+            <div class="card">
+                <div class="row" >
+                    <div class="col">
+                        <img src="https://stackoverflow.com/users/20292772/albert-shown" width="50" height="50">
+                    </div>
+                    <div class="col">
+                        <a href="#">Имя пользователя</a>
+                        <a>131</a>
+                        <a>tag</a>
+                        ", "
+                        <a>tag</a>
+                    </div>
+                </div>
+            </div>
+            <div class="card">
+                <div class="row" >
+                    <div class="col">
+                        <img src="https://stackoverflow.com/users/20292772/albert-shown" width="50" height="50">
+                    </div>
+                    <div class="col">
+                        <a href="#">Имя пользователя</a>
+                        <a>131</a>
+                        <a>tag</a>
+                        ", "
+                        <a>tag</a>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 
     <nav aria-label="Пагинация по пользователям">

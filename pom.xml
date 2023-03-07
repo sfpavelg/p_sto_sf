@@ -19,6 +19,13 @@
         <org.mapstruct.version>1.4.1.Final</org.mapstruct.version>
     </properties>
     <dependencies>
+
+        <dependency>
+            <groupId>org.webjars</groupId>
+            <artifactId>bootstrap</artifactId>
+            <version>5.2.3</version>
+        </dependency>
+
         <dependency>
             <groupId>org.mapstruct</groupId>
             <artifactId>mapstruct</artifactId>
