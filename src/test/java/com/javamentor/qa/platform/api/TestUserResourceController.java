@@ -11,12 +11,12 @@ import org.springframework.test.context.jdbc.SqlGroup;
 
 import static org.hamcrest.Matchers.containsString;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 
 public class TestUserResourceController extends AbstractTestApi {
@@ -95,6 +95,80 @@ public class TestUserResourceController extends AbstractTestApi {
 
     }
 
+
+    @Test
+    @SqlGroup({
+            @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD,
+                    value = {"/script/TestUserResourceController.testGetUsersByPersistDateAndTime/Before.sql"}),
+            @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD,
+                    value = {"/script/TestUserResourceController.testGetUsersByPersistDateAndTime/After.sql"})
+    })
+    public void testGetAllUsersByPersistDateAndTime() throws Exception {
+
+        String token = getToken("email5@domain.com", "password");
+
+//  Successful test (The newest user shown first). Works with null reg date. User with null reg date shown first
+        this.mvc.perform(get("/api/user/new")
+                        .header("Authorization", "Bearer " + token)
+                        .param("currentPageNumber", "0"))
+                .andDo(print())
+                .andExpect(jsonPath("$.currentPageNumber", Is.is(0)))
+                .andExpect(jsonPath("$.totalPageCount", Is.is(1)))
+                .andExpect(jsonPath("$.totalResultCount", Is.is(5)))
+                .andExpect(jsonPath("$.itemsOnPage", Is.is(10)))
+
+                .andExpect(jsonPath("$.items[0].id", Is.is(104)))
+                .andExpect(jsonPath("$.items[0].email", Is.is("email5@domain.com")))
+                .andExpect(jsonPath("$.items[0].fullName", Is.is("name5")))
+                .andExpect(jsonPath("$.items[0].city", Is.is("moscow")))
+                .andExpect(jsonPath("$.items[0].imageLink", Is.is("http://imagelink5.com")))
+                .andExpect(jsonPath("$.items[0].reputation", Is.is(0)))
+
+                .andExpect(jsonPath("$.items[1].id", Is.is(103)))
+                .andExpect(jsonPath("$.items[1].email", Is.is("email4@domain.com")))
+                .andExpect(jsonPath("$.items[1].fullName", Is.is("name4")))
+                .andExpect(jsonPath("$.items[1].city", Is.is("spb")))
+                .andExpect(jsonPath("$.items[1].imageLink", Is.is("http://imagelink4.com")))
+                .andExpect(jsonPath("$.items[1].reputation", Is.is(8)))
+
+                .andExpect(jsonPath("$.items[2].id", Is.is(102)))
+                .andExpect(jsonPath("$.items[2].email", Is.is("email3@domain.com")))
+                .andExpect(jsonPath("$.items[2].fullName", Is.is("name3")))
+                .andExpect(jsonPath("$.items[2].city", Is.is("NY")))
+                .andExpect(jsonPath("$.items[2].imageLink", Is.is("http://imagelink3.com")))
+                .andExpect(jsonPath("$.items[2].reputation", Is.is(11)))
+
+                .andExpect(jsonPath("$.items[3].id", Is.is(101)))
+                .andExpect(jsonPath("$.items[3].email", Is.is("email2@domain.com")))
+                .andExpect(jsonPath("$.items[3].fullName", Is.is("name2")))
+                .andExpect(jsonPath("$.items[3].city", Is.is("spb")))
+                .andExpect(jsonPath("$.items[3].imageLink", Is.is("http://imagelink2.com")))
+                .andExpect(jsonPath("$.items[3].reputation", Is.is(14)))
+
+                .andExpect(jsonPath("$.items[4].id", Is.is(100)))
+                .andExpect(jsonPath("$.items[4].email", Is.is("email1@domain.com")))
+                .andExpect(jsonPath("$.items[4].fullName", Is.is("name1")))
+                .andExpect(jsonPath("$.items[4].city", Is.is("moscow")))
+                .andExpect(jsonPath("$.items[4].imageLink", Is.is("http://imagelink1.com")))
+                .andExpect(jsonPath("$.items[4].reputation", Is.is(6)));
+
+//  Successful test on not existing page
+        this.mvc.perform(get("/api/user/new")
+                        .header("Authorization", "Bearer " + token)
+                        .param("currentPageNumber", "5"))
+                .andDo(print())
+                .andExpect(jsonPath("$.items").isEmpty())
+                .andExpect(status().isOk());
+
+//  Page with negative number can not be found
+        this.mvc.perform(get("/api/user/new")
+                        .header("Authorization", "Bearer " + token)
+                        .param("currentPageNumber", "-1"))
+                .andDo(print())
+                .andExpect(status().isBadRequest());
+    }
+
+
     @Test
     @SqlGroup({
             @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD,
@@ -135,5 +209,4 @@ public class TestUserResourceController extends AbstractTestApi {
                 .andExpect(content().string("Password changed successfully"));
 
     }
-
 }

@@ -22,6 +22,11 @@ public class UserDtoServiceImpl extends PageDtoService<UserDto> implements UserD
         super(beansMap);
         this.userDtoDao = userDtoDao;
     }
+
+    public UserDtoServiceImpl(Map<String, PageDtoDao<UserDto>> beansMap, UserDtoDao userDtoDao) {
+        super(beansMap);
+        this.userDtoDao = userDtoDao;
+    }
     @Override
     public PageDto<UserDto> getAllUsersByVotes(HashMap<String, Object> param) {
         param.put("daoDtoImpl", "userPageByVoteDtoImpl");
@@ -38,4 +43,10 @@ public class UserDtoServiceImpl extends PageDtoService<UserDto> implements UserD
         throw new NotFoundException("User with id = " + id + " not found");
     }
 
+    @Override
+    public PageDto<UserDto> getUsersByPersistDateTime(HashMap<String, Object> param) {
+        param.put("daoDtoImpl", "paginationUserDtoDaoByRegDateImpl");
+
+        return pageDto(param);
+    }
 }

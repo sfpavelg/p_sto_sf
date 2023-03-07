@@ -8,10 +8,5 @@ import java.util.HashMap;
 
 public interface UserDtoService {
     UserDto getById(Long id) throws NotFoundException;
-
-    /**
-     * @return sorted Page<UserDto> sorted by votes on Questions and Answers
-     * @param param required parameters (daoDtoImpl, itemsOnPage, currentPageNumber)
-     */
-    PageDto<UserDto> getAllUsersByVotes(HashMap<String, Object> param) throws NotFoundException;
+    PageDto<UserDto> getUsersByPersistDateTime(HashMap<String, Object> param) throws NotFoundException;
 }
