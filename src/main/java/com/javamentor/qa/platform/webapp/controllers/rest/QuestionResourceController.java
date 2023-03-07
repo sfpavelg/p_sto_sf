@@ -91,7 +91,6 @@ public class QuestionResourceController {
         Question question = questionOptional.get();
         voteQuestionService.voteUpQuestion(question, user);
         voteQuestionConverter.voteQuestionToVoteQuestionDto(voteQuestionService.voteUpQuestion(question, user));
-        reputationService.increaseReputationByQuestionVoteUp(question, user);
 
         return ResponseEntity.ok(voteQuestionService.voteDownQuestion(question, user));
     }
@@ -113,8 +112,6 @@ public class QuestionResourceController {
         }
         Question question = questionOptional.get();
         voteQuestionConverter.voteQuestionToVoteQuestionDto(voteQuestionService.voteDownQuestion(question, user));
-        reputationService.decreaseReputationByQuestionVoteDown(question, user);
-
 
         return ResponseEntity.ok(voteQuestionService.voteDownQuestion(question, user));
         }

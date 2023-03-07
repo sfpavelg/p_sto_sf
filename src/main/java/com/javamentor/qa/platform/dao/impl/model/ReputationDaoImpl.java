@@ -27,4 +27,14 @@ public class ReputationDaoImpl extends ReadWriteDaoImpl<Reputation, Long> implem
         return SingleResultUtil.getSingleResultOrNull(query);
 
     }
+
+    @Override
+    public void deleteReputation(Long userId, Long questionId) {
+        entityManager.createQuery("delete r from Reputation where sender.id =:senderId" +
+                        "and question.id =:question.Id", Reputation.class)
+                .setParameter("senderId", userId)
+                .setParameter("questionId", questionId)
+                .executeUpdate();
+
+    }
 }

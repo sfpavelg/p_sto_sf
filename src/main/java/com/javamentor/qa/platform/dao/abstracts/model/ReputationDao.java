@@ -7,4 +7,5 @@ import java.util.Optional;
 public interface ReputationDao extends ReadWriteDao<Reputation, Long> {
 
     Optional<Reputation> getReputationByQuestionVoteSenderId(Long userId, Long questionId);
+    void deleteReputation(Long userId, Long questionId);
 }

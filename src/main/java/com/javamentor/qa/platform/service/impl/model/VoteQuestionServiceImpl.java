@@ -8,7 +8,6 @@ import com.javamentor.qa.platform.models.entity.question.Question;
 import com.javamentor.qa.platform.models.entity.question.VoteQuestion;
 import com.javamentor.qa.platform.models.entity.question.answer.VoteType;
 import com.javamentor.qa.platform.models.entity.user.User;
-import com.javamentor.qa.platform.models.entity.user.reputation.Reputation;
 import com.javamentor.qa.platform.service.abstracts.dto.answer.VoteQuestionDtoService;
 import com.javamentor.qa.platform.service.abstracts.model.ReputationService;
 import com.javamentor.qa.platform.service.abstracts.model.VoteQuestionService;
@@ -56,7 +55,8 @@ public class VoteQuestionServiceImpl extends ReadWriteServiceImpl<VoteQuestion, 
                 if (voteValue == -1) {
                     voteQuestionDao.deleteById(optionalVoteQuestion.get().getId());
                     voteQuestionDao.persist(voteQuestion);
-                    reputationService.deleteReputationByQuestionVoteDown(question, user);
+                    reputationService.deleteReputation(question, user);
+                    reputationService.increaseReputationByQuestionVoteUp(question, user);
 
                 }
                 return voteQuestion;
@@ -67,6 +67,7 @@ public class VoteQuestionServiceImpl extends ReadWriteServiceImpl<VoteQuestion, 
 
         VoteQuestion voteQuestion = new VoteQuestion(user, question, VoteType.UP_VOTE);
         voteQuestionDao.persist(voteQuestion);
+        reputationService.increaseReputationByQuestionVoteUp(question, user);
 
         return voteQuestion;
     }
@@ -86,7 +87,8 @@ public class VoteQuestionServiceImpl extends ReadWriteServiceImpl<VoteQuestion, 
                 if (voteValue == 1) {
                     voteQuestionDao.deleteById(optionalVoteQuestion.get().getId());
                     voteQuestionDao.persist(voteQuestion);
-                    reputationService.deleteReputationByQuestionVoteUp(question, user);
+                    reputationService.deleteReputation(question, user);
+                    reputationService.decreaseReputationByQuestionVoteDown(question, user);
                 }
                 return voteQuestion;
             }
@@ -95,6 +97,7 @@ public class VoteQuestionServiceImpl extends ReadWriteServiceImpl<VoteQuestion, 
 
         VoteQuestion voteQuestion = new VoteQuestion(user, question, VoteType.DOWN_VOTE);
         voteQuestionDao.persist(voteQuestion);
+        reputationService.decreaseReputationByQuestionVoteDown(question, user);
 
         return voteQuestion;
     }
