@@ -23,10 +23,6 @@ public class UserDtoServiceImpl extends PageDtoService<UserDto> implements UserD
         this.userDtoDao = userDtoDao;
     }
 
-    public UserDtoServiceImpl(Map<String, PageDtoDao<UserDto>> beansMap, UserDtoDao userDtoDao) {
-        super(beansMap);
-        this.userDtoDao = userDtoDao;
-    }
     @Override
     public PageDto<UserDto> getAllUsersByVotes(HashMap<String, Object> param) {
         param.put("daoDtoImpl", "userPageByVoteDtoImpl");

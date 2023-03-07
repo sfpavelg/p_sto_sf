@@ -1,5 +1,6 @@
 package com.javamentor.qa.platform.webapp.controllers.rest;
 
+import com.javamentor.qa.platform.models.dto.PageDto;
 import com.javamentor.qa.platform.models.dto.user.UserDto;
 import com.javamentor.qa.platform.models.entity.user.User;
 import com.javamentor.qa.platform.service.abstracts.dto.user.UserDtoService;
@@ -49,7 +50,7 @@ public class UserResourceController {
             @ApiResponse(code = 200, message = "Success request. UserDto object returned in response"),
             @ApiResponse(code = 403, message = "Forbidden"),
             @ApiResponse(code = 404, message = "Users don't exist")})
-    public ResponseEntity<?> getAllUsersByPersistDateAndTime(@RequestParam(defaultValue = "0") int currentPageNumber,
+    public ResponseEntity<?> getAllUsersByPersistDateAndTime(@RequestParam(defaultValue = "1") int currentPageNumber,
                                          @RequestParam(defaultValue = "10") int itemsOnPage) throws NotFoundException {
         HashMap<String, Object> param = new HashMap<>();
         param.put("currentPageNumber", currentPageNumber);
@@ -67,4 +68,21 @@ public class UserResourceController {
         userService.changeUserPassword(userPassword, (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal());
         return new ResponseEntity<>("Password changed successfully", HttpStatus.OK);
     }
+
+    @GetMapping("/vote")
+    @ApiOperation(
+            value = "Getting pagination of users sorted by the number of votes in all questions and answers",
+            response = PageDto.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Success request. PageDto has been successfully returned"),
+            @ApiResponse(code = 400, message = "Invalid password"),
+            @ApiResponse(code = 403, message = "Forbidden")})
+    public ResponseEntity<PageDto<UserDto>> getUsersSortedByVote(@RequestParam(value = "page", defaultValue = "1") int currentPage,
+                                                                 @RequestParam(value = "items", defaultValue = "10") int items) throws NotFoundException {
+        HashMap<String, Object> parameters = new HashMap<>();
+        parameters.put("currentPageNumber", currentPage);
+        parameters.put("itemsOnPage", items);
+        return ResponseEntity.ok(userDtoService.getAllUsersByVotes(parameters));
+    }
+
 }
