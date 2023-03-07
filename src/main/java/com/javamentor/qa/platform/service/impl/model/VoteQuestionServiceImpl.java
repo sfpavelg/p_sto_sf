@@ -50,9 +50,8 @@ public class VoteQuestionServiceImpl extends ReadWriteServiceImpl<VoteQuestion, 
         if (isUserAlreadyVoted(question, user)) {
             Optional<VoteQuestionDto> optionalVoteQuestion = voteQuestionDtoService.getVoteByQuestionIdAndUserId(question.getId(), user.getId());
             if (optionalVoteQuestion.isPresent()) {
-                int voteValue = optionalVoteQuestion.get().getVote();
                 VoteQuestion voteQuestion = new VoteQuestion(user, question, VoteType.UP_VOTE);
-                if (voteValue == -1) {
+                if (voteQuestion.getVote()== VoteType.DOWN_VOTE) {
                     voteQuestionDao.deleteById(optionalVoteQuestion.get().getId());
                     voteQuestionDao.persist(voteQuestion);
                     reputationService.deleteReputation(question.getId(), user.getId());
@@ -82,9 +81,8 @@ public class VoteQuestionServiceImpl extends ReadWriteServiceImpl<VoteQuestion, 
         if (isUserAlreadyVoted(question, user)) {
             Optional<VoteQuestionDto> optionalVoteQuestion = voteQuestionDtoService.getVoteByQuestionIdAndUserId(question.getId(), user.getId());
             if (optionalVoteQuestion.isPresent()) {
-                int voteValue = optionalVoteQuestion.get().getVote();
                 VoteQuestion voteQuestion = new VoteQuestion(user, question, VoteType.DOWN_VOTE);
-                if (voteValue == 1) {
+                if (voteQuestion.getVote() == VoteType.UP_VOTE) {
                     voteQuestionDao.deleteById(optionalVoteQuestion.get().getId());
                     voteQuestionDao.persist(voteQuestion);
                     reputationService.deleteReputation(question.getId(), user.getId());
