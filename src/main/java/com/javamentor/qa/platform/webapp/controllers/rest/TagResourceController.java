@@ -12,11 +12,7 @@ import io.swagger.annotations.ApiResponses;
 import javassist.NotFoundException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
@@ -86,6 +82,17 @@ public class TagResourceController {
     public ResponseEntity<?> getAllUserIgnoredTag()  {
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         return ResponseEntity.ok(tagDtoService.getIgnoredTagByUserId(user.getId()));
+    }
+
+    @GetMapping("/new")
+    @ApiOperation(value = "Getting list of latest tags", response = List.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Success request. List of latest tags returned"),
+            @ApiResponse(code = 401, message = "Unauthorized request"),
+            @ApiResponse(code = 403, message = "Forbidden")})
+    public ResponseEntity<?> getSortedByDateTagList(@RequestParam(defaultValue = "1") int currentPageNumber,
+                                                    @RequestParam(defaultValue = "2") int itemsOnPage)throws NotFoundException{
+       return ResponseEntity.ok(tagDtoService.getSortedByDateTagList(itemsOnPage, currentPageNumber));
     }
 
 
