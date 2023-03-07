@@ -55,7 +55,7 @@ public class VoteQuestionServiceImpl extends ReadWriteServiceImpl<VoteQuestion, 
                 if (voteValue == -1) {
                     voteQuestionDao.deleteById(optionalVoteQuestion.get().getId());
                     voteQuestionDao.persist(voteQuestion);
-                    reputationService.deleteReputation(question, user);
+                    reputationService.deleteReputation(question.getId(), user.getId());
                     reputationService.increaseReputationByQuestionVoteUp(question, user);
 
                 }
@@ -87,7 +87,7 @@ public class VoteQuestionServiceImpl extends ReadWriteServiceImpl<VoteQuestion, 
                 if (voteValue == 1) {
                     voteQuestionDao.deleteById(optionalVoteQuestion.get().getId());
                     voteQuestionDao.persist(voteQuestion);
-                    reputationService.deleteReputation(question, user);
+                    reputationService.deleteReputation(question.getId(), user.getId());
                     reputationService.decreaseReputationByQuestionVoteDown(question, user);
                 }
                 return voteQuestion;

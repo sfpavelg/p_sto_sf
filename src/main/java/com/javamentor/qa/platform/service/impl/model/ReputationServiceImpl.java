@@ -48,8 +48,8 @@ public class ReputationServiceImpl extends ReadWriteServiceImpl<Reputation, Long
     }
 
     @Override
-    public void deleteReputation(Question question, User voteSender) {
-        reputationDao.deleteReputation(question.getId(), voteSender.getId());
+    public void deleteReputation(Long questionId, Long userId) {
+        reputationDao.deleteReputation(questionId, userId);
     }
 
 }

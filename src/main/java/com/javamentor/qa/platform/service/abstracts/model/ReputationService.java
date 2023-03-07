@@ -7,7 +7,7 @@ import com.javamentor.qa.platform.models.entity.user.reputation.Reputation;
 public interface ReputationService extends ReadWriteService<Reputation, Long> {
     Reputation increaseReputationByQuestionVoteUp(Question question, User voteSender);
     Reputation decreaseReputationByQuestionVoteDown(Question question, User voteSender);
-    void deleteReputation(Question question, User voteSender);
+    void deleteReputation(Long questionId, Long userId);
 
 
 }
