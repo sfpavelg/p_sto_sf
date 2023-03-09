@@ -19,7 +19,7 @@ public class PaginationUserDtoDaoByRegDateImpl implements PaginationUserDtoDaoBy
     @Override
     public List<UserDto> getItems(Map<String, Object> param) {
         int itemsOnPageParam = (int) param.get("itemsOnPage");
-        int itemsPositionParam = (int) param.get("currentPageNumber") * itemsOnPageParam;
+        int itemsPositionParam = (int) param.get("currentPageNumber") * itemsOnPageParam - itemsOnPageParam;
 
         Query query = entityManager.createQuery(
                         "SELECT new com.javamentor.qa.platform.models.dto.user.UserDto" +

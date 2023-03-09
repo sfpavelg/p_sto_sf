@@ -31,7 +31,7 @@ public class ExamplePaginationController {
             @ApiResponse(code = 200, message = "Success request. ExampleDto object returned in response"),
             @ApiResponse(code = 403, message = "Forbidden"),
             @ApiResponse(code = 404, message = "Page doesn't exist")})
-    public ResponseEntity<?> getAllUsers(@RequestParam(defaultValue = "0") int currentPageNumber,
+    public ResponseEntity<?> getAllUsers(@RequestParam(defaultValue = "1") int currentPageNumber,
                                          @RequestParam(defaultValue = "10") int itemsOnPage) throws NotFoundException {
         HashMap<String, Object> param = new HashMap<>();
         param.put("currentPageNumber", currentPageNumber);
@@ -47,7 +47,7 @@ public class ExamplePaginationController {
             @ApiResponse(code = 200, message = "Success request. ExampleDto object returned in response"),
             @ApiResponse(code = 403, message = "Forbidden"),
             @ApiResponse(code = 404, message = "Page doesn't exist")})
-    public ResponseEntity<?> getAnotherUsers(@RequestParam(defaultValue = "0") int currentPageNumber,
+    public ResponseEntity<?> getAnotherUsers(@RequestParam(defaultValue = "1") int currentPageNumber,
                                              @RequestParam(defaultValue = "5") int itemsOnPage) throws NotFoundException {
         HashMap<String, Object> param = new HashMap<>();
         param.put("currentPageNumber", currentPageNumber);

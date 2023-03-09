@@ -67,8 +67,8 @@ public class PageDtoService<T> {
             throw new PaginationDtoIncorrectParametersException("Page number parameter not found");
         }
 
-        if ((int) params.get("currentPageNumber") < 0) {
-            throw new PaginationDtoIncorrectParametersException("The current page cannot be less than 0");
+        if ((int) params.get("currentPageNumber") < 1) {
+            throw new PaginationDtoIncorrectParametersException("The current page cannot be less than 1");
         }
 
         if (beansMap.get((String) params.get("daoDtoImpl")) == null) {

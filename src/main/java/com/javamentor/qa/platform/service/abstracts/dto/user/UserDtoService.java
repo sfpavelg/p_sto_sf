@@ -9,4 +9,5 @@ import java.util.HashMap;
 public interface UserDtoService {
     UserDto getById(Long id) throws NotFoundException;
     PageDto<UserDto> getUsersByPersistDateTime(HashMap<String, Object> param) throws NotFoundException;
+    PageDto<UserDto> getAllUsersByVotes(HashMap<String, Object> param) throws NotFoundException;
 }
