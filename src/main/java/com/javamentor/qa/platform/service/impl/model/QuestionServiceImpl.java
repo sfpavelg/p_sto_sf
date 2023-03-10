@@ -1,11 +1,9 @@
 package com.javamentor.qa.platform.service.impl.model;
 
 import com.javamentor.qa.platform.dao.abstracts.model.QuestionDao;
-import com.javamentor.qa.platform.dao.abstracts.model.VoteQuestionDao;
 import com.javamentor.qa.platform.dao.abstracts.model.tag.TagDao;
 import com.javamentor.qa.platform.models.entity.question.Question;
 import com.javamentor.qa.platform.models.entity.question.Tag;
-import com.javamentor.qa.platform.models.entity.user.reputation.Reputation;
 import com.javamentor.qa.platform.service.abstracts.model.QuestionService;
 import org.springframework.stereotype.Service;
 

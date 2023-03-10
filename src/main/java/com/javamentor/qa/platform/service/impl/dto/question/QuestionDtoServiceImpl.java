@@ -3,7 +3,6 @@ package com.javamentor.qa.platform.service.impl.dto.question;
 import com.javamentor.qa.platform.dao.abstracts.dto.question.QuestionDtoDao;
 import com.javamentor.qa.platform.dao.abstracts.dto.tag.TagDtoDao;
 import com.javamentor.qa.platform.models.dto.question.QuestionDto;
-import com.javamentor.qa.platform.models.entity.question.VoteQuestion;
 import com.javamentor.qa.platform.service.abstracts.dto.question.QuestionDtoService;
 import javassist.NotFoundException;
 import org.springframework.stereotype.Service;
