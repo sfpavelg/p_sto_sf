@@ -12,4 +12,5 @@ public interface UserDtoService {
     PageDto<UserDto> getPageWithListUsersSortedByReputation(HashMap<String, Object> param);
 
     PageDto<UserDto> getUsersByPersistDateTime(HashMap<String, Object> param) throws NotFoundException;
+    PageDto<UserDto> getAllUsersByVotes(HashMap<String, Object> param) throws NotFoundException;
 }

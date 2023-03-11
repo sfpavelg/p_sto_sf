@@ -24,6 +24,12 @@ public class UserDtoServiceImpl extends PageDtoService<UserDto> implements UserD
     }
 
     @Override
+    public PageDto<UserDto> getAllUsersByVotes(HashMap<String, Object> param) {
+        param.put("daoDtoImpl", "userPageByVoteDtoImpl");
+        return pageDto(param);
+    }
+
+    @Override
     public UserDto getById(Long id) throws NotFoundException {
         Optional<UserDto> userDtoOptional = userDtoDao.getById(id);
         if (userDtoOptional.isPresent()) {
