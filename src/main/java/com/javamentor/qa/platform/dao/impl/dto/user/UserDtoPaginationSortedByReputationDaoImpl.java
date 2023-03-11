@@ -18,14 +18,14 @@ public class UserDtoPaginationSortedByReputationDaoImpl implements UserDtoPagina
     @Override
     public List<UserDto> getItems(Map<String, Object> param) {
         int itemsOnPageParam = (int) param.get("itemsOnPage");
-        int itemsPositionParam = (int) param.get("currentPageNumber") * itemsOnPageParam;
+        int itemsPositionParam = (int) param.get("currentPageNumber") * itemsOnPageParam - itemsOnPageParam;
         Query query = entityManager.createQuery(
                         "SELECT new com.javamentor.qa.platform.models.dto.user.UserDto" +
                                 "(u.id, u.email, u.fullName, u.city, u.imageLink, " +
-                                "cast(coalesce(sum(r.count), 0) as integer )) " +
+                                "cast(coalesce(sum(r.count), 0) as integer ) as rep )  " +
                                 "from User u left join Reputation r with r.author.id = u.id " +
                                 "group by u.id " +
-                                "order by cast(coalesce(sum(r.count), 0) as integer) ASC",
+                                "order by rep asc ",
                         UserDto.class)
                 .setMaxResults(itemsOnPageParam)
                 .setFirstResult(itemsPositionParam);

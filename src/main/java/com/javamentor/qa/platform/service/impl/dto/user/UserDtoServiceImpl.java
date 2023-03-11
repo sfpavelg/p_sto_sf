@@ -42,8 +42,7 @@ public class UserDtoServiceImpl extends PageDtoService<UserDto> implements UserD
     @Override
     public PageDto<UserDto> getPageWithListUsersSortedByReputation(HashMap<String, Object> param) {
         param.put("daoDtoImpl", "userDtoPaginationSortedByReputationDaoImpl");
-        PageDto<UserDto> page = pageDto(param);
-        return page;
+        return pageDto(param);
     }
 
     @Override
