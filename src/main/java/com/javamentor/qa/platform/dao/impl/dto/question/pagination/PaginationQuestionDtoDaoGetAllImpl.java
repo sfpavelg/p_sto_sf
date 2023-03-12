@@ -22,11 +22,11 @@ public class PaginationQuestionDtoDaoGetAllImpl implements PaginationQuestionDto
         return entityManager.createQuery(
                         "select new com.javamentor.qa.platform.models.dto.question.QuestionDto ( q.id, " +
                                 "q.title , " +
-                                "u.id, " +
-                                "coalesce(sum(r.count),0), " +
-                                "u.fullName, " +
-                                "u.imageLink, " +
-                                "q.description , " +
+                                "q.user.id, " +
+                                "(select coalesce(sum(r.count),0) from Reputation r where r.author.id = q.user.id), " +
+                                "q.user.fullName, " +
+                                "q.user.imageLink, " +
+                                "q.description, " +
                                 "(select count (qw.question.id) from QuestionViewed qw where qw.question.id = q.id), " +
                                 "(select count (a.question.id) from Answer a where a.question.id = q.id), " +
                                 "(select count(vq.question.id) from VoteQuestion vq where vq.question.id = q.id and vq.vote = 'up') - " +
@@ -35,11 +35,9 @@ public class PaginationQuestionDtoDaoGetAllImpl implements PaginationQuestionDto
                                 "q.lastUpdateDateTime) " +
 
                                 "from Question q " +
-                                "LEFT JOIN User u ON u.id = q.user.id " +
-                                "LEFT JOIN Reputation r ON u.id = r.author.id " +
                                 "where q.id in (select q.id from Question q join q.tags as tags where :trackedTags is null or tags.id in :trackedTags ) " +
                                 "and q.id not in (select q.id from Question q join q.tags as tags where tags.id in :ignoredTags) " +
-                                "group by q.id, u.id", QuestionDto.class)
+                                "order by q.id", QuestionDto.class)
                 .setParameter("trackedTags", param.get("trackedTags"))
                 .setParameter("ignoredTags", param.get("ignoredTags"))
                 .setMaxResults(itemsOnPageParam)
