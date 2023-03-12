@@ -1,7 +1,6 @@
 package com.javamentor.qa.platform.models.dto.question;
 
 import com.javamentor.qa.platform.models.dto.tag.TagDto;
-import com.javamentor.qa.platform.models.entity.question.Tag;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

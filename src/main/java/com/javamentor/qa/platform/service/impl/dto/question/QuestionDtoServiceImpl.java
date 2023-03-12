@@ -23,7 +23,6 @@ public class QuestionDtoServiceImpl extends PageDtoService<QuestionDto> implemen
 
     private final QuestionDtoDao questionDtoDao;
     private final TagDtoDao tagDtoDao;
-
     private final QuestionDtoWithoutAnswerPaginationDao questionDtoWithoutAnswerPaginationDao;
 
     public QuestionDtoServiceImpl(

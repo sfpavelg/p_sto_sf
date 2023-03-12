@@ -6,7 +6,6 @@ import javassist.NotFoundException;
 
 import java.util.HashMap;
 
-
 public interface QuestionDtoService {
     QuestionDto getQuestionDtoById(Long id) throws NotFoundException;
 

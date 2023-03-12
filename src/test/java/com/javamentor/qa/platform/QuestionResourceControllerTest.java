@@ -13,7 +13,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.jdbc.Sql;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
