@@ -12,8 +12,11 @@ import com.javamentor.qa.platform.service.abstracts.dto.question.QuestionDtoServ
 import javassist.NotFoundException;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
-
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
+import java.util.List;
+import java.util.ArrayList;
 
 @Service
 public class QuestionDtoServiceImpl extends PageDtoService<QuestionDto> implements QuestionDtoService {
