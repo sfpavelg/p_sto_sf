@@ -1,8 +1,10 @@
 package com.javamentor.qa.platform.webapp.controllers.rest;
 
+import com.javamentor.qa.platform.models.dto.PageDto;
 import com.javamentor.qa.platform.models.dto.question.QuestionCreateDto;
 import com.javamentor.qa.platform.models.dto.question.QuestionDto;
 import com.javamentor.qa.platform.models.entity.question.Question;
+import com.javamentor.qa.platform.models.entity.question.Tag;
 import com.javamentor.qa.platform.models.entity.user.User;
 import com.javamentor.qa.platform.service.abstracts.dto.question.QuestionDtoService;
 import com.javamentor.qa.platform.service.abstracts.model.QuestionService;
@@ -13,14 +15,11 @@ import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import javassist.NotFoundException;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.HashMap;
+import java.util.List;
 
 
 @RestController
@@ -31,6 +30,7 @@ public class QuestionResourceController {
     private final QuestionDtoService questionDtoService;
     private final QuestionConverter questionConverter;
     private final QuestionService questionService;
+
 
     public QuestionResourceController(QuestionDtoService questionDtoService, QuestionConverter questionConverter, QuestionService questionService) {
         this.questionDtoService = questionDtoService;
@@ -62,4 +62,32 @@ public class QuestionResourceController {
         return ResponseEntity.ok(questionDtoService.getQuestionDtoById(question.getId()));
     }
 
+    /**
+     * The method returns JSON with a page-by-page list of QuestionDTO objects for which no answer was given.
+     * @param pageNumber Page number of the page to be displayed. The parameter must be greater than zero.
+     * @param itemsCountOnPage Optional parameter. The number of items per page. The default value is 10.
+     *                         The parameter must be greater than zero
+     * @param trackedTag Optional parameter, contains a list of ID tags of the {@link Tag} entity, for which it
+     *                   is necessary to give a list of unanswered questions.
+     * @param ignoredTag Optional parameter, contains a list of ID tags of the {@link Tag} entity that should be
+     *                   ignored when displaying a list of unanswered questions. If the question contains at least
+     *                   one ignored tag, the question is not output.
+     * @return {@link ResponseEntity} with status Ok and {@link PageDto<QuestionDto>} in body.
+     */
+    @GetMapping("/noAnswer")
+    @ApiOperation(value = "Get a page with a list of QuestionDto without answers with filtering by " +
+            "the passed tags in the request parameters", response = PageDto.class)
+    public ResponseEntity <?> getPageWithListQuestionDtoWithoutAnswer (
+            @RequestParam(value = "page") Integer pageNumber,
+            @RequestParam(value = "items", required = false, defaultValue = "10") Integer itemsCountOnPage,
+            @RequestParam(value = "trackedTag", required = false) List<Long> trackedTag,
+            @RequestParam(value = "ignoredTag", required = false) List<Long> ignoredTag
+            ) {
+        HashMap<String, Object> param = new HashMap<>();
+        param.put("currentPageNumber", pageNumber);
+        param.put("itemsOnPage", itemsCountOnPage);
+        param.put("trackedTag", trackedTag);
+        param.put("ignoredTag", ignoredTag);
+        return ResponseEntity.ok(questionDtoService.getPageWithListQuestionDtoWithoutAnswer(param));
+    }
 }
