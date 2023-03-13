@@ -3,6 +3,7 @@ package com.javamentor.qa.platform.webapp.controllers.rest;
 import com.javamentor.qa.platform.models.dto.tag.TagDto;
 import com.javamentor.qa.platform.models.entity.user.User;
 import com.javamentor.qa.platform.service.abstracts.dto.tag.TagDtoService;
+import com.javamentor.qa.platform.service.abstracts.dto.tag.TagViewDtoService;
 import com.javamentor.qa.platform.service.abstracts.model.tag.IgnoredTagService;
 import com.javamentor.qa.platform.service.abstracts.model.tag.TrackedTagService;
 import io.swagger.annotations.Api;
@@ -14,6 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 
@@ -23,12 +25,14 @@ import java.util.Optional;
 public class TagResourceController {
 
     private final TagDtoService tagDtoService;
+    private final TagViewDtoService tagViewDtoService;
     private final IgnoredTagService ignoredTagService;
 
     private final TrackedTagService trackedTagService;
 
-    public TagResourceController(TagDtoService tagDtoService, IgnoredTagService ignoredTagService, TrackedTagService trackedTagService) {
+    public TagResourceController(TagDtoService tagDtoService, TagViewDtoService tagViewDtoService, IgnoredTagService ignoredTagService, TrackedTagService trackedTagService) {
         this.tagDtoService = tagDtoService;
+        this.tagViewDtoService = tagViewDtoService;
         this.ignoredTagService = ignoredTagService;
         this.trackedTagService = trackedTagService;
     }
@@ -91,8 +95,11 @@ public class TagResourceController {
             @ApiResponse(code = 401, message = "Unauthorized request"),
             @ApiResponse(code = 403, message = "Forbidden")})
     public ResponseEntity<?> getSortedByDateTagList(@RequestParam(defaultValue = "1") int currentPageNumber,
-                                                    @RequestParam(defaultValue = "2") int itemsOnPage)throws NotFoundException{
-       return ResponseEntity.ok(tagDtoService.getSortedByDateTagList(itemsOnPage, currentPageNumber));
+                                                    @RequestParam(defaultValue = "10") int itemsOnPage)throws NotFoundException{
+        HashMap<String, Object> params = new HashMap<>();
+        params.put("currentPageNumber", currentPageNumber);
+        params.put("itemsOnPage", itemsOnPage);
+       return ResponseEntity.ok(tagViewDtoService.getSortedByDateTagList(params));
     }
 
 

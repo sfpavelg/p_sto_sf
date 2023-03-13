@@ -5,6 +5,7 @@ import com.javamentor.qa.platform.models.dto.tag.TagDto;
 import com.javamentor.qa.platform.models.dto.tag.TagViewDto;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 public interface TagDtoDao {
@@ -16,5 +17,4 @@ public interface TagDtoDao {
 
     List<TagDto> getIgnoredTagByUserId(Long id);
 
-    List<TagViewDto> getSortedByDateTagList(int items, int page);
 }

@@ -48,7 +48,7 @@ public class ExamplePaginationController {
             @ApiResponse(code = 403, message = "Forbidden"),
             @ApiResponse(code = 404, message = "Page doesn't exist")})
     public ResponseEntity<?> getAnotherUsers(@RequestParam(defaultValue = "1") int currentPageNumber,
-                                             @RequestParam(defaultValue = "5") int itemsOnPage) throws NotFoundException {
+                                             @RequestParam(defaultValue = "10") int itemsOnPage) throws NotFoundException {
         HashMap<String, Object> param = new HashMap<>();
         param.put("currentPageNumber", currentPageNumber);
         param.put("itemsOnPage", itemsOnPage);

@@ -4,16 +4,13 @@ import com.javamentor.qa.platform.dao.abstracts.dto.tag.TagDtoDao;
 import com.javamentor.qa.platform.dao.util.SingleResultUtil;
 import com.javamentor.qa.platform.models.dto.tag.RelatedTagsDto;
 import com.javamentor.qa.platform.models.dto.tag.TagDto;
-import com.javamentor.qa.platform.models.dto.tag.TagViewDto;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
-import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
-import java.time.LocalDateTime;
 
 
 @Repository
@@ -64,29 +61,6 @@ public class TagDtoDaoImpl implements TagDtoDao {
         return (List<TagDto>) query.getResultList();
     }
 
-    @Override
-    public List<TagViewDto> getSortedByDateTagList(int items, int page) {
-        LocalDateTime now = LocalDateTime.now();
-        LocalDateTime today =  now.minusHours(Long.valueOf(24));
-        LocalDateTime weekBefore =  now.minusDays(Long.valueOf(7));
-
-        Query query = entityManager.createQuery("select new com.javamentor.qa.platform.models.dto.tag.TagViewDto(" +
-                "t.id, " +
-                "t.name," +
-                "t.description," +
-                "(select count (q.id) from Question q join q.tags qt where t.id = qt.id)," +
-                "(select count (q.id) from Question q join q.tags qt where t.id = qt.id and q.persistDateTime between :today and :now)," +
-                "(select count (q.id) from Question q join q.tags qt where t.id = qt.id and q.persistDateTime between :weekBefore and :now))" +
-                "from Tag t order by t.persistDateTime desc")
-                .setParameter("today", today)
-                .setParameter("weekBefore", weekBefore)
-                .setParameter("now", now);
-
-        query.setFirstResult((page -1) * items);
-        query.setMaxResults(items);
-
-        return (List<TagViewDto>) query.getResultList();
-    }
 
 
 }
