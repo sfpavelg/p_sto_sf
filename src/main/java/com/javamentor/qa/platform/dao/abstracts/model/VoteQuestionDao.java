@@ -7,5 +7,10 @@ import java.util.Optional;
 public interface VoteQuestionDao extends ReadWriteDao<VoteQuestion, Long> {
     Optional<VoteQuestion> getByUserId(Long questionId, Long userId);
 
+    /**
+     * Method that find all VotesQuestion and return sum of it.
+     * @param questionId Id of {@link com.javamentor.qa.platform.models.entity.question.Question Question}
+     * @return Long result = UpVotesQuestion - DownVotesQuestion
+     */
     Long getSumUpDownVotes(Long questionId);
 }

@@ -35,15 +35,6 @@ public class VoteQuestionServiceImpl extends ReadWriteServiceImpl<VoteQuestion, 
         return voteQuestionDao.getByUserId(questionId, userId);
     }
 
-    /**
-     * Method for voting for a question. The result of this method is adding or updating {@link VoteQuestion} and {@link Reputation}
-     *
-     * @param questionId   - {@link Question} for vote
-     * @param user         - Security (authorized) user
-     * @param userVoteType - The type is determined based on the user's action
-     * @return {@link VoteQuestionDao#getSumUpDownVotes(Long) getSumUpDownVotes(questionId)} = (UpVoteQuestion - DownVoteQuestion)
-     * @throws NotFoundException - Question with questionId not found
-     */
     @Override
     @Transactional
     public Long voteForQuestion(Long questionId, User user, VoteType userVoteType) throws NotFoundException {
