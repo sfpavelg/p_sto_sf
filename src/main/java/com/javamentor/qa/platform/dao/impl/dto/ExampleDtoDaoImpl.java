@@ -20,7 +20,7 @@ public class ExampleDtoDaoImpl implements ExampleDtoDao {
     public List<ExampleDto> getItems(Map<String, Object> paramToMap) {
         //For convenience, we will put the necessary parameters into variables
         int itemsOnPageParam = (int) paramToMap.get("itemsOnPage");
-        int itemsPositionParam = (int) paramToMap.get("currentPageNumber") * itemsOnPageParam;
+        int itemsPositionParam = (int) paramToMap.get("currentPageNumber") * itemsOnPageParam - itemsOnPageParam;
         String sortParam = (String) paramToMap.get("sortBy");
 
         Query query = entityManager.createQuery(
