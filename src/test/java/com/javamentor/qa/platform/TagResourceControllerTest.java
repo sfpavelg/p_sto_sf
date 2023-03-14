@@ -1,20 +1,11 @@
 package com.javamentor.qa.platform;
 
 
-import com.javamentor.qa.platform.dao.abstracts.dto.tag.TagViewDtoDao;
-import com.javamentor.qa.platform.models.dto.tag.TagViewDto;
 import org.hamcrest.collection.IsEmptyCollection;
 import org.hamcrest.core.Is;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.jdbc.Sql;
-import org.springframework.test.web.servlet.ResultMatcher;
-import org.springframework.test.web.servlet.result.JsonPathResultMatchers;
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
-
-import java.lang.reflect.Array;
-import java.util.ArrayList;
-import java.util.HashMap;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -170,8 +161,8 @@ public class TagResourceControllerTest extends AbstractTestApi {
     }
 
     @Test
-    @Sql(value = {"/script/tag/getSortedByDateTags/sorted-tags-dto-data-create.sql"}, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
-    @Sql(value = {"/script/tag/getSortedByDateTags/sorted-tags-dto-data-drop.sql"}, executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
+    @Sql(value = {"/script/TestTagController/getSortedByDateTags/sorted-tags-dto-data-create.sql"}, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+    @Sql(value = {"/script/TestTagController/getSortedByDateTags/sorted-tags-dto-data-drop.sql"}, executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
     public void getSortedByDateTagList() throws Exception {
         String token = getToken("0@gmail.com", "0pwd");
 
