@@ -14,7 +14,8 @@ public class AnswerDtoDaoImpl implements AnswerDtoDao {
     private EntityManager entityManager;
     @Override
     public List<AnswerDto> getAllByQuestionId(Long id) {
-        List<AnswerDto> answerDtoList = entityManager.createQuery("select new com.javamentor.qa.platform.models.dto.answer.AnswerDto(" +
+
+        return entityManager.createQuery("select new com.javamentor.qa.platform.models.dto.answer.AnswerDto(" +
                         "a.id, " +
                         "a.user.id, " +
                         "(select coalesce(sum(rep.count), 0) from Reputation as rep where rep.author.id = a.user.id), " +
@@ -28,7 +29,5 @@ public class AnswerDtoDaoImpl implements AnswerDtoDao {
                         "a.user.nickname) " +
                         "from Answer a where a.question.id = :id and a.isDeleted = false", AnswerDto.class)
                 .setParameter("id", id).getResultList();
-
-        return answerDtoList;
     }
 }
