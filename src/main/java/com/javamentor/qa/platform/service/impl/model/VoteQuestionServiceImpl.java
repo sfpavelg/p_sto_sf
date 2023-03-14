@@ -38,56 +38,53 @@ public class VoteQuestionServiceImpl extends ReadWriteServiceImpl<VoteQuestion, 
     @Override
     @Transactional
     public Long voteUpForQuestion(Long questionId, User user) throws NotFoundException {
-        if (!tryUpdateVoteQuestion(questionId, user, VoteType.UP_VOTE)) {
-            updateVoteQuestionWithReputation(questionId, user, VoteType.UP_VOTE);
-        }
+        processVoteForQuestion(questionId, user, VoteType.UP_VOTE);
         return voteQuestionDao.getSumUpDownVotes(questionId);
     }
 
     @Override
     @Transactional
     public Long voteDownForQuestion(Long questionId, User user) throws NotFoundException {
-        if (!tryUpdateVoteQuestion(questionId, user, VoteType.DOWN_VOTE)) {
-            updateVoteQuestionWithReputation(questionId, user, VoteType.DOWN_VOTE);
-        }
+        processVoteForQuestion(questionId, user, VoteType.DOWN_VOTE);
         return voteQuestionDao.getSumUpDownVotes(questionId);
     }
 
-    private boolean tryUpdateVoteQuestion(Long questionId, User user, VoteType userVoteType) {
+    private void processVoteForQuestion(Long questionId, User user, VoteType userVoteType) throws NotFoundException {
         Optional<VoteQuestion> optionalVote = getByUserId(questionId, user.getId());
-        if (optionalVote.isPresent()) {
-            VoteQuestion vote = optionalVote.get();
-
-            if (!vote.getVote().equals(userVoteType)) {
-                vote.setVote(userVoteType);
-                this.update(vote);
-
-                Reputation reputation = reputationService.getByQuestionAndUser(ReputationType.VoteQuestion, questionId, user.getId()).get();
-                reputation.setCount(userVoteType == VoteType.UP_VOTE ? +10 : -5);
-                reputationService.update(reputation);
-            }
-            return true;
+        if (optionalVote.isEmpty()) {
+            persistVoteQuestionWithReputation(questionId, user, userVoteType);
         }
-        return false;
+        if (optionalVote.isPresent()) {
+            updateVoteQuestionWithReputation(optionalVote.get(), questionId, user, userVoteType);
+        }
     }
 
-    private void updateVoteQuestionWithReputation(Long questionId, User user, VoteType userVoteType) throws NotFoundException {
-        Optional<Question> optionalQuestion = questionService.getById(questionId);
-        Question question;
-        if (optionalQuestion.isPresent()) {
-            question = optionalQuestion.get();
+    private void updateVoteQuestionWithReputation(VoteQuestion vote, Long questionId, User user, VoteType userVoteType) {
+        if (!vote.getVote().equals(userVoteType)) {
+            vote.setVote(userVoteType);
+            this.update(vote);
 
-            this.persist(new VoteQuestion(user, question, userVoteType));
-            reputationService.persist(new Reputation(
-                    question.getUser(),
-                    user,
-                    userVoteType == VoteType.UP_VOTE ? +10 : -5,
-                    ReputationType.VoteQuestion,
-                    question,
-                    null
-            ));
-        } else {
+            Reputation reputation = reputationService.getByQuestionAndUser(ReputationType.VoteQuestion, questionId, user.getId()).get();
+            reputation.setCount(userVoteType == VoteType.UP_VOTE ? +10 : -5);
+            reputationService.update(reputation);
+        }
+    }
+
+    private void persistVoteQuestionWithReputation(Long questionId, User user, VoteType userVoteType) throws NotFoundException {
+        Optional<Question> optionalQuestion = questionService.getById(questionId);
+        if (optionalQuestion.isEmpty()) {
             throw new NotFoundException("Question with id " + questionId + " not found.");
         }
+
+        Question question = optionalQuestion.get();
+        this.persist(new VoteQuestion(user, question, userVoteType));
+        reputationService.persist(new Reputation(
+                question.getUser(),
+                user,
+                userVoteType == VoteType.UP_VOTE ? +10 : -5,
+                ReputationType.VoteQuestion,
+                question,
+                null
+        ));
     }
 }
