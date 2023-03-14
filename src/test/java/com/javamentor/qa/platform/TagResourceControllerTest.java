@@ -1,11 +1,17 @@
 package com.javamentor.qa.platform;
 
 
+import com.javamentor.qa.platform.dao.abstracts.dto.tag.TagViewDtoDao;
+import com.javamentor.qa.platform.models.dto.tag.TagViewDto;
 import org.hamcrest.collection.IsEmptyCollection;
 import org.hamcrest.core.Is;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.jdbc.Sql;
+
+import java.lang.reflect.Array;
+import java.util.ArrayList;
+import java.util.HashMap;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -165,6 +171,14 @@ public class TagResourceControllerTest extends AbstractTestApi {
     @Sql(value = {"/script/tag/getSortedByDateTags/sorted-tags-dto-data-drop.sql"}, executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
     public void getSortedByDateTagList() throws Exception {
         String token = getToken("0@gmail.com", "0pwd");
+        HashMap<String, String> someTags = new HashMap();
+        someTags.put("id", "114");
+        someTags.put("title", "name15");
+        someTags.put("description", "description114");
+        someTags.put("questionCount", "6");
+        someTags.put("questionCountOneDay", "0");
+        someTags.put("questionCountWeekDay", "0");
+
         //success getting TOP-10 Tags from 15 in DB (ordered by countQuestion)
 //        String sometags = "{\"id\":\"114,\"title\":\"name15,\"description\":\"description114,\"questionCount\":\"6,\"questionCountOneDay\":\"5,\"questionCountWeekDay\":\"6\"";
         this.mvc.perform(get("/api/user/tag/new?currentPageNumber=1&itemsOnPage=2").header("Authorization", "Bearer " + token))
@@ -174,7 +188,20 @@ public class TagResourceControllerTest extends AbstractTestApi {
                 .andExpect(jsonPath("$.currentPageNumber", Is.is(1)))
                 .andExpect(jsonPath("$.totalPageCount", Is.is(8)))
                 .andExpect(jsonPath("$.totalResultCount", Is.is(15)))
-//                .andExpect(jsonPath("$.items", Is.is(sometags)))
+//                .andExpect(jsonPath("$.items").value(
+//                                jsonPath("$.[0].id", Is.is(114)),
+//                                jsonPath("$.[0].title", Is.is("name15")),
+//                                jsonPath("$.[0].description", Is.is("description114")),
+//                                jsonPath("$.[0].questionCount", Is.is(6)),
+//                                jsonPath("$.[0].questionCountOneDay", Is.is(5)),
+//                                jsonPath("$.[0].questionCountWeekDay", Is.is(6)),
+//                                jsonPath("$.[1].id", Is.is(113)),
+//                                jsonPath("$.[1].title", Is.is("name14")),
+//                                jsonPath("$.[1].description", Is.is("description113")),
+//                                jsonPath("$.[1].questionCount", Is.is(1)),
+//                                jsonPath("$.[1].questionCountOneDay", Is.is(1)),
+//                                jsonPath("$.[1].questionCountWeekDay", Is.is(1))
+//                        )))
 //                .andExpect(jsonPath("$.items",Is.is()
 //                                new org.springframework.test.web.servlet.ResultMatcher[]{
 //                                        jsonPath("$.[0].id", Is.is(114)),
