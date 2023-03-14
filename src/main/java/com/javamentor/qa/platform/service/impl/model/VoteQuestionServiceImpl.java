@@ -76,19 +76,18 @@ public class VoteQuestionServiceImpl extends ReadWriteServiceImpl<VoteQuestion, 
         Question question;
         if (optionalQuestion.isPresent()) {
             question = optionalQuestion.get();
+
+            this.persist(new VoteQuestion(user, question, userVoteType));
+            reputationService.persist(new Reputation(
+                    question.getUser(),
+                    user,
+                    userVoteType == VoteType.UP_VOTE ? +10 : -5,
+                    ReputationType.VoteQuestion,
+                    question,
+                    null
+            ));
         } else {
             throw new NotFoundException("Question with id " + questionId + " not found.");
         }
-
-        this.persist(new VoteQuestion(user, question, userVoteType));
-        reputationService.persist(new Reputation(
-                question.getUser(),
-                user,
-                userVoteType == VoteType.UP_VOTE ? +10 : -5,
-                ReputationType.VoteQuestion,
-                question,
-                null
-        ));
-
     }
 }
