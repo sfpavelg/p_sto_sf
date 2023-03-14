@@ -2,10 +2,8 @@ package com.javamentor.qa.platform.api;
 
 import com.javamentor.qa.platform.AbstractTestApi;
 import com.javamentor.qa.platform.models.dto.user.UserDto;
-import com.javamentor.qa.platform.security.jwt.AuthenticationRequest;
 import org.hamcrest.core.Is;
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.json.JacksonJsonParser;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.jdbc.SqlGroup;
@@ -13,10 +11,9 @@ import org.springframework.test.context.jdbc.SqlGroup;
 import static org.hamcrest.Matchers.containsString;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 
@@ -25,24 +22,16 @@ public class TestUserResourceController extends AbstractTestApi {
     @Test
     @SqlGroup({
             @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD,
-                    value = {"/script/TestUserDtoController/testGetUserById/Before.sql"}),
+                    value = {"/script/TestUserResourceController/testGetUserById/Before.sql"}),
             @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD,
-                    value = {"/script/TestUserDtoController/testGetUserById/After.sql"})
+                    value = {"/script/TestUserResourceController/testGetUserById/After.sql"})
     })
     public void testGetUserById() throws Exception {
-
-        JacksonJsonParser jsonParser = new JacksonJsonParser();
-        String jwt = jsonParser.parseMap(this.mvc.perform(post("/api/auth/token")
-                                .content(objectMapper.valueToTree(new AuthenticationRequest("email5@domain.com",
-                                        "password")).toString())
-                                .contentType(MediaType.APPLICATION_JSON))
-                        .andExpect(status().is2xxSuccessful())
-                        .andReturn().getResponse().getContentAsString())
-                .get("token").toString();
+        String token = getToken("email5@domain.com", "password");
 
 //        Successfully test's
         this.mvc.perform(get("/api/user/{id}", 100)
-                        .header("Authorization", "Bearer " + jwt))
+                        .header("Authorization", "Bearer " + token))
                 .andExpect(jsonPath("$.id", Is.is(100)))
                 .andExpect(jsonPath("$.email", Is.is("email1@domain.com")))
                 .andExpect(jsonPath("$.fullName", Is.is("name1")))
@@ -52,7 +41,7 @@ public class TestUserResourceController extends AbstractTestApi {
 
 
         this.mvc.perform(get("/api/user/{id}", 101)
-                        .header("Authorization", "Bearer " + jwt))
+                        .header("Authorization", "Bearer " + token))
                 .andExpect(jsonPath("$.id", Is.is(101)))
                 .andExpect(jsonPath("$.email", Is.is("email2@domain.com")))
                 .andExpect(jsonPath("$.fullName", Is.is("name2")))
@@ -61,7 +50,7 @@ public class TestUserResourceController extends AbstractTestApi {
                 .andExpect(jsonPath("$.reputation", Is.is(14)));
 
         this.mvc.perform(get("/api/user/{id}", 102)
-                        .header("Authorization", "Bearer " + jwt))
+                        .header("Authorization", "Bearer " + token))
                 .andExpect(jsonPath("$.id", Is.is(102)))
                 .andExpect(jsonPath("$.email", Is.is("email3@domain.com")))
                 .andExpect(jsonPath("$.fullName", Is.is("name3")))
@@ -70,7 +59,7 @@ public class TestUserResourceController extends AbstractTestApi {
                 .andExpect(jsonPath("$.reputation", Is.is(11)));
 
         this.mvc.perform(get("/api/user/{id}", 103)
-                        .header("Authorization", "Bearer " + jwt))
+                        .header("Authorization", "Bearer " + token))
                 .andExpect(jsonPath("$.id", Is.is(103)))
                 .andExpect(jsonPath("$.email", Is.is("email4@domain.com")))
                 .andExpect(jsonPath("$.fullName", Is.is("name4")))
@@ -80,7 +69,7 @@ public class TestUserResourceController extends AbstractTestApi {
 
 //        Successfully test's for user without reputation
         this.mvc.perform(get("/api/user/{id}", 104)
-                        .header("Authorization", "Bearer " + jwt))
+                        .header("Authorization", "Bearer " + token))
                 .andExpect(jsonPath("$.id", Is.is(104)))
                 .andExpect(jsonPath("$.email", Is.is("email5@domain.com")))
                 .andExpect(jsonPath("$.fullName", Is.is("name5")))
@@ -91,7 +80,7 @@ public class TestUserResourceController extends AbstractTestApi {
 
 //        By not existing userId test
         this.mvc.perform(get("/api/user/{id}", 150)
-                        .header("Authorization", "Bearer " + jwt))
+                        .header("Authorization", "Bearer " + token))
                 .andExpect(status().isNotFound());
 
     }
@@ -100,12 +89,11 @@ public class TestUserResourceController extends AbstractTestApi {
     @Test
     @SqlGroup({
             @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD,
-                    value = {"/script/TestUserResourceController.testGetUsersByPersistDateAndTime/Before.sql"}),
+                    value = {"/script/TestUserResourceController/testGetUsersByPersistDateAndTime/Before.sql"}),
             @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD,
-                    value = {"/script/TestUserResourceController.testGetUsersByPersistDateAndTime/After.sql"})
+                    value = {"/script/TestUserResourceController/testGetUsersByPersistDateAndTime/After.sql"})
     })
     public void testGetAllUsersByPersistDateAndTime() throws Exception {
-
         String token = getToken("email5@domain.com", "password");
 
 //  Successful test (The newest user shown first). Works with null reg date. User with null reg date shown first
@@ -178,7 +166,6 @@ public class TestUserResourceController extends AbstractTestApi {
                     value = {"/script/TestUserResourceController/testChangeUserPassword/After.sql"})
     })
     public void testChangeUserPassword() throws Exception {
-
         String userToken = getToken("4@gmail.com", "4pwd");
 
         // Empty password
@@ -214,9 +201,9 @@ public class TestUserResourceController extends AbstractTestApi {
     @Test
     @SqlGroup({
             @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD,
-                    value = {"/script/TestUserResourceController/pagination/testGetUsersSortedByVote/Before.sql"}),
+                    value = {"/script/TestUserResourceController/testGetUsersSortedByVote/Before.sql"}),
             @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD,
-                    value = {"/script/TestUserResourceController/pagination/testGetUsersSortedByVote/After.sql"})}
+                    value = {"/script/TestUserResourceController/testGetUsersSortedByVote/After.sql"})}
     )
     public void testGetUsersSortedByVote() throws Exception {
 

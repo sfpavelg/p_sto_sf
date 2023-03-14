@@ -17,5 +17,5 @@ DELETE FROM "user_entity" WHERE id = 102;
 DELETE FROM "user_entity" WHERE id = 103;
 DELETE FROM "user_entity" WHERE id = 104;
 
-DELETE FROM "role" WHERE id = 1;
-DELETE FROM "role" WHERE id = 2;
+DELETE FROM "role" WHERE id = 100;
+DELETE FROM "role" WHERE id = 200;
