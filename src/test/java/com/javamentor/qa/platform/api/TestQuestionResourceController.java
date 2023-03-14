@@ -279,12 +279,13 @@ class TestQuestionResourceController extends AbstractTestApi {
     }
 
     @Test
-    @Sql(value = {"/script/TestQuestionResourceController.testGetPageWithListQuestionDtoWithoutAnswer/Before.sql"},
+    @Sql(value = {"/script/TestQuestionResourceController/testGetPageWithListQuestionDtoWithoutAnswer/Before.sql"},
             executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
-    @Sql(value = {"/script/TestQuestionResourceController.testGetPageWithListQuestionDtoWithoutAnswer/After.sql"},
+    @Sql(value = {"/script/TestQuestionResourceController/testGetPageWithListQuestionDtoWithoutAnswer/After.sql"},
             executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
     public void getPageWithListQuestionDtoWithoutAnswerTest() throws Exception {
         String token = getToken("5@gmail.com", "5pwd");
+
         //Test 1. Positive. The request parameters are passed page, items, trackedTag, ignoredTag
         this.mvc.perform(get("/api/user/question/noAnswer")
                         .header("Authorization", "Bearer " + token)
@@ -384,5 +385,4 @@ class TestQuestionResourceController extends AbstractTestApi {
                 )
                 .andExpect(status().is4xxClientError());
     }
-
 }

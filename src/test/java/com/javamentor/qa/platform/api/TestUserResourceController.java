@@ -349,13 +349,13 @@ public class TestUserResourceController extends AbstractTestApi {
     @Test
     @SqlGroup({
             @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD,
-                    value = {"/script/TestUserResourceController.testGetPageWithListUsersSortedByReputation/Before.sql"}),
+                    value = {"/script/TestUserResourceController/testGetPageWithListUsersSortedByReputation/Before.sql"}),
             @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD,
-                    value = {"/script/TestUserResourceController.testGetPageWithListUsersSortedByReputation/After.sql"})
+                    value = {"/script/TestUserResourceController/testGetPageWithListUsersSortedByReputation/After.sql"})
     })
     public void testGetPageWithListUsersSortedByReputation() throws Exception {
-        // Get token
         String jwt = getToken("5@gmail.com", "5pwd");
+
         // Positive Test. Output of the second page in order with two elements
         this.mvc.perform(get("/api/user/reputation")
                         .header("Authorization", "Bearer " + jwt)
