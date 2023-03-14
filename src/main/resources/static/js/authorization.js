@@ -1,6 +1,8 @@
-let token = sessionStorage.getItem('tokenData')
-console.log(token)
-let bearer = 'Bearer ' + token;
+let token = localStorage.getItem('tokenData')
+if(token===null){
+    showError403();
+}
+let bearerToken = 'Bearer ' + token;
 
 fetch('/api/auth/validate', {
     method: 'GET',
@@ -8,7 +10,14 @@ fetch('/api/auth/validate', {
     headers: {
         'Accept': 'application/json',
         'Content-Type': 'application/json',
-        'Authorization': bearer
+        'Authorization': bearerToken
     }
 })
-    .then(resp => resp.text().then(role => console.log(role)))
+    .then(resp => {
+        if(resp.status===403){
+            showError403();
+        }
+    })
+function showError403(){
+    location.href='/403';
+}

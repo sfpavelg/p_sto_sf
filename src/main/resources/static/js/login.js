@@ -1,19 +1,19 @@
+if (document.URL.endsWith('logout')) {
+    logOut();
+}
+
 let loginButton = document.getElementById('loginButton');
-let some;
 let email = document.getElementById('email');
 let password = document.getElementById('password');
-loginButton.addEventListener('click', () => {
-    some = getTokenData(
-        email.value,
-        password.value
-    );
-})
+loginButton.addEventListener('click', () => getTokenData(
+    email.value,
+    password.value
+));
 
 async function saveToken(tokenData) {
     const json = await tokenData.then(res => JSON.parse(JSON.stringify(res)));
     const token = json.token;
-    console.log(token)
-    sessionStorage.setItem('tokenData', JSON.stringify(token).replaceAll('\"',''));
+    localStorage.setItem('tokenData', JSON.stringify(token).replaceAll('\"', ''));
 }
 
 function getTokenData(email, password) {
@@ -36,9 +36,12 @@ function getTokenData(email, password) {
                 location.href = '/users'
                 return Promise.resolve()
             }
+            alert('Неверный пароль');
             return Promise.reject();
         });
 
 }
 
-//location.href = "/main";
+function logOut() {
+    localStorage.clear()
+}

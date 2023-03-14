@@ -39,7 +39,10 @@ public class AuthenticationResourceController {
     }
 
     @GetMapping("/validate")
-    public String validate(@AuthenticationPrincipal User user){
-        return user.getRole().getName();
+    public ResponseEntity<?> validate(@AuthenticationPrincipal User user) {
+        if (!user.getRole().getName().equals("ROLE_USER")) {
+            return ResponseEntity.status(403).build();
+        }
+        return ResponseEntity.status(200).build();
     }
 }
