@@ -3,6 +3,7 @@ package com.javamentor.qa.platform.webapp.controllers.rest;
 import com.javamentor.qa.platform.models.dto.tag.TagDto;
 import com.javamentor.qa.platform.models.entity.user.User;
 import com.javamentor.qa.platform.service.abstracts.dto.tag.TagDtoService;
+import com.javamentor.qa.platform.service.abstracts.model.UserService;
 import com.javamentor.qa.platform.service.abstracts.model.tag.IgnoredTagService;
 import com.javamentor.qa.platform.service.abstracts.model.tag.TrackedTagService;
 import io.swagger.annotations.Api;
@@ -11,7 +12,9 @@ import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import javassist.NotFoundException;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -31,10 +34,13 @@ public class TagResourceController {
 
     private final TrackedTagService trackedTagService;
 
-    public TagResourceController(TagDtoService tagDtoService, IgnoredTagService ignoredTagService, TrackedTagService trackedTagService) {
+    private final UserService userService;
+
+    public TagResourceController(TagDtoService tagDtoService, IgnoredTagService ignoredTagService, TrackedTagService trackedTagService, UserService userService) {
         this.tagDtoService = tagDtoService;
         this.ignoredTagService = ignoredTagService;
         this.trackedTagService = trackedTagService;
+        this.userService = userService;
     }
 
     @GetMapping("/related")
@@ -88,5 +94,18 @@ public class TagResourceController {
         return ResponseEntity.ok(tagDtoService.getIgnoredTagByUserId(user.getId()));
     }
 
+    /**
+     * The method returns a JSON with a list of all TrackedTags of the authorized user
+     * without a filled description field in the list of returned TagDto objects
+     *
+     * @return {@link ResponseEntity} with status Ok and {@link List}<{@link TagDto}> in body without a
+     * filled in "description" field.
+     */
+    @GetMapping("/tracked")
+    @ApiOperation(value = "Getting all TrackedTags of an authorized user", response = List.class)
+    public ResponseEntity<List<TagDto>> getAllTrackedTagAuthenticatedUser(@AuthenticationPrincipal UserDetails authenticatedUser) {
+        Long idAuthenticatedUser = userService.getByEmail(authenticatedUser.getUsername()).orElseThrow().getId();
+        return ResponseEntity.ok(tagDtoService.getTrackedTagsByUserId(idAuthenticatedUser));
+    }
 
 }
