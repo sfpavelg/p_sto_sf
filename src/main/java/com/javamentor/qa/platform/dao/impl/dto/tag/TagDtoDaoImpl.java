@@ -5,12 +5,15 @@ import com.javamentor.qa.platform.dao.util.SingleResultUtil;
 import com.javamentor.qa.platform.models.dto.tag.RelatedTagsDto;
 import com.javamentor.qa.platform.models.dto.tag.TagDto;
 import org.springframework.stereotype.Repository;
-
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
+import javax.persistence.Tuple;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.ArrayList;
 
 
 @Repository
@@ -61,6 +64,22 @@ public class TagDtoDaoImpl implements TagDtoDao {
         return (List<TagDto>) query.getResultList();
     }
 
+    @Override
+    public Map<Long, List<TagDto>> getTagsMapByQuestionId(List<Long> qId) {
+        List<Tuple> tags = entityManager.createQuery(
+                "select t.id as tag_id, " +
+                        "t.name as tag_name, " +
+                        "t.description as tag_description, " +
+                        "q.id as question_id " +
+                        "from Tag t join t.questions q where q.id in :id", Tuple.class)
+                .setParameter("id", qId)
+                .getResultList();
+        Map<Long, List<TagDto>> tagsMap = new HashMap<>();
 
-
+        tags.forEach(tupleList -> tagsMap.computeIfAbsent((Long) tupleList.get("question_id"), key -> new ArrayList<>())
+                .add(new TagDto((Long) tupleList.get("tag_id"),
+                        (String) tupleList.get("tag_name"),
+                        (String) tupleList.get("tag_description"))));
+        return tagsMap;
+    }
 }
