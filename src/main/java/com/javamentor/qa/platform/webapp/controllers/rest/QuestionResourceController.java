@@ -3,7 +3,6 @@ package com.javamentor.qa.platform.webapp.controllers.rest;
 import com.javamentor.qa.platform.models.dto.question.QuestionCreateDto;
 import com.javamentor.qa.platform.models.dto.question.QuestionDto;
 import com.javamentor.qa.platform.models.entity.question.Question;
-import com.javamentor.qa.platform.models.entity.question.answer.VoteType;
 import com.javamentor.qa.platform.models.entity.user.User;
 import com.javamentor.qa.platform.service.abstracts.dto.question.QuestionDtoService;
 import com.javamentor.qa.platform.service.abstracts.model.QuestionService;
@@ -23,6 +22,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+
 import javax.validation.Valid;
 import java.util.HashMap;
 import java.util.List;
@@ -87,15 +87,17 @@ public class QuestionResourceController {
         param.put("ignoredTags", ignoredTags);
         return ResponseEntity.ok(questionDtoService.getAllQuestionDto(param));
     }
+
     @PostMapping("/{questionId}/upVote")
     @ApiOperation(value = "Vote UP for question. Returned sum of all Up votes and Down votes.", response = Long.class)
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Success request. Sum of UpVotes and DownVotes returned. VoteQuestion and Reputation added to DB."),
             @ApiResponse(code = 401, message = "Unauthorized request"),
             @ApiResponse(code = 403, message = "Forbidden"),
-            @ApiResponse(code = 400, message = "Invalid password")})
+            @ApiResponse(code = 400, message = "Invalid password"),
+            @ApiResponse(code = 404, message = "Incorrect id Question. Question with id not found")})
     public ResponseEntity<Long> voteUpForQuestion(@PathVariable Long questionId, @AuthenticationPrincipal User user) throws NotFoundException {
-        return ResponseEntity.ok(voteQuestionService.voteForQuestion(questionId, user, VoteType.UP_VOTE));
+        return ResponseEntity.ok(voteQuestionService.voteUpForQuestion(questionId, user));
     }
 
     @PostMapping("/{questionId}/downVote")
@@ -104,8 +106,9 @@ public class QuestionResourceController {
             @ApiResponse(code = 200, message = "Success request. Sum of UpVotes and DownVotes returned. VoteQuestion and Reputation added to DB."),
             @ApiResponse(code = 401, message = "Unauthorized request"),
             @ApiResponse(code = 403, message = "Forbidden"),
-            @ApiResponse(code = 400, message = "Invalid password")})
+            @ApiResponse(code = 400, message = "Invalid password"),
+            @ApiResponse(code = 404, message = "Incorrect id Question. Question with id not found")})
     public ResponseEntity<Long> voteDownForQuestion(@PathVariable Long questionId, @AuthenticationPrincipal User user) throws NotFoundException {
-        return ResponseEntity.ok(voteQuestionService.voteForQuestion(questionId, user, VoteType.DOWN_VOTE));
+        return ResponseEntity.ok(voteQuestionService.voteDownForQuestion(questionId, user));
     }
 }

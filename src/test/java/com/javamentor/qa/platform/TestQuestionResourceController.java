@@ -285,7 +285,7 @@ class TestQuestionResourceController extends AbstractTestApi {
     @Test
     @Sql(value = {"/script/question/voteForQuestionTest/Before.sql"}, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
     @Sql(value = "/script/question/voteForQuestionTest/After.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
-    public void voteForQuestion() throws Exception {
+    public void voteForQuestionTest() throws Exception {
         String token = getToken("0@gmail.com", "0pwd");
 
         // пользователь не авторизован (отсутствует JWT) - ошибка
