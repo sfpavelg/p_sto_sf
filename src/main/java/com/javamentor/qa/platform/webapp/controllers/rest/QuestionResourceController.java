@@ -15,15 +15,17 @@ import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import javassist.NotFoundException;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-
 import javax.validation.Valid;
+import java.util.HashMap;
+import java.util.List;
 
 
 @RestController
@@ -67,6 +69,24 @@ public class QuestionResourceController {
         return ResponseEntity.ok(questionDtoService.getQuestionDtoById(question.getId()));
     }
 
+    @GetMapping()
+    @ApiOperation(value = "Get all questionDto",
+            notes = "currentPageNumber is a number of page with dto's.", response = QuestionDto.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Success request. QuestionDto object returned in response"),
+            @ApiResponse(code = 403, message = "Forbidden"),
+            @ApiResponse(code = 404, message = "Questions don't exist")})
+    public ResponseEntity<?> getAllQuestionDto(@RequestParam(defaultValue = "1") int currentPageNumber,
+                                               @RequestParam(defaultValue = "10") int itemsOnPage,
+                                               @RequestParam(required = false) List<Long> trackedTags,
+                                               @RequestParam(required = false) List<Long> ignoredTags) throws NotFoundException {
+        HashMap<String, Object> param = new HashMap<>();
+        param.put("currentPageNumber", currentPageNumber);
+        param.put("itemsOnPage", itemsOnPage);
+        param.put("trackedTags", trackedTags);
+        param.put("ignoredTags", ignoredTags);
+        return ResponseEntity.ok(questionDtoService.getAllQuestionDto(param));
+    }
     @PostMapping("/{questionId}/upVote")
     @ApiOperation(value = "Vote UP for question. Returned sum of all Up votes and Down votes.", response = Long.class)
     @ApiResponses(value = {
