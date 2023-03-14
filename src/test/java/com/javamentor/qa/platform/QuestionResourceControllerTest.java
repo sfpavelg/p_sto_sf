@@ -242,7 +242,8 @@ class QuestionResourceControllerTest extends AbstractTestApi {
                 .andExpect(jsonPath("$.items[3].listTagDto[0].id", Is.is(101)))
 
                 .andExpect(jsonPath("$.items[4].id", Is.is(109)))
-                .andExpect(jsonPath("$.items[4].listTagDto[1].id", Is.is(105)));
+                .andExpect(jsonPath("$.items[4].listTagDto[1].id", Is.is(105)))
+                .andExpect(status().isOk());
 
 //  Successful test on not existing page
         this.mvc.perform(get("/api/user/question")
@@ -263,6 +264,20 @@ class QuestionResourceControllerTest extends AbstractTestApi {
         this.mvc.perform(get("/api/user/question")
                 .header("Authorization", "Bearer " + token))
                 .andExpect(jsonPath("$.totalResultCount", Is.is(10)))
+                .andExpect(status().isOk());
+
+//  itemsOnPage test
+        this.mvc.perform(get("/api/user/question")
+                        .header("Authorization", "Bearer " + token)
+                        .param("itemsOnPage", "2"))
+                .andDo(print())
+                .andExpect(jsonPath("$.currentPageNumber", Is.is(1)))
+                .andExpect(jsonPath("$.totalPageCount", Is.is(5)))
+                .andExpect(jsonPath("$.totalResultCount", Is.is(10)))
+                .andExpect(jsonPath("$.itemsOnPage", Is.is(2)))
+
+                .andExpect(jsonPath("$.items[0].id", Is.is(100)))
+                .andExpect(jsonPath("$.items[1].id", Is.is(101)))
                 .andExpect(status().isOk());
     }
 }
