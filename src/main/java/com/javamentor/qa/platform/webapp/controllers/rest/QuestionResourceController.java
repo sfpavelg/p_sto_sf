@@ -15,13 +15,13 @@ import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import javassist.NotFoundException;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.validation.Valid;
 import java.util.HashMap;
@@ -70,30 +70,50 @@ public class QuestionResourceController {
 
     /**
      * The method returns JSON with a page-by-page list of QuestionDTO objects for which no answer was given.
-     * @param pageNumber Page number of the page to be displayed. The parameter must be greater than zero.
+     *
+     * @param pageNumber       Page number of the page to be displayed. The parameter must be greater than zero.
      * @param itemsCountOnPage Optional parameter. The number of items per page. The default value is 10.
      *                         The parameter must be greater than zero
-     * @param trackedTag Optional parameter, contains a list of ID tags of the {@link Tag} entity, for which it
-     *                   is necessary to give a list of unanswered questions.
-     * @param ignoredTag Optional parameter, contains a list of ID tags of the {@link Tag} entity that should be
-     *                   ignored when displaying a list of unanswered questions. If the question contains at least
-     *                   one ignored tag, the question is not output.
+     * @param trackedTag       Optional parameter, contains a list of ID tags of the {@link Tag} entity, for which it
+     *                         is necessary to give a list of unanswered questions.
+     * @param ignoredTag       Optional parameter, contains a list of ID tags of the {@link Tag} entity that should be
+     *                         ignored when displaying a list of unanswered questions. If the question contains at least
+     *                         one ignored tag, the question is not output.
      * @return {@link ResponseEntity} with status Ok and {@link PageDto<QuestionDto>} in body.
      */
     @GetMapping("/noAnswer")
     @ApiOperation(value = "Get a page with a list of QuestionDto without answers with filtering by " +
             "the passed tags in the request parameters", response = PageDto.class)
-    public ResponseEntity <?> getPageWithListQuestionDtoWithoutAnswer (
+    public ResponseEntity<?> getPageWithListQuestionDtoWithoutAnswer(
             @RequestParam(value = "page") Integer pageNumber,
             @RequestParam(value = "items", required = false, defaultValue = "10") Integer itemsCountOnPage,
             @RequestParam(value = "trackedTag", required = false) List<Long> trackedTag,
             @RequestParam(value = "ignoredTag", required = false) List<Long> ignoredTag
-            ) {
+    ) {
         HashMap<String, Object> param = new HashMap<>();
         param.put("currentPageNumber", pageNumber);
         param.put("itemsOnPage", itemsCountOnPage);
         param.put("trackedTag", trackedTag);
         param.put("ignoredTag", ignoredTag);
         return ResponseEntity.ok(questionDtoService.getPageWithListQuestionDtoWithoutAnswer(param));
+    }
+
+    @GetMapping()
+    @ApiOperation(value = "Get all questionDto",
+            notes = "currentPageNumber is a number of page with dto's.", response = QuestionDto.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Success request. QuestionDto object returned in response"),
+            @ApiResponse(code = 403, message = "Forbidden"),
+            @ApiResponse(code = 404, message = "Questions don't exist")})
+    public ResponseEntity<?> getAllQuestionDto(@RequestParam(defaultValue = "1") int currentPageNumber,
+                                               @RequestParam(defaultValue = "10") int itemsOnPage,
+                                               @RequestParam(required = false) List<Long> trackedTags,
+                                               @RequestParam(required = false) List<Long> ignoredTags) throws NotFoundException {
+        HashMap<String, Object> param = new HashMap<>();
+        param.put("currentPageNumber", currentPageNumber);
+        param.put("itemsOnPage", itemsOnPage);
+        param.put("trackedTags", trackedTags);
+        param.put("ignoredTags", ignoredTags);
+        return ResponseEntity.ok(questionDtoService.getAllQuestionDto(param));
     }
 }

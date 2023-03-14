@@ -201,6 +201,86 @@ class QuestionResourceControllerTest extends AbstractTestApi {
 
     }
 
+
+    @Test
+    @Sql(value = {"/script/TestQuestionResourceController/testGetAllQuestionDto/Before.sql"}, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+    @Sql(value = {"/script/TestQuestionResourceController/testGetAllQuestionDto/After.sql"}, executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
+    public void getAllQuestionDtoTest() throws Exception {
+        String token = getToken("0@gmail.com", "0pwd");
+        this.mvc.perform(get("/api/user/question")
+                        .header("Authorization", "Bearer " + token)
+                        .param("currentPageNumber", "1")
+                        .param("ignoredTags", "100", "103", "106")
+                        .param("trackedTags", "100", "101", "102"))
+//  A question with a tag that is ignored and tracked is not shown
+                .andDo(print())
+                .andExpect(jsonPath("$.totalPageCount", Is.is(1)))
+                .andExpect(jsonPath("$.totalResultCount", Is.is(5)))
+                .andExpect(jsonPath("$.itemsOnPage", Is.is(10)))
+
+                .andExpect(jsonPath("$.items[0].id", Is.is(101)))
+                .andExpect(jsonPath("$.items[0].title", Is.is("title2")))
+                .andExpect(jsonPath("$.items[0].authorId", Is.is(101)))
+                .andExpect(jsonPath("$.items[0].authorReputation", Is.is(4)))
+                .andExpect(jsonPath("$.items[0].authorName", Is.is("name2")))
+                .andExpect(jsonPath("$.items[0].authorImage", Is.is("http://imagelink2.com")))
+                .andExpect(jsonPath("$.items[0].description", Is.is("description2")))
+                .andExpect(jsonPath("$.items[0].viewCount", Is.is(1)))
+                .andExpect(jsonPath("$.items[0].countAnswer", Is.is(1)))
+                .andExpect(jsonPath("$.items[0].countValuable", Is.is(0)))
+                .andExpect(jsonPath("$.items[0].persistDateTime", Is.is("2023-01-27T13:01:11.245126")))
+                .andExpect(jsonPath("$.items[0].lastUpdateDateTime", Is.is("2023-01-27T13:01:11.245126")))
+                .andExpect(jsonPath("$.items[0].listTagDto[0].id", Is.is(101)))
+
+                .andExpect(jsonPath("$.items[1].id", Is.is(102)))
+                .andExpect(jsonPath("$.items[1].listTagDto[0].id", Is.is(102)))
+
+                .andExpect(jsonPath("$.items[2].id", Is.is(105)))
+                .andExpect(jsonPath("$.items[2].listTagDto[0].id", Is.is(105)))
+
+                .andExpect(jsonPath("$.items[3].id", Is.is(108)))
+                .andExpect(jsonPath("$.items[3].listTagDto[0].id", Is.is(101)))
+
+                .andExpect(jsonPath("$.items[4].id", Is.is(109)))
+                .andExpect(jsonPath("$.items[4].listTagDto[1].id", Is.is(105)))
+                .andExpect(status().isOk());
+
+//  Successful test on not existing page
+        this.mvc.perform(get("/api/user/question")
+                        .header("Authorization", "Bearer " + token)
+                        .param("currentPageNumber", "5"))
+                .andDo(print())
+                .andExpect(jsonPath("$.items").isEmpty())
+                .andExpect(status().isOk());
+
+//  Page with negative number can not be found
+        this.mvc.perform(get("/api/user/question")
+                        .header("Authorization", "Bearer " + token)
+                        .param("currentPageNumber", "-1"))
+                .andDo(print())
+                .andExpect(status().isBadRequest());
+
+//  A question must have at least one tag, so questions without any tags are not shown
+        this.mvc.perform(get("/api/user/question")
+                        .header("Authorization", "Bearer " + token))
+                .andExpect(jsonPath("$.totalResultCount", Is.is(10)))
+                .andExpect(status().isOk());
+
+//  itemsOnPage test
+        this.mvc.perform(get("/api/user/question")
+                        .header("Authorization", "Bearer " + token)
+                        .param("itemsOnPage", "2"))
+                .andDo(print())
+                .andExpect(jsonPath("$.currentPageNumber", Is.is(1)))
+                .andExpect(jsonPath("$.totalPageCount", Is.is(5)))
+                .andExpect(jsonPath("$.totalResultCount", Is.is(10)))
+                .andExpect(jsonPath("$.itemsOnPage", Is.is(2)))
+
+                .andExpect(jsonPath("$.items[0].id", Is.is(100)))
+                .andExpect(jsonPath("$.items[1].id", Is.is(101)))
+                .andExpect(status().isOk());
+    }
+
     @Test
     @Sql(value = {"/script/TestQuestionResourceController.testGetPageWithListQuestionDtoWithoutAnswer/Before.sql"},
             executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)

@@ -14,9 +14,12 @@ import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
 import java.util.List;
+import java.util.Optional;
 import java.util.ArrayList;
+
+import static java.util.stream.Collectors.toList;
+
 
 @Service
 public class QuestionDtoServiceImpl extends PageDtoService<QuestionDto> implements QuestionDtoService {
@@ -49,16 +52,29 @@ public class QuestionDtoServiceImpl extends PageDtoService<QuestionDto> implemen
     }
 
     @Override
+    public PageDto<QuestionDto> getAllQuestionDto(HashMap<String, Object> param) {
+        param.put("daoDtoImpl", "paginationQuestionDtoDaoGetAllImpl");
+
+        PageDto<QuestionDto> pageDto = pageDto(param);
+        List<QuestionDto> listQuestionDto = pageDto.getItems();
+        List<Long> questionId = listQuestionDto.stream().map(QuestionDto::getId).collect(toList());
+        Map<Long, List<TagDto>> tagsMap = tagDtoDao.getTagsMapByQuestionId(questionId);
+        listQuestionDto.forEach(lQuestionDto -> lQuestionDto.setListTagDto(tagsMap.get(lQuestionDto.getId())));
+
+        return pageDto;
+    }
+
+    @Override
     public PageDto<QuestionDto> getPageWithListQuestionDtoWithoutAnswer(HashMap<String, Object> param) {
         param.put("daoDtoImpl", "questionDtoWithoutAnswerPaginationDaoImpl");
         PageDto<QuestionDto> pageDto = pageDto(param);
-        List<QuestionDto> questionDtoList =  pageDto.getItems();
+        List<QuestionDto> questionDtoList = pageDto.getItems();
         List<Long> listQuestionId = new ArrayList<>();
-        for (QuestionDto questionDto: questionDtoList){
+        for (QuestionDto questionDto : questionDtoList) {
             listQuestionId.add(questionDto.getId());
         }
         Map<Long, List<TagDto>> tagsMapByQuestionId = questionDtoWithoutAnswerPaginationDao.getTagsMapByQuestionId(listQuestionId);
-        for (QuestionDto questionDto: questionDtoList) {
+        for (QuestionDto questionDto : questionDtoList) {
             questionDto.setListTagDto(tagsMapByQuestionId.get(questionDto.getId()));
         }
         return pageDto;

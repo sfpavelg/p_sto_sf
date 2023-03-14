@@ -10,4 +10,6 @@ public interface QuestionDtoService {
     QuestionDto getQuestionDtoById(Long id) throws NotFoundException;
 
     PageDto<QuestionDto> getPageWithListQuestionDtoWithoutAnswer(HashMap<String, Object> param);
+
+    PageDto<QuestionDto> getAllQuestionDto(HashMap<String, Object> param) throws NotFoundException;
 }

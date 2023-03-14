@@ -8,6 +8,7 @@ import java.util.Optional;
 /**
  * A DTO for the {@link User} entity
  */
-public interface UserDtoDao {
+public interface UserDtoDao  {
     Optional<UserDto> getById(Long id);
+
 }
