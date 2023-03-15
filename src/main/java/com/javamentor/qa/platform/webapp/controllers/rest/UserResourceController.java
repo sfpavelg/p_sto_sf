@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.RequestParam;
+
 import java.util.HashMap;
 
 @RestController
@@ -41,6 +42,30 @@ public class UserResourceController {
             @ApiResponse(code = 404, message = "User with such id doesn't exist")})
     public ResponseEntity<?> getUser(@PathVariable("id") Long id) throws NotFoundException {
         return ResponseEntity.ok(userDtoService.getById(id));
+    }
+
+
+    /**
+     * Method return JSON with list all users sorted by reputation, with pagination
+     *
+     * @param itemsCountOnPage The number of users per page. Optional parameter. The default value is 10
+     * @param pageNumber       Page number of the page to be displayed (starts from zero)
+     * @return {@link ResponseEntity} with status Ok and {@link PageDto<UserDto>} in body
+     */
+    @GetMapping("/reputation")
+    @ApiOperation(value = "Get a page with a list of users sorted by reputation", response = PageDto.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Success request. UserDto objects returned in response"),
+            @ApiResponse(code = 403, message = "Forbidden"),
+            @ApiResponse(code = 404, message = "User with such id doesn't exist")})
+    public ResponseEntity<?> getPageWithListUsersSortedByReputation(
+            @RequestParam(value = "page") Integer pageNumber,
+            @RequestParam(value = "items", required = false, defaultValue = "10") Integer itemsCountOnPage
+    ) throws NotFoundException {
+        HashMap<String, Object> param = new HashMap<>();
+        param.put("currentPageNumber", pageNumber);
+        param.put("itemsOnPage", itemsCountOnPage);
+        return ResponseEntity.ok(userDtoService.getPageWithListUsersSortedByReputation(param));
     }
 
     @GetMapping("/new")
