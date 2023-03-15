@@ -93,7 +93,7 @@ public class TestAnswerResourceController extends AbstractTestApi {
     }
 
 
-   /* @Test
+    @Test
     @SqlGroup({
             @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD,
                     value = {"/script/TestAnswerResourceController/testDeleteAnswer/Before.sql"}),
@@ -102,5 +102,20 @@ public class TestAnswerResourceController extends AbstractTestApi {
     })
     public void testDeleteAnswer() throws Exception {
         String token = getToken("0@gmail.com", "0pwd");
-    }*/
+
+    // success (questionId does not make sense)
+        this.mvc.perform(delete("/api/user/question/{questionId}/answer/{answerId}", 10000, 100).header("Authorization", "Bearer " + token))
+                .andDo(print())
+                .andExpect(status().isOk());
+
+    // can not delete answer that is already deleted
+        this.mvc.perform(delete("/api/user/question/{questionId}/answer/{answerId}", 10000, 100).header("Authorization", "Bearer " + token))
+                .andDo(print())
+                .andExpect(status().isBadRequest());
+
+    // answerId does not exist
+        this.mvc.perform(delete("/api/user/question/{questionId}/answer/{answerId}", 10000, 10000).header("Authorization", "Bearer " + token))
+                .andDo(print())
+                .andExpect(status().isBadRequest());
+    }
 }
