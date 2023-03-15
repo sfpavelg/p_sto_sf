@@ -1,19 +1,26 @@
+const keyName = 'kataToken';
+
 if (document.URL.endsWith('logout')) {
     logOut();
 }
 
-let loginButton = document.getElementById('loginButton');
-let email = document.getElementById('email');
-let password = document.getElementById('password');
-loginButton.addEventListener('click', () => getTokenData(
-    email.value,
-    password.value
-));
+init();
+
+
+function init() {
+    let loginButton = document.getElementById('loginButton');
+    let email = document.getElementById('email');
+    let password = document.getElementById('password');
+    loginButton.addEventListener('click', () => getTokenData(
+        email.value,
+        password.value
+    ));
+}
 
 async function saveToken(tokenData) {
     const json = await tokenData.then(res => JSON.parse(JSON.stringify(res)));
     const token = json.token;
-    localStorage.setItem('tokenData', JSON.stringify(token).replaceAll('\"', ''));
+    localStorage.setItem(keyName, JSON.stringify(token).replaceAll('\"', ''));
 }
 
 function getTokenData(email, password) {
@@ -43,5 +50,5 @@ function getTokenData(email, password) {
 }
 
 function logOut() {
-    localStorage.clear()
+    localStorage.removeItem(keyName)
 }
