@@ -33,11 +33,8 @@ public class TagResourceController {
     private final TagDtoService tagDtoService;
     private final TagViewDtoService tagViewDtoService;
     private final IgnoredTagService ignoredTagService;
-
     private final TrackedTagService trackedTagService;
 
-
-    public TagResourceController(TagDtoService tagDtoService, IgnoredTagService ignoredTagService, TrackedTagService trackedTagService) {
     public TagResourceController(TagDtoService tagDtoService, TagViewDtoService tagViewDtoService, IgnoredTagService ignoredTagService, TrackedTagService trackedTagService) {
         this.tagDtoService = tagDtoService;
         this.tagViewDtoService = tagViewDtoService;
