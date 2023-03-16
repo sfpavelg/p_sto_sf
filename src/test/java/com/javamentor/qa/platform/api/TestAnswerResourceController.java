@@ -106,6 +106,7 @@ public class TestAnswerResourceController extends AbstractTestApi {
     // success (questionId does not make sense)
         this.mvc.perform(delete("/api/user/question/{questionId}/answer/{answerId}", 10000, 100).header("Authorization", "Bearer " + token))
                 .andDo(print())
+                .andExpect(jsonPath("$").doesNotExist())
                 .andExpect(status().isOk());
 
     // can not delete answer that is already deleted
