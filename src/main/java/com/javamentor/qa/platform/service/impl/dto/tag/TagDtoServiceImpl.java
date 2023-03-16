@@ -32,4 +32,5 @@ public class TagDtoServiceImpl implements TagDtoService {
     public List<TagDto> getIgnoredTagByUserId(Long id) {
         return tagDtoDao.getIgnoredTagByUserId(id);
     }
+
 }
