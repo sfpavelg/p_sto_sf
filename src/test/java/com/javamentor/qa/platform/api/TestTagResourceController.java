@@ -163,8 +163,8 @@ public class TestTagResourceController extends AbstractTestApi {
     }
 
     @Test
-    @Sql(value = {"/script/TestTagController/getSortedByDateTags/sorted-tags-dto-data-create.sql"}, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
-    @Sql(value = {"/script/TestTagController/getSortedByDateTags/sorted-tags-dto-data-drop.sql"}, executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
+    @Sql(value = {"/script/TestTagResourceController/testGetSortedByDateTags/Before.sql"}, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+    @Sql(value = {"/script/TestTagResourceController/testGetSortedByDateTags/After.sql"}, executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
     public void getSortedByDateTagList() throws Exception {
         String token = getToken("0@gmail.com", "0pwd");
 
