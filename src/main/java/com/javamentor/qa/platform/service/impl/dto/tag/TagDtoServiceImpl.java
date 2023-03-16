@@ -37,4 +37,5 @@ public class TagDtoServiceImpl implements TagDtoService {
     public List<TagDto> getTrackedTagsByUserId(Long userId) {
         return tagDtoDao.getTrackedTagsByUserId(userId);
     }
+
 }

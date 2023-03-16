@@ -1,11 +1,16 @@
 package com.javamentor.qa.platform.security.jwt;
 
 
+import com.javamentor.qa.platform.models.entity.user.User;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -32,5 +37,13 @@ public class AuthenticationResourceController {
     public AuthenticationResponse authentication(@RequestBody AuthenticationRequest request) {
         Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword()));
         return new AuthenticationResponse(jwtService.generateJwtToken(authentication));
+    }
+
+    @GetMapping("/validate")
+    public ResponseEntity<?> validate(@AuthenticationPrincipal User user) {
+        if (!user.getRole().getName().equals("ROLE_USER")) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
+        return ResponseEntity.ok().build();
     }
 }

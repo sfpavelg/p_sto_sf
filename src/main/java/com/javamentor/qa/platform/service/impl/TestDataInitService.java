@@ -1,19 +1,20 @@
 package com.javamentor.qa.platform.service.impl;
 
-import com.javamentor.qa.platform.models.entity.question.IgnoredTag;
-import com.javamentor.qa.platform.models.entity.question.Question;
-import com.javamentor.qa.platform.models.entity.question.Tag;
-import com.javamentor.qa.platform.models.entity.question.TrackedTag;
+import com.javamentor.qa.platform.models.entity.Comment;
+import com.javamentor.qa.platform.models.entity.CommentType;
+import com.javamentor.qa.platform.models.entity.question.*;
 import com.javamentor.qa.platform.models.entity.question.answer.Answer;
+import com.javamentor.qa.platform.models.entity.question.answer.CommentAnswer;
+import com.javamentor.qa.platform.models.entity.question.answer.VoteAnswer;
+import com.javamentor.qa.platform.models.entity.question.answer.VoteType;
 import com.javamentor.qa.platform.models.entity.user.Role;
 import com.javamentor.qa.platform.models.entity.user.User;
-import com.javamentor.qa.platform.service.abstracts.model.AnswerService;
+import com.javamentor.qa.platform.models.entity.user.reputation.Reputation;
+import com.javamentor.qa.platform.models.entity.user.reputation.ReputationType;
+import com.javamentor.qa.platform.service.abstracts.model.*;
 import com.javamentor.qa.platform.service.abstracts.model.tag.IgnoredTagService;
-import com.javamentor.qa.platform.service.abstracts.model.QuestionService;
-import com.javamentor.qa.platform.service.abstracts.model.RoleService;
 import com.javamentor.qa.platform.service.abstracts.model.tag.TagService;
 import com.javamentor.qa.platform.service.abstracts.model.tag.TrackedTagService;
-import com.javamentor.qa.platform.service.abstracts.model.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -37,10 +38,20 @@ public class TestDataInitService {
     private final TagService tagService;
     private final IgnoredTagService ignoredTagService;
     private final TrackedTagService trackedTagService;
+    private final QuestionViewedService questionViewedService;
+    private final VoteQuestionService voteQuestionService;
+    private final VoteAnswerService voteAnswerService;
+    private final CommentQuestionService commentQuestionService;
+    private final CommentAnswerService commentAnswerService;
+    private final ReputationService reputationService;
 
     @Autowired
-    public TestDataInitService(RoleService roleService, UserService userService, QuestionService questionService, AnswerService answerService,
-                               TagService tagService, IgnoredTagService ignoredTagService, TrackedTagService trackedTagService) {
+    public TestDataInitService(RoleService roleService, UserService userService, QuestionService questionService,
+                               AnswerService answerService, TagService tagService, IgnoredTagService ignoredTagService,
+                               TrackedTagService trackedTagService, QuestionViewedService questionViewedService,
+                               VoteQuestionService voteQuestionService, VoteAnswerService voteAnswerService,
+                               CommentQuestionService commentQuestionService, CommentAnswerService commentAnswerService,
+                               ReputationService reputationService) {
         this.roleService = roleService;
         this.userService = userService;
         this.questionService = questionService;
@@ -48,6 +59,12 @@ public class TestDataInitService {
         this.tagService = tagService;
         this.ignoredTagService = ignoredTagService;
         this.trackedTagService = trackedTagService;
+        this.questionViewedService = questionViewedService;
+        this.voteQuestionService = voteQuestionService;
+        this.voteAnswerService = voteAnswerService;
+        this.commentQuestionService = commentQuestionService;
+        this.commentAnswerService = commentAnswerService;
+        this.reputationService = reputationService;
     }
 
     public void createSuperUser(int count) {
@@ -177,6 +194,142 @@ public class TestDataInitService {
         return leftLimit + (int) (Math.random() * rightLimit);
     }
 
+    public void createQuestionViewed(int count) {
+        List<Question> questionList = questionService.getAll();
+        List<User> userList = userService.getAll();
+        for (int i = 0; i < count; i++) {
+            QuestionViewed questionViewed = new QuestionViewed();
+            Collections.shuffle(questionList);
+            questionViewed.setQuestion(questionList.get(0));
+            Collections.shuffle(userList);
+            questionViewed.setUser(userList.get(0));
+            questionViewedService.persist(questionViewed);
+        }
+    }
+
+    public void createVoteQuestion(int count) {
+        List<Question> questionList = questionService.getAll();
+        List<User> userList = userService.getAll();
+        for (int i = 0; i < count; i++) {
+            VoteQuestion voteQuestion = new VoteQuestion();
+            Collections.shuffle(userList);
+            voteQuestion.setUser(userList.get(0));
+            Collections.shuffle(questionList);
+            voteQuestion.setQuestion(questionList.get(0));
+            if (rand(0, 2) == 0) {
+                voteQuestion.setVote(VoteType.DOWN_VOTE);
+            } else {
+                voteQuestion.setVote(VoteType.UP_VOTE);
+            }
+            voteQuestionService.persist(voteQuestion);
+        }
+    }
+
+    public void createVoteAnswer(int count) {
+        List<Answer> answerList = answerService.getAll();
+        List<User> userList = userService.getAll();
+        for (int i = 0; i < count; i++) {
+            VoteAnswer voteAnswer = new VoteAnswer();
+            Collections.shuffle(userList);
+            voteAnswer.setUser(userList.get(0));
+            Collections.shuffle(answerList);
+            voteAnswer.setAnswer(answerList.get(0));
+            if (rand(0, 2) == 0) {
+                voteAnswer.setVote(VoteType.DOWN_VOTE);
+            } else {
+                voteAnswer.setVote(VoteType.UP_VOTE);
+            }
+            voteAnswerService.persist(voteAnswer);
+        }
+    }
+
+    public void createCommentQuestion(int count) {
+        List<Question> questionList = questionService.getAll();
+        List<User> userList = userService.getAll();
+        for (int i = 0; i < count; i++) {
+            Comment comment = new Comment(CommentType.QUESTION);
+            Collections.shuffle(userList);
+            comment.setText("Comment on the question nickname \"" + userList.get(0).getNickname() + "\"");
+            comment.setUser(userList.get(0));
+
+            CommentQuestion commentQuestion = new CommentQuestion();
+            commentQuestion.setComment(comment);
+            Collections.shuffle(questionList);
+            commentQuestion.setQuestion(questionList.get(0));
+
+            commentQuestionService.persist(commentQuestion);
+        }
+    }
+
+    public void createCommentAnswer(int count) {
+        List<Answer> answerList = answerService.getAll();
+        List<User> userList = userService.getAll();
+        for (int i = 0; i < count; i++) {
+            Comment comment = new Comment(CommentType.ANSWER);
+            Collections.shuffle(userList);
+            comment.setText("Comment on the answer nickname \"" + userList.get(0).getNickname() + "\"");
+            comment.setUser(userList.get(0));
+
+            CommentAnswer commentAnswer = new CommentAnswer();
+            commentAnswer.setComment(comment);
+            Collections.shuffle(answerList);
+            commentAnswer.setAnswer(answerList.get(0));
+
+            commentAnswerService.persist(commentAnswer);
+        }
+    }
+
+    public void createReputation() {
+        List<Question> questionList = questionService.getAll();
+        for (Question question : questionList) {
+            Reputation reputation = new Reputation();
+            reputation.setPersistDate(question.getPersistDateTime());
+            reputation.setAuthor(question.getUser());
+            reputation.setSender(question.getUser());
+            reputation.setCount(1);
+            reputation.setType(ReputationType.Question);
+            reputation.setQuestion(question);
+            reputation.setAnswer(null);
+            reputationService.persist(reputation);
+        }
+        List<VoteQuestion> voteQuestionList = voteQuestionService.getAll();
+        for (VoteQuestion voteQuestion : voteQuestionList) {
+            Reputation reputation = new Reputation();
+            reputation.setPersistDate(voteQuestion.getLocalDateTime());
+            reputation.setAuthor(voteQuestion.getUser());
+            reputation.setSender(voteQuestion.getUser());
+            reputation.setCount(1);
+            reputation.setType(ReputationType.VoteQuestion);
+            reputation.setQuestion(voteQuestion.getQuestion());
+            reputation.setAnswer(null);
+            reputationService.persist(reputation);
+        }
+        List<Answer> answerList = answerService.getAll();
+        for (Answer answer : answerList) {
+            Reputation reputation = new Reputation();
+            reputation.setPersistDate(answer.getPersistDateTime());
+            reputation.setAuthor(answer.getUser());
+            reputation.setSender(answer.getUser());
+            reputation.setCount(1);
+            reputation.setType(ReputationType.Answer);
+            reputation.setQuestion(null);
+            reputation.setAnswer(answer);
+            reputationService.persist(reputation);
+        }
+        List<VoteAnswer> voteAnswerList = voteAnswerService.getAll();
+        for (VoteAnswer voteAnswer : voteAnswerList) {
+            Reputation reputation = new Reputation();
+            reputation.setPersistDate(voteAnswer.getPersistDateTime());
+            reputation.setAuthor(voteAnswer.getUser());
+            reputation.setSender(voteAnswer.getUser());
+            reputation.setCount(1);
+            reputation.setType(ReputationType.VoteAnswer);
+            reputation.setQuestion(null);
+            reputation.setAnswer(voteAnswer.getAnswer());
+            reputationService.persist(reputation);
+        }
+    }
+
     public void init() {
         roleService.persist(ROLE_ADMIN);
         roleService.persist(ROLE_USER);
@@ -186,5 +339,11 @@ public class TestDataInitService {
         createQuestion(10);
         createAnswer(50);
         createIgnoredAndTrackedTags(1);
+        createQuestionViewed(50);
+        createVoteQuestion(25);
+        createVoteAnswer(25);
+        createCommentQuestion(20);
+        createCommentAnswer(20);
+        createReputation();
     }
 }
