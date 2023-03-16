@@ -1,4 +1,4 @@
-package com.javamentor.qa.platform;
+package com.javamentor.qa.platform.api;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -7,6 +7,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 
+import com.javamentor.qa.platform.AbstractTestApi;
 import com.javamentor.qa.platform.models.dto.question.QuestionCreateDto;
 import com.javamentor.qa.platform.models.dto.tag.TagDto;
 import org.hamcrest.core.Is;
@@ -283,8 +284,8 @@ class TestQuestionResourceController extends AbstractTestApi {
                 .andExpect(status().isOk());
     }
     @Test
-    @Sql(value = {"/script/question/voteForQuestionTest/Before.sql"}, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
-    @Sql(value = "/script/question/voteForQuestionTest/After.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
+    @Sql(value = {"/script/TestQuestionResourceController/testVoteForQuestion/Before.sql"}, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+    @Sql(value = "/script/TestQuestionResourceController/testVoteForQuestion/After.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
     public void voteForQuestionTest() throws Exception {
         String token = getToken("0@gmail.com", "0pwd");
 
