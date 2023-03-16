@@ -3,6 +3,7 @@ package com.javamentor.qa.platform.webapp.controllers.rest;
 import com.javamentor.qa.platform.models.dto.tag.TagDto;
 import com.javamentor.qa.platform.models.entity.user.User;
 import com.javamentor.qa.platform.service.abstracts.dto.tag.TagDtoService;
+import com.javamentor.qa.platform.service.abstracts.dto.tag.TagViewDtoService;
 import com.javamentor.qa.platform.service.abstracts.model.tag.IgnoredTagService;
 import com.javamentor.qa.platform.service.abstracts.model.tag.TrackedTagService;
 import io.swagger.annotations.Api;
@@ -17,7 +18,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestParam;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 
@@ -27,12 +30,14 @@ import java.util.Optional;
 public class TagResourceController {
 
     private final TagDtoService tagDtoService;
+    private final TagViewDtoService tagViewDtoService;
     private final IgnoredTagService ignoredTagService;
 
     private final TrackedTagService trackedTagService;
 
-    public TagResourceController(TagDtoService tagDtoService, IgnoredTagService ignoredTagService, TrackedTagService trackedTagService) {
+    public TagResourceController(TagDtoService tagDtoService, TagViewDtoService tagViewDtoService, IgnoredTagService ignoredTagService, TrackedTagService trackedTagService) {
         this.tagDtoService = tagDtoService;
+        this.tagViewDtoService = tagViewDtoService;
         this.ignoredTagService = ignoredTagService;
         this.trackedTagService = trackedTagService;
     }
@@ -86,6 +91,20 @@ public class TagResourceController {
     public ResponseEntity<?> getAllUserIgnoredTag()  {
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         return ResponseEntity.ok(tagDtoService.getIgnoredTagByUserId(user.getId()));
+    }
+
+    @GetMapping("/new")
+    @ApiOperation(value = "Getting list of latest tags", response = List.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Success request. List of latest tags returned"),
+            @ApiResponse(code = 401, message = "Unauthorized request"),
+            @ApiResponse(code = 403, message = "Forbidden")})
+    public ResponseEntity<?> getSortedByDateTagList(@RequestParam(defaultValue = "1") int currentPageNumber,
+                                                    @RequestParam(defaultValue = "10") int itemsOnPage)throws NotFoundException{
+        HashMap<String, Object> params = new HashMap<>();
+        params.put("currentPageNumber", currentPageNumber);
+        params.put("itemsOnPage", itemsOnPage);
+       return ResponseEntity.ok(tagViewDtoService.getSortedByDateTagList(params));
     }
 
 
