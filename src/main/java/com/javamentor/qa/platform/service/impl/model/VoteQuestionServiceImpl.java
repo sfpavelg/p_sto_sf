@@ -31,11 +31,6 @@ public class VoteQuestionServiceImpl extends ReadWriteServiceImpl<VoteQuestion, 
     }
 
     @Override
-    public Optional<VoteQuestion> getByUserId(Long questionId, Long userId) {
-        return voteQuestionDao.getByUserId(questionId, userId);
-    }
-
-    @Override
     @Transactional
     public Long voteUpForQuestion(Long questionId, User user) throws NotFoundException {
         processVoteForQuestion(questionId, user, VoteType.UP_VOTE);
@@ -50,7 +45,7 @@ public class VoteQuestionServiceImpl extends ReadWriteServiceImpl<VoteQuestion, 
     }
 
     private void processVoteForQuestion(Long questionId, User user, VoteType userVoteType) throws NotFoundException {
-        Optional<VoteQuestion> optionalVote = getByUserId(questionId, user.getId());
+        Optional<VoteQuestion> optionalVote = voteQuestionDao.getByUserId(questionId, user.getId());
         if (optionalVote.isEmpty()) {
             persistVoteQuestionWithReputation(questionId, user, userVoteType);
         }

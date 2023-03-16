@@ -7,10 +7,7 @@ import com.javamentor.qa.platform.models.entity.user.User;
 import com.javamentor.qa.platform.models.entity.user.reputation.Reputation;
 import javassist.NotFoundException;
 
-import java.util.Optional;
-
 public interface VoteQuestionService extends ReadWriteService<VoteQuestion, Long> {
-    Optional<VoteQuestion> getByUserId(Long questionId, Long userId);
 
     /**
      * Method for voting UP for a question. The result of this method is adding or updating {@link VoteQuestion} and {@link Reputation}
