@@ -4,6 +4,7 @@ package com.javamentor.qa.platform.security.jwt;
 import com.javamentor.qa.platform.models.entity.user.User;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -41,8 +42,8 @@ public class AuthenticationResourceController {
     @GetMapping("/validate")
     public ResponseEntity<?> validate(@AuthenticationPrincipal User user) {
         if (!user.getRole().getName().equals("ROLE_USER")) {
-            return ResponseEntity.status(403).build();
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
-        return ResponseEntity.status(200).build();
+        return ResponseEntity.ok().build();
     }
 }
