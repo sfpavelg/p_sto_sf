@@ -47,6 +47,7 @@ const headerText = `
           </li>
         </ul>
       </div>
+      <button id="logoutBtn" type="button" class="btn btn-primary ms-3">LogOut</button>
     </div>
   </div>
 </header>
@@ -55,3 +56,12 @@ const headerText = `
 let header = document.createElement("div");
 header.innerHTML = headerText;
 document.body.insertAdjacentElement('afterbegin', header);
+
+logoutInit();
+
+function logoutInit(){
+    document.getElementById('logoutBtn').onclick = function (){
+        localStorage.removeItem(keyName);
+        location.href = '/login'
+    }
+}
