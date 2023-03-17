@@ -17,6 +17,15 @@ public class ReputationDaoImpl extends ReadWriteDaoImpl<Reputation, Long> implem
     private EntityManager entityManager;
 
     @Override
+    public Optional<Reputation> getByAnswerAndUser(ReputationType type, Long answerId, Long senderId) {
+        return SingleResultUtil.getSingleResultOrNull(entityManager.createQuery("" +
+                        "SELECT rep FROM Reputation rep " +
+                        "WHERE rep.answer.id = :answerId AND rep.sender.id = :senderId AND rep.type = :type", Reputation.class)
+                .setParameter("type", type)
+                .setParameter("answerId", answerId)
+                .setParameter("senderId", senderId));
+    }
+
     public Optional<Reputation> getByQuestionAndUser(ReputationType type, Long questionId, Long senderId) {
         return SingleResultUtil.getSingleResultOrNull(entityManager.createQuery("" +
                         "SELECT rep FROM Reputation rep " +
