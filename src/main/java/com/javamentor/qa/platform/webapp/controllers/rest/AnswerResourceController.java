@@ -1,7 +1,6 @@
 package com.javamentor.qa.platform.webapp.controllers.rest;
 
 import com.javamentor.qa.platform.models.dto.answer.AnswerDto;
-import com.javamentor.qa.platform.models.entity.question.answer.VoteType;
 import com.javamentor.qa.platform.models.entity.user.User;
 import com.javamentor.qa.platform.service.abstracts.dto.answer.AnswerDtoService;
 import com.javamentor.qa.platform.service.abstracts.model.AnswerService;
@@ -45,7 +44,6 @@ public class AnswerResourceController {
     }
 
 
-
     @ApiOperation(value = "Удаление ответа")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Запрос успешно выполнен"),
@@ -70,7 +68,7 @@ public class AnswerResourceController {
             @ApiResponse(code = 400, message = "Invalid password")})
     public ResponseEntity<Long> voteUpForAnswer(@PathVariable Long answerId,
                                                 @AuthenticationPrincipal User user) throws NotFoundException {
-        return ResponseEntity.ok(voteAnswerService.voteForAnswer(answerId, user, VoteType.UP_VOTE));
+        return ResponseEntity.ok(voteAnswerService.voteUpForAnswer(answerId, user));
     }
 
     @PostMapping("/{answerId}/downVote")
@@ -82,11 +80,8 @@ public class AnswerResourceController {
             @ApiResponse(code = 400, message = "Invalid password")})
     public ResponseEntity<Long> voteDownForAnswer(@PathVariable Long answerId,
                                                   @AuthenticationPrincipal User user) throws NotFoundException {
-        return ResponseEntity.ok(voteAnswerService.voteForAnswer(answerId, user, VoteType.DOWN_VOTE));
+        return ResponseEntity.ok(voteAnswerService.voteDownForAnswer(answerId, user));
     }
-
-
-
 }
 
 

@@ -90,8 +90,8 @@ public class TestAnswerResourceController extends AbstractTestApi {
     }
 
     @Test
-    @Sql(value = {"/script/answer/testVoteForAnswer/Before.sql"}, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
-    @Sql(value = "/script/answer/testVoteForAnswer/After.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
+    @Sql(value = {"/script/TestAnswerResourceController/testVoteForAnswer/Before.sql"}, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+    @Sql(value = "/script/TestAnswerResourceController/testVoteForAnswer/After.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
     public void voteForAnswer() throws Exception {
         String token = getToken("0@gmail.com", "0pwd");
 

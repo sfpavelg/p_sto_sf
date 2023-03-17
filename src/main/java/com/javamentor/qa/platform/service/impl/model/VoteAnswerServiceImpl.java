@@ -34,20 +34,43 @@ public class VoteAnswerServiceImpl extends ReadWriteServiceImpl<VoteAnswer, Long
 
     @Override
     @Transactional
-    public Long voteForAnswer(Long answerId, User user, VoteType voteType) throws NotFoundException {
-
-        Optional<Answer> optionalAnswer = answerDao.getById(answerId);
-        Answer answer;
-        if (!optionalAnswer.isPresent()) {
-            throw new NotFoundException("Answer with id " + answerId + " not found.");
-        }
-        answer = optionalAnswer.get();
-        return addVoteAnswerAndAddReputation(answerId, answer, user, voteType);
+    public Long voteUpForAnswer(Long answerId, User user) throws NotFoundException {
+        processVoteForAnswer(answerId, user, VoteType.UP_VOTE);
+        return voteAnswerDao.getSumUpDownVotes(answerId);
     }
 
     @Override
     @Transactional
-    public Long addVoteAnswerAndAddReputation(Long answerId, Answer answer, User user, VoteType voteType) {
+    public Long voteDownForAnswer(Long answerId, User user) throws NotFoundException {
+        processVoteForAnswer(answerId, user, VoteType.DOWN_VOTE);
+        return voteAnswerDao.getSumUpDownVotes(answerId);
+    }
+
+
+    private void processVoteForAnswer(Long answerId, User user, VoteType voteType) throws NotFoundException {
+
+        Optional<Answer> optionalAnswer = answerDao.getById(answerId);
+        Answer answer;
+        if (optionalAnswer.isEmpty()) {
+            throw new NotFoundException("Answer with id " + answerId + " not found.");
+        }
+        answer = optionalAnswer.get();
+        persistOrUpdateVoteForAnswer(answerId, answer, user, voteType);
+    }
+
+
+    private void persistOrUpdateVoteForAnswer(Long answerId, Answer answer, User user, VoteType voteType) {
+        Optional<VoteAnswer> optionalVote = voteAnswerDao.getByUserId(answerId, user.getId());
+        if (optionalVote.isEmpty()) {
+            persistVoteAnswerWithReputation(answerId, answer, user, voteType);
+            return;
+        }
+            updateVoteAnswerWithReputation(optionalVote.get(), answerId, user, voteType);
+
+    }
+
+
+    private void persistVoteAnswerWithReputation(Long answerId, Answer answer, User user, VoteType voteType) {
         Optional<VoteAnswer> optionalVote = voteAnswerDao.getByUserId(answerId, user.getId());
         VoteAnswer vote;
         if (!optionalVote.isPresent()) {
@@ -60,16 +83,10 @@ public class VoteAnswerServiceImpl extends ReadWriteServiceImpl<VoteAnswer, Long
                     answer,
                     null
             ));
-            return voteAnswerDao.getSumUpDownVotes(answerId);
-        }else {
-            vote = optionalVote.get();
-            return updateVoteAnswerAndUpdateReputation(vote, answerId, user, voteType);
         }
     }
 
-    @Override
-    @Transactional
-    public Long updateVoteAnswerAndUpdateReputation(VoteAnswer vote, Long answerId, User user, VoteType voteType) {
+    private void updateVoteAnswerWithReputation(VoteAnswer vote, Long answerId, User user, VoteType voteType) {
 
         vote.setVote(voteType);
         this.update(vote);
@@ -77,7 +94,5 @@ public class VoteAnswerServiceImpl extends ReadWriteServiceImpl<VoteAnswer, Long
         Reputation reputation = reputationDao.getByAnswerAndUser(ReputationType.VoteAnswer, answerId, user.getId()).get();
         reputation.setCount(voteType == VoteType.UP_VOTE ? +10 : -5);
         reputationDao.update(reputation);
-
-        return voteAnswerDao.getSumUpDownVotes(answerId);
     }
 }
