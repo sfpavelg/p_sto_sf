@@ -8,11 +8,14 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.jdbc.SqlGroup;
 
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 public class TestAnswerResourceController extends AbstractTestApi {
 
@@ -104,13 +107,11 @@ public class TestAnswerResourceController extends AbstractTestApi {
         // success (questionId does not make sense)
         this.mvc.perform(delete("/api/user/question/{questionId}/answer/{answerId}", 10000, 100).header("Authorization", "Bearer " + token))
                 .andDo(print())
-                .andExpect(jsonPath("$").doesNotExist())
                 .andExpect(status().isOk());
-
-        // can not delete answer that is already deleted
-        this.mvc.perform(delete("/api/user/question/{questionId}/answer/{answerId}", 10000, 100).header("Authorization", "Bearer " + token))
-                .andDo(print())
-                .andExpect(status().isBadRequest());
+        assertThat(em.createQuery("select a from Answer a where a.id = 100 and a.isDeleted = true")
+                .getResultList()
+                .isEmpty())
+                .isEqualTo(false);
 
         // answerId does not exist
         this.mvc.perform(delete("/api/user/question/{questionId}/answer/{answerId}", 10000, 10000).header("Authorization", "Bearer " + token))

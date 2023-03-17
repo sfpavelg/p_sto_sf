@@ -44,14 +44,14 @@ public class AnswerResourceController {
     }
 
 
-    @ApiOperation(value = "Удаление ответа")
+    @ApiOperation(value = "Delete answer by id")
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Запрос успешно выполнен"),
-            @ApiResponse(code = 400, message = "Ответ с указанным уникальным идентификатором (Id) не найден")
+            @ApiResponse(code = 200, message = "Success request. Answer has been deleted"),
+            @ApiResponse(code = 400, message = "No answer with such id")
     })
     @DeleteMapping("/{answerId}")
-    public ResponseEntity<Void> deleteAnswer(@PathVariable Long answerId) {
-        if (answerService.getById(answerId).isPresent()) {
+    public ResponseEntity<?> deleteAnswer(@PathVariable Long answerId) {
+        if (answerService.existsById(answerId)) {
             answerService.deleteById(answerId);
             return new ResponseEntity<>(HttpStatus.OK);
         }
