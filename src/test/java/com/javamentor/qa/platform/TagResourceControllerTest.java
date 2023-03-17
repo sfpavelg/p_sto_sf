@@ -282,4 +282,80 @@ public class TagResourceControllerTest extends AbstractTestApi {
                 .andExpect(jsonPath("$.size()", Is.is(0)));
     }
 
+    @Test
+    @Sql(value = {"/script/TestTagResourseController/testGetSortedByPopularity/Before.sql"}, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+    @Sql(value = {"/script/TestTagResourseController/testGetSortedByPopularity/After.sql"}, executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
+    public void testGetSortedByPopularity() throws Exception{
+        String token = getToken("0@gmail.com", "0pwd");
+
+        // пользователь не авторизован (отсутствует JWT) - ошибка
+        this.mvc.perform(get("/api/user/tag/popular"))
+                .andDo(print())
+                .andExpect(status().is4xxClientError());
+
+        // получение тегов
+        this.mvc.perform(get("/api/user/tag/popular")
+                        .header("Authorization", "Bearer " + token))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.totalPageCount", Is.is(1)))
+                .andExpect(jsonPath("$.totalResultCount", Is.is(5)))
+                .andExpect(jsonPath("$.currentPageNumber", Is.is(1)))
+                .andExpect(jsonPath("$.items.size()", Is.is(5)))
+
+                .andExpect(jsonPath("$.items[0].id",Is.is(103)))
+                .andExpect(jsonPath("$.items[0].name",Is.is("HTML")))
+                .andExpect(jsonPath("$.items[0].description",Is.is("HTML description")))
+
+                .andExpect(jsonPath("$.items[1].id",Is.is(101)))
+                .andExpect(jsonPath("$.items[1].name",Is.is("JavaScript")))
+                .andExpect(jsonPath("$.items[1].description",Is.is("JavaScript description")))
+
+                .andExpect(jsonPath("$.items[2].id",Is.is(100)))
+                .andExpect(jsonPath("$.items[2].name",Is.is("Java")))
+                .andExpect(jsonPath("$.items[2].description",Is.is("Java description")))
+
+                .andExpect(jsonPath("$.items[3].id",Is.is(102)))
+                .andExpect(jsonPath("$.items[3].name",Is.is("C#")))
+                .andExpect(jsonPath("$.items[3].description",Is.is("C# description")))
+
+                .andExpect(jsonPath("$.items[4].id",Is.is(104)))
+                .andExpect(jsonPath("$.items[4].name",Is.is("Python")))
+                .andExpect(jsonPath("$.items[4].description",Is.is("Python description")));
+
+        // получение последней 5 страницы, когда 1 тег на страницу
+        this.mvc.perform(get("/api/user/tag/popular")
+                        .header("Authorization", "Bearer " + token)
+                        .param("page","5")
+                        .param("items","1"))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.totalPageCount", Is.is(5)))
+                .andExpect(jsonPath("$.totalResultCount", Is.is(5)))
+                .andExpect(jsonPath("$.currentPageNumber", Is.is(5)))
+                .andExpect(jsonPath("$.items.size()", Is.is(1)))
+                .andExpect(jsonPath("$.items[0].id",Is.is(104)))
+                .andExpect(jsonPath("$.items[0].name",Is.is("Python")))
+                .andExpect(jsonPath("$.items[0].description",Is.is("Python description")));
+
+        // пустая страница
+        this.mvc.perform(get("/api/user/tag/popular")
+                        .header("Authorization", "Bearer " + token)
+                        .param("page","6")
+                        .param("items","1"))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.totalPageCount", Is.is(5)))
+                .andExpect(jsonPath("$.totalResultCount", Is.is(5)))
+                .andExpect(jsonPath("$.currentPageNumber", Is.is(6)))
+                .andExpect(jsonPath("$.items.size()", Is.is(0)));
+
+        // ошибка - страница за пределами границ ( <1 )
+        this.mvc.perform(get("/api/user/tag/popular")
+                        .header("Authorization", "Bearer " + token)
+                        .param("page","0"))
+                .andDo(print())
+                .andExpect(status().is4xxClientError())
+                .andExpect(jsonPath("$", Is.is("The current page cannot be less than 1")));
+    }
 }

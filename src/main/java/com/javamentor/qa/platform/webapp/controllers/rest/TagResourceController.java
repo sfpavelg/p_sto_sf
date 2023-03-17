@@ -1,5 +1,6 @@
 package com.javamentor.qa.platform.webapp.controllers.rest;
 
+import com.javamentor.qa.platform.models.dto.PageDto;
 import com.javamentor.qa.platform.models.dto.tag.TagDto;
 import com.javamentor.qa.platform.models.entity.user.User;
 import com.javamentor.qa.platform.service.abstracts.dto.tag.TagDtoService;
@@ -120,4 +121,17 @@ public class TagResourceController {
         return ResponseEntity.ok(tagDtoService.getTrackedTagsByUserId(authenticatedUser.getId()));
     }
 
+    @GetMapping("/popular")
+    @ApiOperation(value = "Getting all Tags sorted by popularity", response = PageDto.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Success request. PageDto has been successfully returned"),
+            @ApiResponse(code = 400, message = "Invalid password"),
+            @ApiResponse(code = 403, message = "Forbidden")})
+    public ResponseEntity<PageDto<TagDto>> getSortedByPopularity(@RequestParam(defaultValue = "1") int page,
+                                                                 @RequestParam(defaultValue = "10") int items){
+        HashMap<String, Object> params = new HashMap<>();
+        params.put("currentPageNumber", page);
+        params.put("itemsOnPage", items);
+        return ResponseEntity.ok(tagDtoService.getSortedByPopularity(params));
+    }
 }
