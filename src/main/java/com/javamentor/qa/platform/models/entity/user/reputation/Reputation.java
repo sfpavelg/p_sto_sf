@@ -59,6 +59,14 @@ public class Reputation implements Serializable {
     @JoinColumn(name = "answer_id")
     private Answer answer;
 
+    public Reputation(User author, User sender, Integer count, ReputationType type, Question question, Answer answer) {
+        this.author = author;
+        this.sender = sender;
+        this.count = count;
+        this.type = type;
+        this.question = question;
+        this.answer = answer;
+    }
 
     @Override
     public boolean equals(Object o) {

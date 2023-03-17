@@ -3,7 +3,9 @@ package com.javamentor.qa.platform.api;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 
 import com.javamentor.qa.platform.AbstractTestApi;
 import com.javamentor.qa.platform.models.dto.question.QuestionCreateDto;
@@ -276,6 +278,153 @@ class TestQuestionResourceController extends AbstractTestApi {
                 .andExpect(jsonPath("$.items[0].id", Is.is(100)))
                 .andExpect(jsonPath("$.items[1].id", Is.is(101)))
                 .andExpect(status().isOk());
+    }
+    @Test
+    @Sql(value = {"/script/TestQuestionResourceController/testVoteForQuestion/Before.sql"}, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+    @Sql(value = "/script/TestQuestionResourceController/testVoteForQuestion/After.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
+    public void voteForQuestionTest() throws Exception {
+        String token = getToken("0@gmail.com", "0pwd");
+
+        // пользователь не авторизован (отсутствует JWT) - ошибка
+        this.mvc.perform(post("/api/user/question/1/upVote"))
+                .andDo(print())
+                .andExpect(status().is4xxClientError());
+
+        // голосование за несуществующий вопрос - ошибка
+        this.mvc.perform(post("/api/user/question/1/upVote")
+                        .header("Authorization", "Bearer " + token))
+                .andDo(print())
+                .andExpect(status().is4xxClientError())
+                .andExpect(jsonPath("$",Is.is("Question with id 1 not found.")));
+
+        // UpVote за 103 вопрос - за него никто еще не голосовал
+        this.mvc.perform(post("/api/user/question/103/upVote")
+                        .header("Authorization", "Bearer " + token))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", Is.is(1)));
+        // проверка репутации после голосования
+        this.mvc.perform(get("/api/user/{id}", 100)
+                        .header("Authorization", "Bearer " + token))
+                .andExpect(jsonPath("$.id", Is.is(100)))
+                .andExpect(jsonPath("$.email", Is.is("0@gmail.com")))
+                .andExpect(jsonPath("$.fullName", Is.is("name1")))
+                .andExpect(jsonPath("$.city", Is.is("Moscow")))
+                .andExpect(jsonPath("$.imageLink", Is.is("http://imagelink1.com")))
+                .andExpect(jsonPath("$.reputation", Is.is(0)));
+        this.mvc.perform(get("/api/user/{id}", 103)
+                        .header("Authorization", "Bearer " + token))
+                .andExpect(jsonPath("$.id", Is.is(103)))
+                .andExpect(jsonPath("$.email", Is.is("email4@domain.com")))
+                .andExpect(jsonPath("$.fullName", Is.is("name4")))
+                .andExpect(jsonPath("$.city", Is.is("Ekaterinburg")))
+                .andExpect(jsonPath("$.imageLink", Is.is("http://imagelink4.com")))
+                .andExpect(jsonPath("$.reputation", Is.is(10)));
+
+
+        // DownVote за 103 вопрос - существующий UpVote меняется на DownVote
+        this.mvc.perform(post("/api/user/question/103/downVote")
+                        .header("Authorization", "Bearer " + token))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", Is.is(-1)));
+        // проверка репутации после голосования
+        this.mvc.perform(get("/api/user/{id}", 100)
+                        .header("Authorization", "Bearer " + token))
+                .andExpect(jsonPath("$.id", Is.is(100)))
+                .andExpect(jsonPath("$.email", Is.is("0@gmail.com")))
+                .andExpect(jsonPath("$.fullName", Is.is("name1")))
+                .andExpect(jsonPath("$.city", Is.is("Moscow")))
+                .andExpect(jsonPath("$.imageLink", Is.is("http://imagelink1.com")))
+                .andExpect(jsonPath("$.reputation", Is.is(0)));
+        this.mvc.perform(get("/api/user/{id}", 103)
+                        .header("Authorization", "Bearer " + token))
+                .andExpect(jsonPath("$.id", Is.is(103)))
+                .andExpect(jsonPath("$.email", Is.is("email4@domain.com")))
+                .andExpect(jsonPath("$.fullName", Is.is("name4")))
+                .andExpect(jsonPath("$.city", Is.is("Ekaterinburg")))
+                .andExpect(jsonPath("$.imageLink", Is.is("http://imagelink4.com")))
+                .andExpect(jsonPath("$.reputation", Is.is(-5)));
+
+
+        // повторный DownVote за 103 вопрос - голос не должен дублироваться и результат должен остаться тем же
+        this.mvc.perform(post("/api/user/question/103/downVote")
+                        .header("Authorization", "Bearer " + token))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", Is.is(-1)));
+        // проверка репутации после голосования
+        this.mvc.perform(get("/api/user/{id}", 100)
+                        .header("Authorization", "Bearer " + token))
+                .andExpect(jsonPath("$.id", Is.is(100)))
+                .andExpect(jsonPath("$.email", Is.is("0@gmail.com")))
+                .andExpect(jsonPath("$.fullName", Is.is("name1")))
+                .andExpect(jsonPath("$.city", Is.is("Moscow")))
+                .andExpect(jsonPath("$.imageLink", Is.is("http://imagelink1.com")))
+                .andExpect(jsonPath("$.reputation", Is.is(0)));
+        this.mvc.perform(get("/api/user/{id}", 103)
+                        .header("Authorization", "Bearer " + token))
+                .andExpect(jsonPath("$.id", Is.is(103)))
+                .andExpect(jsonPath("$.email", Is.is("email4@domain.com")))
+                .andExpect(jsonPath("$.fullName", Is.is("name4")))
+                .andExpect(jsonPath("$.city", Is.is("Ekaterinburg")))
+                .andExpect(jsonPath("$.imageLink", Is.is("http://imagelink4.com")))
+                .andExpect(jsonPath("$.reputation", Is.is(-5)));
+
+        // UpVote за 104 вопрос, за который уже проголосовали и изначально имеет рейтинг 15 = ( 2*10 - 1*(-5) )
+        this.mvc.perform(post("/api/user/question/104/upVote")
+                        .header("Authorization", "Bearer " + token))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", Is.is(2)));
+        // проверка репутации после голосования
+        this.mvc.perform(get("/api/user/{id}", 100)
+                        .header("Authorization", "Bearer " + token))
+                .andExpect(jsonPath("$.id", Is.is(100)))
+                .andExpect(jsonPath("$.email", Is.is("0@gmail.com")))
+                .andExpect(jsonPath("$.fullName", Is.is("name1")))
+                .andExpect(jsonPath("$.city", Is.is("Moscow")))
+                .andExpect(jsonPath("$.imageLink", Is.is("http://imagelink1.com")))
+                .andExpect(jsonPath("$.reputation", Is.is(0)));
+        this.mvc.perform(get("/api/user/{id}", 104)
+                        .header("Authorization", "Bearer " + token))
+                .andExpect(jsonPath("$.id", Is.is(104)))
+                .andExpect(jsonPath("$.email", Is.is("email5@domain.com")))
+                .andExpect(jsonPath("$.fullName", Is.is("name5")))
+                .andExpect(jsonPath("$.city", Is.is("Samara")))
+                .andExpect(jsonPath("$.imageLink", Is.is("http://imagelink5.com")))
+                .andExpect(jsonPath("$.reputation", Is.is(25)));
+
+        // DownVote за 104 вопрос
+        this.mvc.perform(post("/api/user/question/104/downVote")
+                        .header("Authorization", "Bearer " + token))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", Is.is(0)));
+        this.mvc.perform(get("/api/user/{id}", 104)
+                        .header("Authorization", "Bearer " + token))
+                .andExpect(jsonPath("$.id", Is.is(104)))
+                .andExpect(jsonPath("$.email", Is.is("email5@domain.com")))
+                .andExpect(jsonPath("$.fullName", Is.is("name5")))
+                .andExpect(jsonPath("$.city", Is.is("Samara")))
+                .andExpect(jsonPath("$.imageLink", Is.is("http://imagelink5.com")))
+                .andExpect(jsonPath("$.reputation", Is.is(10)));
+
+        // DownVote за 100 вопрос (сам себе поставил дизлайк на вопрос)
+        this.mvc.perform(post("/api/user/question/100/downVote")
+                        .header("Authorization", "Bearer " + token))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", Is.is(-1)));
+        this.mvc.perform(get("/api/user/{id}", 100)
+                        .header("Authorization", "Bearer " + token))
+                .andExpect(jsonPath("$.id", Is.is(100)))
+                .andExpect(jsonPath("$.email", Is.is("0@gmail.com")))
+                .andExpect(jsonPath("$.fullName", Is.is("name1")))
+                .andExpect(jsonPath("$.city", Is.is("Moscow")))
+                .andExpect(jsonPath("$.imageLink", Is.is("http://imagelink1.com")))
+                .andExpect(jsonPath("$.reputation", Is.is(-5)));
+
     }
 
     @Test
