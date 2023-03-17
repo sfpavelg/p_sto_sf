@@ -254,4 +254,32 @@ public class TagResourceControllerTest extends AbstractTestApi {
                 .andExpect(jsonPath("$.items[5].questionCountWeekDay",Is.is(4)))
                 .andExpect(jsonPath("$.itemsOnPage", Is.is(6)));
     }
+
+    @Test
+    @Sql(value = {"/script/TestTagResourseController.TestGetAllTrackedTagAuthenticatedUser/Before.sql"}, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+    @Sql(value = {"/script/TestTagResourseController.TestGetAllTrackedTagAuthenticatedUser/After.sql"}, executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
+    public void testGetAllTrackedTagAuthenticatedUser() throws Exception {
+        //The user has TrackedTag
+        String token = getToken("5@gmail.com", "5pwd");
+        this.mvc.perform(get("/api/user/tag/tracked")
+                        .header("Authorization", "Bearer " + token)
+                        .contentType(MediaType.APPLICATION_JSON)
+                )
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.size()", Is.is(2)))
+                .andExpect(jsonPath("$.[0].id", Is.is(101)))
+                .andExpect(jsonPath("$.[0].name", Is.is("Java")))
+                .andExpect(jsonPath("$.[1].id", Is.is(103)))
+                .andExpect(jsonPath("$.[1].name", Is.is("C#")));
+
+        //The user does not have TrackedTag
+        String token2 = getToken("3@gmail.com", "3pwd");
+        this.mvc.perform(get("/api/user/tag/tracked")
+                        .header("Authorization", "Bearer " + token2)
+                        .contentType(MediaType.APPLICATION_JSON)
+                )
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.size()", Is.is(0)));
+    }
+
 }

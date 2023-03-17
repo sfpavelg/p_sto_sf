@@ -32,7 +32,6 @@ public class TagResourceController {
     private final TagDtoService tagDtoService;
     private final TagViewDtoService tagViewDtoService;
     private final IgnoredTagService ignoredTagService;
-
     private final TrackedTagService trackedTagService;
 
     public TagResourceController(TagDtoService tagDtoService, TagViewDtoService tagViewDtoService, IgnoredTagService ignoredTagService, TrackedTagService trackedTagService) {
@@ -107,5 +106,18 @@ public class TagResourceController {
        return ResponseEntity.ok(tagViewDtoService.getSortedByDateTagList(params));
     }
 
+    /**
+     * The method returns a JSON with a list of all TrackedTags of the authorized user
+     * without a filled description field in the list of returned TagDto objects
+     *
+     * @return {@link ResponseEntity} with status Ok and {@link List}<{@link TagDto}> in body without a
+     * filled in "description" field.
+     */
+    @GetMapping("/tracked")
+    @ApiOperation(value = "Getting all TrackedTags of an authorized user", response = List.class)
+    public ResponseEntity<List<TagDto>> getAllTrackedTagAuthenticatedUser() {
+        User authenticatedUser = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        return ResponseEntity.ok(tagDtoService.getTrackedTagsByUserId(authenticatedUser.getId()));
+    }
 
 }

@@ -13,5 +13,5 @@ public interface TagDtoService {
 
     List<TagDto> getIgnoredTagByUserId(Long id);
 
-
+    List<TagDto> getTrackedTagsByUserId(Long userId);
 }
