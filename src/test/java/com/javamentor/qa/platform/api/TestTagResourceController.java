@@ -258,8 +258,8 @@ public class TestTagResourceController extends AbstractTestApi {
     }
 
     @Test
-    @Sql(value = {"/script/TestTagResourseController.TestGetAllTrackedTagAuthenticatedUser/Before.sql"}, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
-    @Sql(value = {"/script/TestTagResourseController.TestGetAllTrackedTagAuthenticatedUser/After.sql"}, executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
+    @Sql(value = {"/script/TestTagResourceController/testGetAllTrackedTagAuthenticatedUser/Before.sql"}, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+    @Sql(value = {"/script/TestTagResourceController/testGetAllTrackedTagAuthenticatedUser/After.sql"}, executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
     public void testGetAllTrackedTagAuthenticatedUser() throws Exception {
         //The user has TrackedTag
         String token = getToken("5@gmail.com", "5pwd");
