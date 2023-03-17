@@ -88,7 +88,7 @@ public class TagResourceController {
             @ApiResponse(code = 200, message = "Success request. List of IgnoredTag returned"),
             @ApiResponse(code = 401, message = "Unauthorized request"),
             @ApiResponse(code = 403, message = "Forbidden")})
-    public ResponseEntity<?> getAllUserIgnoredTag()  {
+    public ResponseEntity<?> getAllUserIgnoredTag() {
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         return ResponseEntity.ok(tagDtoService.getIgnoredTagByUserId(user.getId()));
     }
@@ -100,11 +100,11 @@ public class TagResourceController {
             @ApiResponse(code = 401, message = "Unauthorized request"),
             @ApiResponse(code = 403, message = "Forbidden")})
     public ResponseEntity<?> getSortedByDateTagList(@RequestParam(defaultValue = "1") int currentPageNumber,
-                                                    @RequestParam(defaultValue = "10") int itemsOnPage)throws NotFoundException{
+                                                    @RequestParam(defaultValue = "10") int itemsOnPage) throws NotFoundException {
         HashMap<String, Object> params = new HashMap<>();
         params.put("currentPageNumber", currentPageNumber);
         params.put("itemsOnPage", itemsOnPage);
-       return ResponseEntity.ok(tagViewDtoService.getSortedByDateTagList(params));
+        return ResponseEntity.ok(tagViewDtoService.getSortedByDateTagList(params));
     }
 
     /**
@@ -128,7 +128,7 @@ public class TagResourceController {
             @ApiResponse(code = 400, message = "Invalid password"),
             @ApiResponse(code = 403, message = "Forbidden")})
     public ResponseEntity<PageDto<TagDto>> getSortedByPopularity(@RequestParam(defaultValue = "1") int page,
-                                                                 @RequestParam(defaultValue = "10") int items){
+                                                                 @RequestParam(defaultValue = "10") int items) throws NotFoundException {
         HashMap<String, Object> params = new HashMap<>();
         params.put("currentPageNumber", page);
         params.put("itemsOnPage", items);

@@ -3,6 +3,7 @@ package com.javamentor.qa.platform.service.abstracts.dto.tag;
 import com.javamentor.qa.platform.models.dto.PageDto;
 import com.javamentor.qa.platform.models.dto.tag.RelatedTagsDto;
 import com.javamentor.qa.platform.models.dto.tag.TagDto;
+import javassist.NotFoundException;
 
 import java.util.HashMap;
 import java.util.List;
@@ -17,5 +18,5 @@ public interface TagDtoService {
 
     List<TagDto> getTrackedTagsByUserId(Long userId);
 
-    PageDto<TagDto> getSortedByPopularity(HashMap<String, Object> params);
+    PageDto<TagDto> getSortedByPopularity(HashMap<String, Object> params) throws NotFoundException;
 }
