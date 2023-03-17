@@ -8,6 +8,7 @@ import com.javamentor.qa.platform.models.entity.question.Tag;
 import com.javamentor.qa.platform.models.entity.user.User;
 import com.javamentor.qa.platform.service.abstracts.dto.question.QuestionDtoService;
 import com.javamentor.qa.platform.service.abstracts.model.QuestionService;
+import com.javamentor.qa.platform.service.abstracts.model.VoteQuestionService;
 import com.javamentor.qa.platform.webapp.converters.QuestionConverter;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -19,6 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -36,12 +38,13 @@ public class QuestionResourceController {
     private final QuestionDtoService questionDtoService;
     private final QuestionConverter questionConverter;
     private final QuestionService questionService;
+    private final VoteQuestionService voteQuestionService;
 
-
-    public QuestionResourceController(QuestionDtoService questionDtoService, QuestionConverter questionConverter, QuestionService questionService) {
+    public QuestionResourceController(QuestionDtoService questionDtoService, QuestionConverter questionConverter, QuestionService questionService, VoteQuestionService voteQuestionService) {
         this.questionDtoService = questionDtoService;
         this.questionConverter = questionConverter;
         this.questionService = questionService;
+        this.voteQuestionService = voteQuestionService;
     }
 
     @GetMapping("/{id}")
@@ -115,5 +118,29 @@ public class QuestionResourceController {
         param.put("trackedTags", trackedTags);
         param.put("ignoredTags", ignoredTags);
         return ResponseEntity.ok(questionDtoService.getAllQuestionDto(param));
+    }
+
+    @PostMapping("/{questionId}/upVote")
+    @ApiOperation(value = "Vote UP for question. Returned sum of all Up votes and Down votes.", response = Long.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Success request. Sum of UpVotes and DownVotes returned. VoteQuestion and Reputation added to DB."),
+            @ApiResponse(code = 401, message = "Unauthorized request"),
+            @ApiResponse(code = 403, message = "Forbidden"),
+            @ApiResponse(code = 400, message = "Invalid password"),
+            @ApiResponse(code = 404, message = "Incorrect id Question. Question with id not found")})
+    public ResponseEntity<Long> voteUpForQuestion(@PathVariable Long questionId, @AuthenticationPrincipal User user) throws NotFoundException {
+        return ResponseEntity.ok(voteQuestionService.voteUpForQuestion(questionId, user));
+    }
+
+    @PostMapping("/{questionId}/downVote")
+    @ApiOperation(value = "Vote DOWN for question. Returned sum of all Up votes and Down votes.", response = Long.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Success request. Sum of UpVotes and DownVotes returned. VoteQuestion and Reputation added to DB."),
+            @ApiResponse(code = 401, message = "Unauthorized request"),
+            @ApiResponse(code = 403, message = "Forbidden"),
+            @ApiResponse(code = 400, message = "Invalid password"),
+            @ApiResponse(code = 404, message = "Incorrect id Question. Question with id not found")})
+    public ResponseEntity<Long> voteDownForQuestion(@PathVariable Long questionId, @AuthenticationPrincipal User user) throws NotFoundException {
+        return ResponseEntity.ok(voteQuestionService.voteDownForQuestion(questionId, user));
     }
 }

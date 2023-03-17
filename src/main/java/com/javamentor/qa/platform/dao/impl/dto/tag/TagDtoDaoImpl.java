@@ -82,4 +82,15 @@ public class TagDtoDaoImpl implements TagDtoDao {
                         (String) tupleList.get("tag_description"))));
         return tagsMap;
     }
+
+    @Override
+    public List<TagDto> getTrackedTagsByUserId(Long userId) {
+        Query query = entityManager.createQuery("SELECT new com.javamentor.qa.platform.models.dto.tag.TagDto(" +
+                        "tt.trackedTag.id, " +
+                        "tt.trackedTag.name " +
+                        ") " +
+                        "FROM TrackedTag tt WHERE tt.user.id = :id")
+                .setParameter("id", userId);
+        return (List<TagDto>) query.getResultList();
+    }
 }
