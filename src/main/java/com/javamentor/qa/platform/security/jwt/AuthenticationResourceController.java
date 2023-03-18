@@ -36,12 +36,17 @@ public class AuthenticationResourceController {
     @ApiOperation("Получение JWT токена и авторизации по email и password")
     public AuthenticationResponse authentication(@RequestBody AuthenticationRequest request) {
         Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword()));
-        return new AuthenticationResponse(jwtService.generateJwtToken(authentication));
+
+        int timeExpire = 3600;                  // 1 day cookie expire
+        if (request.isRemember()) {
+            timeExpire = Integer.MAX_VALUE;     // around 68 years cookie expire
+        }
+        return new AuthenticationResponse(jwtService.generateJwtToken(authentication), timeExpire);
     }
 
     @GetMapping("/validate")
     public ResponseEntity<?> validate(@AuthenticationPrincipal User user) {
-        if (!user.getRole().getName().equals("ROLE_USER")) {
+        if (user == null || !user.getRole().getName().equals("ROLE_USER")) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
         return ResponseEntity.ok().build();

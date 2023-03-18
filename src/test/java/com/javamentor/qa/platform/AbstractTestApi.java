@@ -8,7 +8,6 @@ import com.javamentor.qa.platform.webapp.configs.JmApplication;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.cache.CacheManager;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
@@ -35,10 +34,16 @@ public abstract class AbstractTestApi {
     protected ObjectMapper objectMapper;
 
     public String getToken(String email, String password) throws Exception {
-        return mvc.perform(post("/api/auth/token")
+//        return mvc.perform(post("/api/auth/token")
+//                        .contentType(MediaType.APPLICATION_JSON)
+//                        .content(objectMapper.writeValueAsString(new AuthenticationRequest(email, password))))
+//                .andReturn().getResponse()
+//                .getContentAsString().substring(10);
+        var str = mvc.perform(post("/api/auth/token")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(new AuthenticationRequest(email, password))))
+                        .content(objectMapper.writeValueAsString(new AuthenticationRequest(email, password,true))))
                 .andReturn().getResponse()
-                .getContentAsString().substring(10);
+                .getContentAsString();
+        return str.substring(10,str.indexOf("\"timeExpire\"")-2);
     }
 }
