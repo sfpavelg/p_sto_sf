@@ -6,6 +6,7 @@ import org.hamcrest.core.Is;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.jdbc.Sql;
+import org.springframework.test.context.jdbc.SqlGroup;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -280,6 +281,64 @@ public class TagResourceControllerTest extends AbstractTestApi {
                 )
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.size()", Is.is(0)));
+    }
+
+    @Test
+    @SqlGroup({
+            @Sql(value = {"/script/TestTagResourceController.TestGetPageWithListTagDtoSortedByName/Before.sql"},
+                    executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD),
+            @Sql(value = {"/script/TestTagResourceController.TestGetPageWithListTagDtoSortedByName/After.sql"},
+                    executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
+    })
+    public void testGetPageWithListTagDtoSortedByName() throws Exception {
+        String token = getToken("5@gmail.com", "5pwd");
+
+        this.mvc.perform(get("/api/user/tag/name")
+                        .header("Authorization", "Bearer " + token)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .param("page", "2")
+                        .param("items", "1")
+                )
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.currentPageNumber", Is.is(2)))
+                .andExpect(jsonPath("$.totalPageCount", Is.is(5)))
+                .andExpect(jsonPath("$.totalResultCount", Is.is(5)))
+                .andExpect(jsonPath("$.itemsOnPage", Is.is(1)))
+                .andExpect(jsonPath("$.items[0].id", Is.is(104)))
+                .andExpect(jsonPath("$.items[0].name", Is.is("name2")))
+                .andExpect(jsonPath("$.items[0].description", Is.is("description2")));
+
+        this.mvc.perform(get("/api/user/tag/name")
+                        .header("Authorization", "Bearer " + token)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .param("page", "1")
+                )
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.currentPageNumber", Is.is(1)))
+                .andExpect(jsonPath("$.totalPageCount", Is.is(1)))
+                .andExpect(jsonPath("$.totalResultCount", Is.is(5)))
+                .andExpect(jsonPath("$.itemsOnPage", Is.is(10)))
+                .andExpect(jsonPath("$.items[1].id", Is.is(104)))
+                .andExpect(jsonPath("$.items[1].name", Is.is("name2")))
+                .andExpect(jsonPath("$.items[1].description", Is.is("description2")));
+
+        this.mvc.perform(get("/api/user/tag/name")
+                .header("Authorization", "Bearer " + token)
+                .contentType(MediaType.APPLICATION_JSON)
+        ).andExpect(status().isBadRequest());
+
+        this.mvc.perform(get("/api/user/tag/name")
+                .header("Authorization", "Bearer " + token)
+                .contentType(MediaType.APPLICATION_JSON)
+                .param("page", "0")
+        ).andExpect(status().isBadRequest());
+
+        this.mvc.perform(get("/api/user/tag/name")
+                .header("Authorization", "Bearer " + token)
+                .contentType(MediaType.APPLICATION_JSON)
+                .param("page", "1")
+                .param("items", "0")
+        ).andExpect(status().isBadRequest());
     }
 
 }
