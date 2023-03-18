@@ -1,5 +1,6 @@
 package com.javamentor.qa.platform.webapp.controllers.rest;
 
+import com.javamentor.qa.platform.models.dto.PageDto;
 import com.javamentor.qa.platform.models.dto.tag.TagDto;
 import com.javamentor.qa.platform.models.entity.user.User;
 import com.javamentor.qa.platform.service.abstracts.dto.tag.TagDtoService;
@@ -118,6 +119,23 @@ public class TagResourceController {
     public ResponseEntity<List<TagDto>> getAllTrackedTagAuthenticatedUser() {
         User authenticatedUser = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         return ResponseEntity.ok(tagDtoService.getTrackedTagsByUserId(authenticatedUser.getId()));
+    }
+
+    /**
+     * Method return JSON with list all tags sorted by name, with pagination.
+     * @param itemsCountOnPage The number of users per page. Optional parameter. The default value is 10.
+     * @param pageNumber       Page number of the page to be displayed (starts from zero).
+     * @return {@link ResponseEntity} with status Ok and {@link PageDto}<{@link TagDto}> in body.
+     */
+    @GetMapping("/name")
+    @ApiOperation(value = "Getting all tags, sorted by name", response = PageDto.class)
+    public ResponseEntity<PageDto<TagDto>> getPageWithListTagDtoSortedByName (
+            @RequestParam(value = "page") Integer pageNumber,
+            @RequestParam(value = "items", required = false, defaultValue = "10") Integer itemsCountOnPage){
+        HashMap<String, Object> param = new HashMap<>();
+        param.put("currentPageNumber", pageNumber);
+        param.put("itemsOnPage", itemsCountOnPage);
+        return ResponseEntity.ok(tagDtoService.getPageWithListTagDtoSortedByName(param));
     }
 
 }
