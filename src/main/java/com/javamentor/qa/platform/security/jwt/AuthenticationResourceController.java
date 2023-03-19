@@ -37,9 +37,9 @@ public class AuthenticationResourceController {
     public AuthenticationResponse authentication(@RequestBody AuthenticationRequest request) {
         Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword()));
 
-        int timeExpire = 3600;                  // 1 day cookie expire
+        int timeExpire = 86400;                  // 1 day cookie expire
         if (request.isRemember()) {
-            timeExpire = Integer.MAX_VALUE;     // around 68 years cookie expire
+            timeExpire = Integer.MAX_VALUE;     // max time cookie expire (around 1 year)
         }
         return new AuthenticationResponse(jwtService.generateJwtToken(authentication), timeExpire);
     }

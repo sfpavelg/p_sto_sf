@@ -62,6 +62,6 @@ logoutInit();
 function logoutInit(){
     document.getElementById('logoutBtn').onclick = function (){
         localStorage.removeItem(keyName);
-        location.href = '/login'
+        location.href = '/logout'
     }
 }

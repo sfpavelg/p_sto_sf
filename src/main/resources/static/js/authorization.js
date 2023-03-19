@@ -1,24 +1,22 @@
 const keyName = 'kataToken';
 
-const tokenJson = localStorage.getItem(keyName)
-const token = JSON.parse(tokenJson)
+const token = getTokenFromCookie(keyName)
 
-if (isTokenChecked(token)) {
-    const bearerToken = 'Bearer ' + token.value;
+checkToken(token);
+
+
+function checkToken(token) {
+    if (token === null) {
+        showError403()
+    }
+    const bearerToken = 'Bearer ' + token
     validate(bearerToken);
-} else {
-    showError403();
 }
 
-
-function isTokenChecked(token) {
-    if (token === null) return false;
-
-    if (new Date() > new Date(token.expTime)) {
-        localStorage.removeItem(keyName);
-        return false;
-    }
-    return true;
+function getTokenFromCookie(key) {
+    const str = document.cookie.split(';').find(x => x.includes(key));
+    if (str === undefined) return null;
+    return str.slice(str.indexOf('=') + 1).trim();
 }
 
 function validate(bearerToken) {

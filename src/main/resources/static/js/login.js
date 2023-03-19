@@ -23,13 +23,7 @@ async function saveToken(tokenData) {
     const tokenValue = json.token.replaceAll('\"', '');
     const timeExpire = json.timeExpire;
 
-    let exp = new Date(new Date().getTime() + timeExpire * 1000)
-
-    const token = {
-        'value': tokenValue,
-        'expTime': exp
-    }
-    localStorage.setItem(keyName, JSON.stringify(token))
+    document.cookie = `${keyName} = ${tokenValue}; max-age=${timeExpire};`
 }
 
 function getTokenData(email, password, remember) {
@@ -60,5 +54,5 @@ function getTokenData(email, password, remember) {
 }
 
 function logOut() {
-    localStorage.removeItem(keyName)
+    document.cookie = `${keyName} = null; max-age=-1;`
 }
