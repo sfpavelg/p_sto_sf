@@ -8,13 +8,13 @@ const sidebarText = `
     <hr>
     <ul class="nav nav-pills flex-column mb-auto">
       <li class="nav-item">
-        <a href="#" class="nav-link active" aria-current="page">
+        <a href="/main" class="nav-link active" aria-current="page">
           <svg class="bi pe-none me-2" width="16" height="16"><use xlink:href="#home"/></svg>
           Home
         </a>
       </li>
       <li>
-        <a href="#" class="nav-link text-white">
+        <a href="/questions" class="nav-link text-white">
           <svg class="bi pe-none me-2" width="16" height="16"><use xlink:href="#speedometer2"/></svg>
           Questions
         </a>
@@ -32,9 +32,9 @@ const sidebarText = `
         </a>
       </li>
       <li>
-        <a href="#" class="nav-link text-white">
+        <a href="/noAnswers" class="nav-link text-white">
           <svg class="bi pe-none me-2" width="16" height="16"><use xlink:href="#people-circle"/></svg>
-          Companies
+          No Answers
         </a>
       </li>
     </ul>
