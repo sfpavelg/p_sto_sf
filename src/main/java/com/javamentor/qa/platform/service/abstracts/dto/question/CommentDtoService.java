@@ -4,6 +4,6 @@ import com.javamentor.qa.platform.models.dto.question.QuestionCommentDto;
 
 import java.util.List;
 
-public interface QuestionCommentDtoService {
+public interface CommentDtoService {
    List<QuestionCommentDto> getAllCommentDtoByQuestionId(Long questionId);
 }

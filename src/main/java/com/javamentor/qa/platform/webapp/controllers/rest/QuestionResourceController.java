@@ -7,7 +7,7 @@ import com.javamentor.qa.platform.models.dto.question.QuestionDto;
 import com.javamentor.qa.platform.models.entity.question.Question;
 import com.javamentor.qa.platform.models.entity.question.Tag;
 import com.javamentor.qa.platform.models.entity.user.User;
-import com.javamentor.qa.platform.service.abstracts.dto.question.QuestionCommentDtoService;
+import com.javamentor.qa.platform.service.abstracts.dto.question.CommentDtoService;
 import com.javamentor.qa.platform.service.abstracts.dto.question.QuestionDtoService;
 import com.javamentor.qa.platform.service.abstracts.model.QuestionService;
 import com.javamentor.qa.platform.service.abstracts.model.VoteQuestionService;
@@ -44,7 +44,7 @@ public class QuestionResourceController {
     private final QuestionConverter questionConverter;
     private final QuestionService questionService;
     private final VoteQuestionService voteQuestionService;
-    private final QuestionCommentDtoService questionCommentDtoService;
+    private final CommentDtoService commentDtoService;
 
 
     @GetMapping("/{id}")
@@ -144,7 +144,7 @@ public class QuestionResourceController {
         return ResponseEntity.ok(voteQuestionService.voteDownForQuestion(questionId, user));
     }
 
-    @GetMapping("/{questionId}/allComments")
+    @GetMapping("/{questionId}/comments")
     @ApiOperation(value = "Getting all QuestionCommentDto by Question element id", response = QuestionCommentDto.class)
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Success request. QuestionCommentDto objects returned in response (May be empty list)"),
@@ -155,6 +155,6 @@ public class QuestionResourceController {
         if (!questionService.existsById(questionId)) {
             return new ResponseEntity<>("No question with such id", HttpStatus.NOT_FOUND);
         }
-        return ResponseEntity.ok(questionCommentDtoService.getAllCommentDtoByQuestionId(questionId));
+        return ResponseEntity.ok(commentDtoService.getAllCommentDtoByQuestionId(questionId));
     }
 }

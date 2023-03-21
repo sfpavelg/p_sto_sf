@@ -1,5 +1,6 @@
 package com.javamentor.qa.platform.api;
 
+import static org.hamcrest.Matchers.hasSize;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -556,11 +557,11 @@ class TestQuestionResourceController extends AbstractTestApi {
                 .andExpect(status().isOk());
 
         // addressing a non-existent question is an error
-        this.mvc.perform(get("/api/user/question/105/allComments")
+        this.mvc.perform(get("/api/user/question/105/comments")
                         .header("Authorization", "Bearer " + token))
                 .andDo(print())
                 .andExpect(status().is4xxClientError())
-                .andExpect(jsonPath("$",Is.is("No question with such id")));
+                .andExpect(jsonPath("$", Is.is("No question with such id")));
 
         //we take a question from the database by id
         this.mvc.perform(get("/api/user/question/{id}", 104)
@@ -578,11 +579,20 @@ class TestQuestionResourceController extends AbstractTestApi {
                 .andExpect(jsonPath("$.lastUpdateDateTime", Is.is("2023-01-27T13:01:11.245126")))
                 .andExpect(status().isOk());
 
-        // We receive comments on 104 questions
-        this.mvc.perform(get("/api/user/question/104/allComments")
+
+        // We receive comments on 103 questions (no comments)
+        this.mvc.perform(get("/api/user/question/103/comments")
+                        .header("Authorization", "Bearer " + token))
+                .andDo(print())
+                .andExpect(jsonPath("$", hasSize(0)))
+                .andExpect(status().isOk());
+
+        // We receive comments on 104 questions (three comments expected)
+        this.mvc.perform(get("/api/user/question/104/comments")
                         .header("Authorization", "Bearer " + token))
                 .andDo(print())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$", hasSize(3)))
                 .andExpect(jsonPath("$.[0].id", Is.is(100)))
                 .andExpect(jsonPath("$.[0].questionId", Is.is(104)))
                 .andExpect(jsonPath("$.[0].lastRedactionDate", Is.is("2023-01-27T13:01:11.245126")))
