@@ -7,19 +7,19 @@ INSERT INTO "user_entity"
 ("id", "about", "city", "email", "full_name", "image_link", "is_deleted",
  "is_enabled", "last_redaction_date", "link_github", "link_site", "link_vk",
  "nickname", "password", "persist_date", "role_id")
-VALUES (100, 'about', 'Moscow', '0@gmail.com', 'name1', 'http://imagelink1.com', 'f', 't',
+VALUES (100, 'about', 'Moscow', '0@gmail.com', 'name100', 'http://imagelink100.com', 'f', 't',
         '2023-01-10 15:17:18.280368', 'http://github.com/1', 'http://site1.com', 'http://vk.com/1',
         'nickname1', '$2a$10$/Hq12PgE.XuzB3ZizNOIXuBnCjyK/9/oHJ1Y/FRPbJZO8jSBzD1F.', '2023-01-21 15:17:18.280368', 200),
-       (101, 'about', 'St. Petersburg', 'email2@domain.com', 'name2', 'http://imagelink2.com', 'f', 't',
+       (101, 'about', 'St. Petersburg', 'email2@domain.com', 'name101', 'http://imagelink101.com', 'f', 't',
         '2023-01-10 15:17:18.280368', 'http://github.com/4', 'http://site2.com', 'http://vk.com/2',
         'nickname2', 'password', '2023-01-21 15:17:18.280368', 200),
-       (102, 'about', 'Kazan', 'email3@domain.com', 'name3', null, 'f', 't',
+       (102, 'about', 'Kazan', 'email3@domain.com', 'name102', 'http://imagelink102.com', 'f', 't',
         '2023-01-10 15:17:18.280368', 'http://github.com/3', 'http://site3.com', 'http://vk.com/3',
         'nickname3', 'password', '2023-01-21 15:17:18.280368', 100),
-       (103, 'about', 'Ekaterinburg', 'email4@domain.com', 'name4', 'http://imagelink4.com', 'f', 't',
+       (103, 'about', 'Ekaterinburg', 'email4@domain.com', 'name103', 'http://imagelink103.com', 'f', 't',
         '2023-01-10 15:17:18.280368', 'http://github.com/4', 'http://site4.com', 'http://vk.com/4',
         'nickname4', 'password', '2023-01-21 15:17:18.280368', 200),
-       (104, 'about', 'Samara', 'email5@domain.com', 'name5', 'http://imagelink5.com', 'f', 't',
+       (104, 'about', 'Samara', 'email5@domain.com', 'name104', 'http://imagelink104.com', 'f', 't',
         '2023-01-10 15:17:18.280368', 'http://github.com/5', 'http://site5.com', 'http://vk.com/5',
         'nickname5', 'password', '2023-01-21 15:17:18.280368', 100);
 
@@ -39,9 +39,10 @@ VALUES (100, 1, '2023-01-27 13:01:11.245126', '2023-01-27 13:01:11.245126', 'Com
 
 INSERT INTO "reputation"
 ("id", "count", "persist_date", "type", "answer_id", "author_id", "question_id", "sender_id")
-VALUES (100, 10, '2023-01-19 15:21:03.527867', 3, NULL, 104, 104, 101),
-       (101, 10, '2023-01-19 15:21:03.527867', 3, NULL, 104, 104, 102),
-       (102, -5, '2023-01-19 15:21:03.527867', 3, NULL, 104, 104, 103);
+VALUES (100, 15, '2023-01-27 13:01:11.245126', 0, NULL, 101, 101, 101),
+       (101, 15, '2023-01-27 13:01:11.245126', 0, NULL, 102, 102, 102),
+       (102, 15, '2023-01-27 13:01:11.245126', 0, NULL, 103, 103, 103),
+       (103, 15, '2023-01-27 13:01:11.245126', 0, NULL, 104, 104, 104);
 
 INSERT INTO "comment_question"
 ("comment_id",  "question_id")
