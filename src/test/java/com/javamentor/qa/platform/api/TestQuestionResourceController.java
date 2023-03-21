@@ -283,6 +283,7 @@ class TestQuestionResourceController extends AbstractTestApi {
                 .andExpect(jsonPath("$.items[1].id", Is.is(101)))
                 .andExpect(status().isOk());
     }
+
     @Test
     @Sql(value = {"/script/TestQuestionResourceController/testVoteForQuestion/Before.sql"}, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
     @Sql(value = "/script/TestQuestionResourceController/testVoteForQuestion/After.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
@@ -299,7 +300,7 @@ class TestQuestionResourceController extends AbstractTestApi {
                         .header("Authorization", "Bearer " + token))
                 .andDo(print())
                 .andExpect(status().is4xxClientError())
-                .andExpect(jsonPath("$",Is.is("Question with id 1 not found.")));
+                .andExpect(jsonPath("$", Is.is("Question with id 1 not found.")));
 
         // UpVote за 103 вопрос - за него никто еще не голосовал
         this.mvc.perform(post("/api/user/question/103/upVote")
@@ -432,9 +433,9 @@ class TestQuestionResourceController extends AbstractTestApi {
     }
 
     @Test
-    @Sql(value = {"/script/TestQuestionResourceController.testGetPageWithListQuestionDtoWithoutAnswer/Before.sql"},
+    @Sql(value = {"/script/TestQuestionResourceController/testGetPageWithListQuestionDtoWithoutAnswer/Before.sql"},
             executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
-    @Sql(value = {"/script/TestQuestionResourceController.testGetPageWithListQuestionDtoWithoutAnswer/After.sql"},
+    @Sql(value = {"/script/TestQuestionResourceController/testGetPageWithListQuestionDtoWithoutAnswer/After.sql"},
             executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
     public void getPageWithListQuestionDtoWithoutAnswerTest() throws Exception {
         String token = getToken("5@gmail.com", "5pwd");
@@ -536,6 +537,41 @@ class TestQuestionResourceController extends AbstractTestApi {
                         .param("items", "0")
                 )
                 .andExpect(status().is4xxClientError());
+    }
+
+    @Test
+    @Sql(value = {"/script/TestQuestionResourceController/testGetAllCommentDtoByQuestionId/Before.sql"}, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+    @Sql(value = "/script/TestQuestionResourceController/testGetAllCommentDtoByQuestionId/After.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
+    public void getAllCommentDtoByQuestionIdTest() throws Exception {
+        String token = getToken("0@gmail.com", "0pwd");
+
+        // user not authorized (missing JWT) - error
+        this.mvc.perform(post("/api/user/question/104/allComments"))
+                .andDo(print())
+                .andExpect(status().is4xxClientError());
+
+        // addressing a non-existent question is an error
+//        this.mvc.perform(post("/api/user/question/105/allComments")
+//                        .header("Authorization", "Bearer " + token))
+//                .andDo(print())
+//                .andExpect(status().is4xxClientError())
+//                .andExpect(jsonPath("$",Is.is("No question with such id")));
+
+        // We receive comments on 104 questions
+//        this.mvc.perform(post("/api/user/question/104/allComments")
+//                        .header("Authorization", "Bearer " + token))
+//                .andDo(print())
+//
+//                .andExpect(jsonPath("$.items[0].id", Is.is(100)))
+//                .andExpect(jsonPath("$.items[0].questionId", Is.is(104)))
+//                .andExpect(jsonPath("$.items[0].lastRedactionDate", Is.is("2023-01-27 13:01:11.245126")))
+//                .andExpect(jsonPath("$.items[0].persistDate", Is.is("2023-01-27 13:01:11.245126")))
+//                .andExpect(jsonPath("$.items[0].text", Is.is("Comment on the question nickname nickname104")))
+//                .andExpect(jsonPath("$.items[0].userId", Is.is(101)))
+//                .andExpect(jsonPath("$.items[0].imageLink", Is.is("http://imagelink2.com")))
+//                .andExpect(jsonPath("$.items[0].reputation", Is.is(10)))
+//                .andExpect(status().isOk());
+
     }
 
 }
