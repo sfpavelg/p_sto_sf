@@ -15,11 +15,11 @@ import java.util.Map;
 import java.util.Optional;
 
 @Service
-public class TagDtoServiceImpl extends PageDtoService<TagDto> implements TagDtoService {
+public class TagDtoServiceImpl implements TagDtoService {
 
     private final TagDtoDao tagDtoDao;
 
-    public TagDtoServiceImpl(Map<String, PageDtoDao<TagDto>> beansMap, TagDtoDao tagDtoDao) {
+    public TagDtoServiceImpl(TagDtoDao tagDtoDao, Map<String, PageDtoDao<TagDto>> beansMap) {
         super(beansMap);
         this.tagDtoDao = tagDtoDao;
     }
@@ -44,6 +44,11 @@ public class TagDtoServiceImpl extends PageDtoService<TagDto> implements TagDtoS
         return tagDtoDao.getTrackedTagsByUserId(userId);
     }
 
+    @Override
+    public PageDto<TagDto> getPageWithListTagDtoSortedByName(HashMap<String, Object> param) {
+        param.put("daoDtoImpl", "tagDtoPaginationSortedByNameDaoImpl");
+        return pageDto(param);
+    }
     @Override
     public PageDto<TagDto> getSortedByPopularity(HashMap<String, Object> params) {
         params.put("daoDtoImpl", "tagPageByPopularityImpl");

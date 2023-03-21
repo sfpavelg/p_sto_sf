@@ -8,4 +8,4 @@ WHERE id between 100 and 150;
 
 DELETE
 FROM "role"
-WHERE id in (1, 2)
+WHERE id in (100, 200)

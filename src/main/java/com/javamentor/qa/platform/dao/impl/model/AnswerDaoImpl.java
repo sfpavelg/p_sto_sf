@@ -14,12 +14,11 @@ public class AnswerDaoImpl extends ReadWriteDaoImpl<Answer, Long> implements Ans
     private EntityManager entityManager;
 
     @Override
-    public void deleteByUser(Long id) {
+    public void deleteById(Long id) {
         entityManager.createQuery("update Answer" +
                         "            set isDeleted = true" +
                         "            where id = :answerId")
                 .setParameter("answerId", id)
                 .executeUpdate();
-
     }
 }
