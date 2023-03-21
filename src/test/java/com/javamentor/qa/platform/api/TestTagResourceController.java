@@ -1,6 +1,7 @@
-package com.javamentor.qa.platform;
+package com.javamentor.qa.platform.api;
 
 
+import com.javamentor.qa.platform.AbstractTestApi;
 import org.hamcrest.collection.IsEmptyCollection;
 import org.hamcrest.core.Is;
 import org.junit.jupiter.api.Test;
@@ -15,13 +16,14 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 
-public class TagResourceControllerTest extends AbstractTestApi {
+public class TestTagResourceController extends AbstractTestApi {
 
     @Test
-    @Sql(value = {"/script/tag/getRelatedTagsDtoListTest/related-tags-dto-data-create.sql"}, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
-    @Sql(value = {"/script/tag/getRelatedTagsDtoListTest/related-tags-dto-data-drop.sql"}, executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
+    @Sql(value = {"/script/TestTagResourceController/testGetRelatedTagsDtoList/Before.sql"}, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+    @Sql(value = {"/script/TestTagResourceController/testGetRelatedTagsDtoList/After.sql"}, executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
     public void getRelatedTagsDtoListTest() throws Exception {
         String token = getToken("0@gmail.com", "0pwd");
+
         //success getting TOP-10 Tags from 15 in DB (ordered by countQuestion)
         this.mvc.perform(get("/api/user/tag/related").header("Authorization", "Bearer " + token))
                 .andDo(print())
@@ -61,8 +63,8 @@ public class TagResourceControllerTest extends AbstractTestApi {
     }
 
     @Test
-    @Sql(value = {"/script/tag/addIgnoredTag/add-ignored-tag-data-create.sql"}, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
-    @Sql(value = {"/script/tag/addIgnoredTag/add-ignored-tag-data-drop.sql"}, executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
+    @Sql(value = {"/script/TestTagResourceController/testAddIgnoredTag/Before.sql"}, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+    @Sql(value = {"/script/TestTagResourceController/testAddIgnoredTag/After.sql"}, executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
     public void addIgnoredTag() throws Exception {
         String token = getToken("0@gmail.com", "0pwd");
 
@@ -97,8 +99,8 @@ public class TagResourceControllerTest extends AbstractTestApi {
     }
 
     @Test
-    @Sql(value = {"/script/tag/addTrackedTag/add-tracked-tag-data-create.sql"}, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
-    @Sql(value = {"/script/tag/addTrackedTag/add-tracked-tag-data-drop.sql"}, executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
+    @Sql(value = {"/script/TestTagResourceController/testAddTrackedTag/Before.sql"}, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+    @Sql(value = {"/script/TestTagResourceController/testAddTrackedTag/After.sql"}, executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
     public void addTrackedTag() throws Exception {
         String token = getToken("0@gmail.com", "0pwd");
 
@@ -133,8 +135,8 @@ public class TagResourceControllerTest extends AbstractTestApi {
     }
 
     @Test
-    @Sql(value = {"/script/TestTagController/testGetAllUserIgnoredTag/Before.sql"}, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
-    @Sql(value = {"/script/TestTagController/testGetAllUserIgnoredTag/After.sql"}, executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
+    @Sql(value = {"/script/TestTagResourceController/testGetAllUserIgnoredTag/Before.sql"}, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+    @Sql(value = {"/script/TestTagResourceController/testGetAllUserIgnoredTag/After.sql"}, executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
     public void testGetAllUserIgnoredTag() throws Exception {
 
         //Successfully (User has IgnoredTag)
@@ -161,8 +163,8 @@ public class TagResourceControllerTest extends AbstractTestApi {
     }
 
     @Test
-    @Sql(value = {"/script/TestTagController/getSortedByDateTags/sorted-tags-dto-data-create.sql"}, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
-    @Sql(value = {"/script/TestTagController/getSortedByDateTags/sorted-tags-dto-data-drop.sql"}, executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
+    @Sql(value = {"/script/TestTagResourceController/testGetSortedByDateTags/Before.sql"}, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+    @Sql(value = {"/script/TestTagResourceController/testGetSortedByDateTags/After.sql"}, executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
     public void getSortedByDateTagList() throws Exception {
         String token = getToken("0@gmail.com", "0pwd");
 
@@ -256,8 +258,8 @@ public class TagResourceControllerTest extends AbstractTestApi {
     }
 
     @Test
-    @Sql(value = {"/script/TestTagResourseController.TestGetAllTrackedTagAuthenticatedUser/Before.sql"}, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
-    @Sql(value = {"/script/TestTagResourseController.TestGetAllTrackedTagAuthenticatedUser/After.sql"}, executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
+    @Sql(value = {"/script/TestTagResourceController/testGetAllTrackedTagAuthenticatedUser/Before.sql"}, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+    @Sql(value = {"/script/TestTagResourceController/testGetAllTrackedTagAuthenticatedUser/After.sql"}, executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
     public void testGetAllTrackedTagAuthenticatedUser() throws Exception {
         //The user has TrackedTag
         String token = getToken("5@gmail.com", "5pwd");
