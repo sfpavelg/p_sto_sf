@@ -1,11 +1,13 @@
 package com.javamentor.qa.platform.webapp.controllers.rest;
 
 import com.javamentor.qa.platform.models.dto.PageDto;
+import com.javamentor.qa.platform.models.dto.question.QuestionCommentDto;
 import com.javamentor.qa.platform.models.dto.question.QuestionCreateDto;
 import com.javamentor.qa.platform.models.dto.question.QuestionDto;
 import com.javamentor.qa.platform.models.entity.question.Question;
 import com.javamentor.qa.platform.models.entity.question.Tag;
 import com.javamentor.qa.platform.models.entity.user.User;
+import com.javamentor.qa.platform.service.abstracts.dto.question.CommentDtoService;
 import com.javamentor.qa.platform.service.abstracts.dto.question.QuestionDtoService;
 import com.javamentor.qa.platform.service.abstracts.model.QuestionService;
 import com.javamentor.qa.platform.service.abstracts.model.VoteQuestionService;
@@ -15,6 +17,8 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import javassist.NotFoundException;
+import lombok.AllArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -31,24 +35,20 @@ import java.util.List;
 
 
 @RestController
+@AllArgsConstructor
 @RequestMapping("/api/user/question")
-@Api("Контроллер для работы с Question")
+@Api("Question controller")
 public class QuestionResourceController {
 
     private final QuestionDtoService questionDtoService;
     private final QuestionConverter questionConverter;
     private final QuestionService questionService;
     private final VoteQuestionService voteQuestionService;
+    private final CommentDtoService commentDtoService;
 
-    public QuestionResourceController(QuestionDtoService questionDtoService, QuestionConverter questionConverter, QuestionService questionService, VoteQuestionService voteQuestionService) {
-        this.questionDtoService = questionDtoService;
-        this.questionConverter = questionConverter;
-        this.questionService = questionService;
-        this.voteQuestionService = voteQuestionService;
-    }
 
     @GetMapping("/{id}")
-    @ApiOperation(value = "Получение элемента QuestionDto по id", response = QuestionDto.class)
+    @ApiOperation(value = "Getting the QuestionDto element by id", response = QuestionDto.class)
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Success request. QuestionDto object returned in response"),
             @ApiResponse(code = 401, message = "Unauthorized request"),
@@ -59,7 +59,7 @@ public class QuestionResourceController {
     }
 
     @PostMapping
-    @ApiOperation(value = "Добавление вопроса. Ожидает заполненный объект QuestionCreateDto", response = QuestionDto.class, responseContainer = "List")
+    @ApiOperation(value = "Adding a question. Waits for a completed QuestionCreateDto object", response = QuestionDto.class, responseContainer = "List")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Success request. Question added to DB and it's QuestionDto object returned in response"),
             @ApiResponse(code = 401, message = "Unauthorized request"),
@@ -142,5 +142,19 @@ public class QuestionResourceController {
             @ApiResponse(code = 404, message = "Incorrect id Question. Question with id not found")})
     public ResponseEntity<Long> voteDownForQuestion(@PathVariable Long questionId, @AuthenticationPrincipal User user) throws NotFoundException {
         return ResponseEntity.ok(voteQuestionService.voteDownForQuestion(questionId, user));
+    }
+
+    @GetMapping("/{questionId}/comments")
+    @ApiOperation(value = "Getting all QuestionCommentDto by Question element id", response = QuestionCommentDto.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Success request. QuestionCommentDto objects returned in response (May be empty list)"),
+            @ApiResponse(code = 401, message = "Unauthorized request"),
+            @ApiResponse(code = 403, message = "Forbidden"),
+            @ApiResponse(code = 404, message = "No question with such id")})
+    public ResponseEntity<?> getAllCommentDtoByQuestionId(@PathVariable("questionId") Long questionId) throws NotFoundException {
+        if (!questionService.existsById(questionId)) {
+            return new ResponseEntity<>("No question with such id", HttpStatus.NOT_FOUND);
+        }
+        return ResponseEntity.ok(commentDtoService.getAllCommentDtoByQuestionId(questionId));
     }
 }

@@ -1,5 +1,6 @@
 package com.javamentor.qa.platform.api;
 
+import static org.hamcrest.Matchers.hasSize;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -151,7 +152,6 @@ class TestQuestionResourceController extends AbstractTestApi {
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$", Is.is("Title can't be empty")))
         ;
-
         //null title
         this.mvc.perform(post("/api/user/question").header("Authorization", "Bearer " + token).content(this.objectMapper.writeValueAsString(
                                 new QuestionCreateDto(null, "testDescription1", list1)))
@@ -169,7 +169,6 @@ class TestQuestionResourceController extends AbstractTestApi {
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$", Is.is("Description can't be empty")))
         ;
-
         //null description
         this.mvc.perform(post("/api/user/question").header("Authorization", "Bearer " + token).content(this.objectMapper.writeValueAsString(
                                 new QuestionCreateDto("testTitle", null, list1)))
@@ -295,7 +294,7 @@ class TestQuestionResourceController extends AbstractTestApi {
                         .header("Authorization", "Bearer " + token))
                 .andDo(print())
                 .andExpect(status().is4xxClientError())
-                .andExpect(jsonPath("$",Is.is("Question with id 1 not found.")));
+                .andExpect(jsonPath("$", Is.is("Question with id 1 not found.")));
 
         // UpVote за 103 вопрос - за него никто еще не голосовал
         this.mvc.perform(post("/api/user/question/103/upVote")
@@ -533,5 +532,91 @@ class TestQuestionResourceController extends AbstractTestApi {
                         .param("items", "0")
                 )
                 .andExpect(status().is4xxClientError());
+    }
+
+    @Test
+    @Sql(value = {"/script/TestQuestionResourceController/testGetAllCommentDtoByQuestionId/Before.sql"}, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+    @Sql(value = "/script/TestQuestionResourceController/testGetAllCommentDtoByQuestionId/After.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
+    public void getAllCommentDtoByQuestionIdTest() throws Exception {
+        String token = getToken("0@gmail.com", "0pwd");
+
+        // user not authorized (missing JWT) - error
+        this.mvc.perform(get("/api/user/question/104/allComments"))
+                .andDo(print())
+                .andExpect(status().is4xxClientError());
+
+        //Authorized user
+        this.mvc.perform(get("/api/user/{id}", 100)
+                        .header("Authorization", "Bearer " + token))
+                .andExpect(jsonPath("$.id", Is.is(100)))
+                .andExpect(jsonPath("$.email", Is.is("0@gmail.com")))
+                .andExpect(jsonPath("$.fullName", Is.is("name100")))
+                .andExpect(jsonPath("$.city", Is.is("Moscow")))
+                .andExpect(jsonPath("$.imageLink", Is.is("http://imagelink100.com")))
+                .andExpect(jsonPath("$.reputation", Is.is(0)))
+                .andExpect(status().isOk());
+
+        // addressing a non-existent question is an error
+        this.mvc.perform(get("/api/user/question/105/comments")
+                        .header("Authorization", "Bearer " + token))
+                .andDo(print())
+                .andExpect(status().is4xxClientError())
+                .andExpect(jsonPath("$", Is.is("No question with such id")));
+
+        //we take a question from the database by id
+        this.mvc.perform(get("/api/user/question/{id}", 104)
+                        .header("Authorization", "Bearer " + token))
+                .andDo(print())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.id", Is.is(104)))
+                .andExpect(jsonPath("$.authorId", Is.is(104)))
+                .andExpect(jsonPath("$.authorReputation", Is.is(15)))
+                .andExpect(jsonPath("$.authorName", Is.is("name104")))
+                .andExpect(jsonPath("$.authorImage", Is.is("http://imagelink104.com")))
+                .andExpect(jsonPath("$.description", Is.is("description5")))
+                .andExpect(jsonPath("$.title", Is.is("title5")))
+                .andExpect(jsonPath("$.persistDateTime", Is.is("2023-01-27T13:01:11.245126")))
+                .andExpect(jsonPath("$.lastUpdateDateTime", Is.is("2023-01-27T13:01:11.245126")))
+                .andExpect(status().isOk());
+
+
+        // We receive comments on 103 questions (no comments)
+        this.mvc.perform(get("/api/user/question/103/comments")
+                        .header("Authorization", "Bearer " + token))
+                .andDo(print())
+                .andExpect(jsonPath("$", hasSize(0)))
+                .andExpect(status().isOk());
+
+        // We receive comments on 104 questions (three comments expected)
+        this.mvc.perform(get("/api/user/question/104/comments")
+                        .header("Authorization", "Bearer " + token))
+                .andDo(print())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$", hasSize(3)))
+                .andExpect(jsonPath("$.[0].id", Is.is(100)))
+                .andExpect(jsonPath("$.[0].questionId", Is.is(104)))
+                .andExpect(jsonPath("$.[0].lastRedactionDate", Is.is("2023-01-27T13:01:11.245126")))
+                .andExpect(jsonPath("$.[0].persistDate", Is.is("2023-01-27T13:01:11.245126")))
+                .andExpect(jsonPath("$.[0].text", Is.is("Comment on the question nickname nickname104")))
+                .andExpect(jsonPath("$.[0].userId", Is.is(101)))
+                .andExpect(jsonPath("$.[0].imageLink", Is.is("http://imagelink101.com")))
+                .andExpect(jsonPath("$.[0].reputation", Is.is(15)))
+                .andExpect(jsonPath("$.[1].id", Is.is(101)))
+                .andExpect(jsonPath("$.[1].questionId", Is.is(104)))
+                .andExpect(jsonPath("$.[1].lastRedactionDate", Is.is("2023-01-27T13:01:11.245126")))
+                .andExpect(jsonPath("$.[1].persistDate", Is.is("2023-01-27T13:01:11.245126")))
+                .andExpect(jsonPath("$.[1].text", Is.is("Comment on the question nickname nickname104")))
+                .andExpect(jsonPath("$.[1].userId", Is.is(102)))
+                .andExpect(jsonPath("$.[1].imageLink", Is.is("http://imagelink102.com")))
+                .andExpect(jsonPath("$.[1].reputation", Is.is(15)))
+                .andExpect(jsonPath("$.[2].id", Is.is(102)))
+                .andExpect(jsonPath("$.[2].questionId", Is.is(104)))
+                .andExpect(jsonPath("$.[2].lastRedactionDate", Is.is("2023-01-27T13:01:11.245126")))
+                .andExpect(jsonPath("$.[2].persistDate", Is.is("2023-01-27T13:01:11.245126")))
+                .andExpect(jsonPath("$.[2].text", Is.is("Comment on the question nickname nickname104")))
+                .andExpect(jsonPath("$.[2].userId", Is.is(103)))
+                .andExpect(jsonPath("$.[2].imageLink", Is.is("http://imagelink103.com")))
+                .andExpect(jsonPath("$.[2].reputation", Is.is(15)))
+                .andExpect(status().isOk());
     }
 }

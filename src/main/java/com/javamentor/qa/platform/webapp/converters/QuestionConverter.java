@@ -19,6 +19,4 @@ public abstract class QuestionConverter {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         return (User) authentication.getPrincipal();
     }
-
-
 }
