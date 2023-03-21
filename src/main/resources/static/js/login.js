@@ -13,17 +13,20 @@ function init() {
     let password = document.getElementById('password');
     loginButton.addEventListener('click', () => getTokenData(
         email.value,
-        password.value
+        password.value,
+        document.getElementById('rememberCheckBox').checked
     ));
 }
 
 async function saveToken(tokenData) {
-    const json = await tokenData.then(res => JSON.parse(JSON.stringify(res)));
-    const token = json.token;
-    localStorage.setItem(keyName, JSON.stringify(token).replaceAll('\"', ''));
+    const json = await tokenData.then();
+    const tokenValue = json.token.replaceAll('\"', '');
+    const timeExpire = json.timeExpire;
+
+    document.cookie = `${keyName} = ${tokenValue}; max-age=${timeExpire};`
 }
 
-function getTokenData(email, password) {
+function getTokenData(email, password, remember) {
     return fetch('api/auth/token', {
         method: 'POST',
         credentials: 'include',
@@ -34,6 +37,7 @@ function getTokenData(email, password) {
         body: JSON.stringify({
             email,
             password,
+            remember
         }),
     })
         .then((res) => {
@@ -50,5 +54,5 @@ function getTokenData(email, password) {
 }
 
 function logOut() {
-    localStorage.removeItem(keyName)
+    document.cookie = `${keyName} = null; max-age=-1;`
 }
