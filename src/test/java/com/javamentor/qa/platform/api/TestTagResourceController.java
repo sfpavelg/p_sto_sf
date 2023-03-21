@@ -344,8 +344,8 @@ public class TestTagResourceController extends AbstractTestApi {
     }
 
     @Test
-    @Sql(value = {"/script/TestTagResourseController/testGetSortedByPopularity/Before.sql"}, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
-    @Sql(value = {"/script/TestTagResourseController/testGetSortedByPopularity/After.sql"}, executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
+    @Sql(value = {"/script/TestTagResourceController/testGetSortedByPopularity/Before.sql"}, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+    @Sql(value = {"/script/TestTagResourceController/testGetSortedByPopularity/After.sql"}, executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
     public void testGetSortedByPopularity() throws Exception{
         String token = getToken("0@gmail.com", "0pwd");
 
