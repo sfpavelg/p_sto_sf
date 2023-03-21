@@ -1,5 +1,6 @@
 package com.javamentor.qa.platform.webapp.controllers.rest;
 
+import com.javamentor.qa.platform.exception.PaginationDtoIncorrectParametersException;
 import com.javamentor.qa.platform.models.dto.PageDto;
 import com.javamentor.qa.platform.models.dto.tag.TagDto;
 import com.javamentor.qa.platform.models.entity.user.User;
@@ -128,7 +129,7 @@ public class TagResourceController {
             @ApiResponse(code = 400, message = "Invalid password"),
             @ApiResponse(code = 403, message = "Forbidden")})
     public ResponseEntity<PageDto<TagDto>> getSortedByPopularity(@RequestParam(defaultValue = "1") int page,
-                                                                 @RequestParam(defaultValue = "10") int items) throws NotFoundException {
+                                                                 @RequestParam(defaultValue = "10") int items) throws PaginationDtoIncorrectParametersException {
         HashMap<String, Object> params = new HashMap<>();
         params.put("currentPageNumber", page);
         params.put("itemsOnPage", items);
