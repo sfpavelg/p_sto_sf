@@ -15,7 +15,7 @@ import java.util.Map;
 import java.util.Optional;
 
 @Service
-public class TagDtoServiceImpl implements TagDtoService {
+public class TagDtoServiceImpl extends PageDtoService<TagDto> implements TagDtoService {
 
     private final TagDtoDao tagDtoDao;
 
