@@ -23,23 +23,19 @@ import java.util.List;
 class TestQuestionResourceController extends AbstractTestApi {
 
     @Test
-    @Sql(value = {"/script/question/getQuestionDtoByIdTest/question-dto-data-create.sql"}, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
-    @Sql(value = {"/script/question/getQuestionDtoByIdTest/question-dto-data-drop.sql"}, executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
+    @Sql(value = {"/script/TestQuestionResourceController/testGetQuestionDtoById/Before.sql"}, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+    @Sql(value = {"/script/TestQuestionResourceController/testGetQuestionDtoById/After.sql"}, executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
     public void getQuestionDtoByIdTest() throws Exception {
-
-        String json = "{\"email\":\"0@gmail.com\",\"password\":\"0pwd\"}";
-        String token = this.mvc.perform(post("/api/auth/token").contentType(MediaType.APPLICATION_JSON)
-                        .content(json)).andExpect(status().isOk())
-                .andReturn().getResponse().getContentAsString().substring(10);
+        String token = getToken("0@gmail.com", "0pwd");
 
         //success
-        this.mvc.perform(get("/api/user/question/{id}", 1).header("Authorization", "Bearer " + token))
+        this.mvc.perform(get("/api/user/question/{id}", 100).header("Authorization", "Bearer " + token))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.id", Is.is(1)))
+                .andExpect(jsonPath("$.id", Is.is(100)))
                 .andExpect(jsonPath("$.title", Is.is("title1")))
-                .andExpect(jsonPath("$.authorId", Is.is(1)))
+                .andExpect(jsonPath("$.authorId", Is.is(100)))
                 .andExpect(jsonPath("$.authorReputation", Is.is(6)))
                 .andExpect(jsonPath("$.authorName", Is.is("name1")))
                 .andExpect(jsonPath("$.authorImage", Is.is("http://imagelink1.com")))
@@ -50,10 +46,10 @@ class TestQuestionResourceController extends AbstractTestApi {
                 .andExpect(jsonPath("$.countValuable", Is.is(2)))
                 .andExpect(jsonPath("$.persistDateTime", Is.is("2023-01-27T13:01:11.245126")))
                 .andExpect(jsonPath("$.lastUpdateDateTime", Is.is("2023-01-27T13:01:11.245126")))
-                .andExpect(jsonPath("$.listTagDto[0].id", Is.is(1)))
+                .andExpect(jsonPath("$.listTagDto[0].id", Is.is(100)))
                 .andExpect(jsonPath("$.listTagDto[0].name", Is.is("name1")))
                 .andExpect(jsonPath("$.listTagDto[0].description", Is.is("description1")))
-                .andExpect(jsonPath("$.listTagDto[1].id", Is.is(2)))
+                .andExpect(jsonPath("$.listTagDto[1].id", Is.is(101)))
                 .andExpect(jsonPath("$.listTagDto[1].name", Is.is("name2")))
                 .andExpect(jsonPath("$.listTagDto[1].description", Is.is("description2")));
 
@@ -64,13 +60,13 @@ class TestQuestionResourceController extends AbstractTestApi {
                 .andExpect(jsonPath("$", Is.is("QuestionDto with id = 111 not found")));
 
         //null results in DB (only possible fields like imageLink, rep, counts of answers and valuable)
-        this.mvc.perform(get("/api/user/question/{id}", 5).header("Authorization", "Bearer " + token))
+        this.mvc.perform(get("/api/user/question/{id}", 104).header("Authorization", "Bearer " + token))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.id", Is.is(5)))
+                .andExpect(jsonPath("$.id", Is.is(104)))
                 .andExpect(jsonPath("$.title", Is.is("title5")))
-                .andExpect(jsonPath("$.authorId", Is.is(5)))
+                .andExpect(jsonPath("$.authorId", Is.is(104)))
                 .andExpect(jsonPath("$.authorReputation", Is.is(0)))
                 .andExpect(jsonPath("$.authorName", Is.is("name5")))
                 .andExpect(jsonPath("$.authorImage", IsNull.nullValue()))
@@ -86,13 +82,10 @@ class TestQuestionResourceController extends AbstractTestApi {
 
 
     @Test
-    @Sql(value = {"/script/question/addQuestionTest/question-add-data-create.sql"}, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
-    @Sql(value = {"/script/question/addQuestionTest/question-add-data-drop.sql"}, executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
+    @Sql(value = {"/script/TestQuestionResourceController/testAddQuestion/Before.sql"}, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+    @Sql(value = {"/script/TestQuestionResourceController/testAddQuestion/After.sql"}, executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
     public void addQuestionTest() throws Exception {
-        String json = "{\"email\":\"0@gmail.com\",\"password\":\"0pwd\"}";
-        String token = this.mvc.perform(post("/api/auth/token").contentType(MediaType.APPLICATION_JSON)
-                        .content(json)).andExpect(status().isOk())
-                .andReturn().getResponse().getContentAsString().substring(10);
+        String token = getToken("0@gmail.com", "0pwd");
 
         //Check that Question successfully added in DB if TagDto exist in DB
         List<TagDto> list1 = new ArrayList<>();
@@ -210,6 +203,7 @@ class TestQuestionResourceController extends AbstractTestApi {
     @Sql(value = {"/script/TestQuestionResourceController/testGetAllQuestionDto/After.sql"}, executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
     public void getAllQuestionDtoTest() throws Exception {
         String token = getToken("0@gmail.com", "0pwd");
+
         this.mvc.perform(get("/api/user/question")
                         .header("Authorization", "Bearer " + token)
                         .param("currentPageNumber", "1")
@@ -283,7 +277,6 @@ class TestQuestionResourceController extends AbstractTestApi {
                 .andExpect(jsonPath("$.items[1].id", Is.is(101)))
                 .andExpect(status().isOk());
     }
-
     @Test
     @Sql(value = {"/script/TestQuestionResourceController/testVoteForQuestion/Before.sql"}, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
     @Sql(value = "/script/TestQuestionResourceController/testVoteForQuestion/After.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
@@ -439,6 +432,7 @@ class TestQuestionResourceController extends AbstractTestApi {
             executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
     public void getPageWithListQuestionDtoWithoutAnswerTest() throws Exception {
         String token = getToken("5@gmail.com", "5pwd");
+
         //Test 1. Positive. The request parameters are passed page, items, trackedTag, ignoredTag
         this.mvc.perform(get("/api/user/question/noAnswer")
                         .header("Authorization", "Bearer " + token)

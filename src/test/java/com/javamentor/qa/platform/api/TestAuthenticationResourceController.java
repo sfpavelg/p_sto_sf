@@ -16,10 +16,9 @@ import org.springframework.test.context.jdbc.Sql;
 
 public class TestAuthenticationResourceController extends AbstractTestApi {
 
-
     @Test
-    @Sql(value = {"/static/TestAuthenticationResourceController/testAuthentication/Before.sql"}, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
-    @Sql(value = {"/static/TestAuthenticationResourceController/testAuthentication/After.sql"}, executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
+    @Sql(value = {"/script/TestAuthenticationResourceController/testAuthentication/Before.sql"}, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+    @Sql(value = {"/script/TestAuthenticationResourceController/testAuthentication/After.sql"}, executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
     public void testAuthentication() throws Exception {
         // correct request
         this.mvc.perform(post("http://localhost:8091/api/auth/token")
