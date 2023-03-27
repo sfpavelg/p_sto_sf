@@ -54,5 +54,9 @@ public class TagDtoServiceImpl extends PageDtoService<TagDto> implements TagDtoS
         params.put("daoDtoImpl", "tagPageByPopularityImpl");
         return pageDto(params);
     }
-
+    @Override
+    public PageDto<TagDto> getPageWithListTagDtoSortedBySyllable(HashMap<String, Object> param) {
+        param.put("daoDtoImpl", "tagDtoPaginationSortedBySyllableDaoImpl");
+        return pageDto(param);
+    }
 }

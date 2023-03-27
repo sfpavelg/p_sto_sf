@@ -177,18 +177,18 @@ public class TestTagResourceController extends AbstractTestApi {
                 .andExpect(jsonPath("$.currentPageNumber", Is.is(1)))
                 .andExpect(jsonPath("$.totalPageCount", Is.is(8)))
                 .andExpect(jsonPath("$.totalResultCount", Is.is(15)))
-                .andExpect(jsonPath("$.items[0].id",Is.is(114)))
-                .andExpect(jsonPath("$.items[0].title",Is.is("name15")))
-                .andExpect(jsonPath("$.items[0].description",Is.is("description114")))
-                .andExpect(jsonPath("$.items[0].questionCount",Is.is(6)))
-                .andExpect(jsonPath("$.items[0].questionCountOneDay",Is.is(3)))
-                .andExpect(jsonPath("$.items[0].questionCountWeekDay",Is.is(6)))
-                .andExpect(jsonPath("$.items[1].id",Is.is(113)))
-                .andExpect(jsonPath("$.items[1].title",Is.is("name14")))
-                .andExpect(jsonPath("$.items[1].description",Is.is("description113")))
-                .andExpect(jsonPath("$.items[1].questionCount",Is.is(1)))
-                .andExpect(jsonPath("$.items[1].questionCountOneDay",Is.is(1)))
-                .andExpect(jsonPath("$.items[1].questionCountWeekDay",Is.is(1)))
+                .andExpect(jsonPath("$.items[0].id", Is.is(114)))
+                .andExpect(jsonPath("$.items[0].title", Is.is("name15")))
+                .andExpect(jsonPath("$.items[0].description", Is.is("description114")))
+                .andExpect(jsonPath("$.items[0].questionCount", Is.is(6)))
+                .andExpect(jsonPath("$.items[0].questionCountOneDay", Is.is(3)))
+                .andExpect(jsonPath("$.items[0].questionCountWeekDay", Is.is(6)))
+                .andExpect(jsonPath("$.items[1].id", Is.is(113)))
+                .andExpect(jsonPath("$.items[1].title", Is.is("name14")))
+                .andExpect(jsonPath("$.items[1].description", Is.is("description113")))
+                .andExpect(jsonPath("$.items[1].questionCount", Is.is(1)))
+                .andExpect(jsonPath("$.items[1].questionCountOneDay", Is.is(1)))
+                .andExpect(jsonPath("$.items[1].questionCountWeekDay", Is.is(1)))
                 .andExpect(jsonPath("$.itemsOnPage", Is.is(2)));
 
         ;
@@ -198,18 +198,18 @@ public class TestTagResourceController extends AbstractTestApi {
                 .andExpect(jsonPath("$.currentPageNumber", Is.is(2)))
                 .andExpect(jsonPath("$.totalPageCount", Is.is(8)))
                 .andExpect(jsonPath("$.totalResultCount", Is.is(15)))
-                .andExpect(jsonPath("$.items[0].id",Is.is(112)))
-                .andExpect(jsonPath("$.items[0].title",Is.is("name13")))
-                .andExpect(jsonPath("$.items[0].description",Is.is("description112")))
-                .andExpect(jsonPath("$.items[0].questionCount",Is.is(1)))
-                .andExpect(jsonPath("$.items[0].questionCountOneDay",Is.is(0)))
-                .andExpect(jsonPath("$.items[0].questionCountWeekDay",Is.is(1)))
-                .andExpect(jsonPath("$.items[1].id",Is.is(111)))
-                .andExpect(jsonPath("$.items[1].title",Is.is("name12")))
-                .andExpect(jsonPath("$.items[1].description",Is.is("description111")))
-                .andExpect(jsonPath("$.items[1].questionCount",Is.is(3)))
-                .andExpect(jsonPath("$.items[1].questionCountOneDay",Is.is(2)))
-                .andExpect(jsonPath("$.items[1].questionCountWeekDay",Is.is(3)))
+                .andExpect(jsonPath("$.items[0].id", Is.is(112)))
+                .andExpect(jsonPath("$.items[0].title", Is.is("name13")))
+                .andExpect(jsonPath("$.items[0].description", Is.is("description112")))
+                .andExpect(jsonPath("$.items[0].questionCount", Is.is(1)))
+                .andExpect(jsonPath("$.items[0].questionCountOneDay", Is.is(0)))
+                .andExpect(jsonPath("$.items[0].questionCountWeekDay", Is.is(1)))
+                .andExpect(jsonPath("$.items[1].id", Is.is(111)))
+                .andExpect(jsonPath("$.items[1].title", Is.is("name12")))
+                .andExpect(jsonPath("$.items[1].description", Is.is("description111")))
+                .andExpect(jsonPath("$.items[1].questionCount", Is.is(3)))
+                .andExpect(jsonPath("$.items[1].questionCountOneDay", Is.is(2)))
+                .andExpect(jsonPath("$.items[1].questionCountWeekDay", Is.is(3)))
                 .andExpect(jsonPath("$.itemsOnPage", Is.is(2)));
         ;
         this.mvc.perform(get("/api/user/tag/new?currentPageNumber=1&itemsOnPage=6").header("Authorization", "Bearer " + token))
@@ -219,42 +219,42 @@ public class TestTagResourceController extends AbstractTestApi {
                 .andExpect(jsonPath("$.currentPageNumber", Is.is(1)))
                 .andExpect(jsonPath("$.totalPageCount", Is.is(3)))
                 .andExpect(jsonPath("$.totalResultCount", Is.is(15)))
-                .andExpect(jsonPath("$.items[0].id",Is.is(114)))
-                .andExpect(jsonPath("$.items[0].title",Is.is("name15")))
-                .andExpect(jsonPath("$.items[0].description",Is.is("description114")))
-                .andExpect(jsonPath("$.items[0].questionCount",Is.is(6)))
-                .andExpect(jsonPath("$.items[0].questionCountOneDay",Is.is(3)))
-                .andExpect(jsonPath("$.items[0].questionCountWeekDay",Is.is(6)))
-                .andExpect(jsonPath("$.items[1].id",Is.is(113)))
-                .andExpect(jsonPath("$.items[1].title",Is.is("name14")))
-                .andExpect(jsonPath("$.items[1].description",Is.is("description113")))
-                .andExpect(jsonPath("$.items[1].questionCount",Is.is(1)))
-                .andExpect(jsonPath("$.items[1].questionCountOneDay",Is.is(1)))
-                .andExpect(jsonPath("$.items[1].questionCountWeekDay",Is.is(1)))
-                .andExpect(jsonPath("$.items[2].id",Is.is(112)))
-                .andExpect(jsonPath("$.items[2].title",Is.is("name13")))
-                .andExpect(jsonPath("$.items[2].description",Is.is("description112")))
-                .andExpect(jsonPath("$.items[2].questionCount",Is.is(1)))
-                .andExpect(jsonPath("$.items[2].questionCountOneDay",Is.is(0)))
-                .andExpect(jsonPath("$.items[2].questionCountWeekDay",Is.is(1)))
-                .andExpect(jsonPath("$.items[3].id",Is.is(111)))
-                .andExpect(jsonPath("$.items[3].title",Is.is("name12")))
-                .andExpect(jsonPath("$.items[3].description",Is.is("description111")))
-                .andExpect(jsonPath("$.items[3].questionCount",Is.is(3)))
-                .andExpect(jsonPath("$.items[3].questionCountOneDay",Is.is(2)))
-                .andExpect(jsonPath("$.items[3].questionCountWeekDay",Is.is(3)))
-                .andExpect(jsonPath("$.items[4].id",Is.is(110)))
-                .andExpect(jsonPath("$.items[4].title",Is.is("name11")))
-                .andExpect(jsonPath("$.items[4].description",Is.is("description110")))
-                .andExpect(jsonPath("$.items[4].questionCount",Is.is(2)))
-                .andExpect(jsonPath("$.items[4].questionCountOneDay",Is.is(1)))
-                .andExpect(jsonPath("$.items[4].questionCountWeekDay",Is.is(2)))
-                .andExpect(jsonPath("$.items[5].id",Is.is(109)))
-                .andExpect(jsonPath("$.items[5].title",Is.is("name10")))
-                .andExpect(jsonPath("$.items[5].description",Is.is("description109")))
-                .andExpect(jsonPath("$.items[5].questionCount",Is.is(4)))
-                .andExpect(jsonPath("$.items[5].questionCountOneDay",Is.is(1)))
-                .andExpect(jsonPath("$.items[5].questionCountWeekDay",Is.is(4)))
+                .andExpect(jsonPath("$.items[0].id", Is.is(114)))
+                .andExpect(jsonPath("$.items[0].title", Is.is("name15")))
+                .andExpect(jsonPath("$.items[0].description", Is.is("description114")))
+                .andExpect(jsonPath("$.items[0].questionCount", Is.is(6)))
+                .andExpect(jsonPath("$.items[0].questionCountOneDay", Is.is(3)))
+                .andExpect(jsonPath("$.items[0].questionCountWeekDay", Is.is(6)))
+                .andExpect(jsonPath("$.items[1].id", Is.is(113)))
+                .andExpect(jsonPath("$.items[1].title", Is.is("name14")))
+                .andExpect(jsonPath("$.items[1].description", Is.is("description113")))
+                .andExpect(jsonPath("$.items[1].questionCount", Is.is(1)))
+                .andExpect(jsonPath("$.items[1].questionCountOneDay", Is.is(1)))
+                .andExpect(jsonPath("$.items[1].questionCountWeekDay", Is.is(1)))
+                .andExpect(jsonPath("$.items[2].id", Is.is(112)))
+                .andExpect(jsonPath("$.items[2].title", Is.is("name13")))
+                .andExpect(jsonPath("$.items[2].description", Is.is("description112")))
+                .andExpect(jsonPath("$.items[2].questionCount", Is.is(1)))
+                .andExpect(jsonPath("$.items[2].questionCountOneDay", Is.is(0)))
+                .andExpect(jsonPath("$.items[2].questionCountWeekDay", Is.is(1)))
+                .andExpect(jsonPath("$.items[3].id", Is.is(111)))
+                .andExpect(jsonPath("$.items[3].title", Is.is("name12")))
+                .andExpect(jsonPath("$.items[3].description", Is.is("description111")))
+                .andExpect(jsonPath("$.items[3].questionCount", Is.is(3)))
+                .andExpect(jsonPath("$.items[3].questionCountOneDay", Is.is(2)))
+                .andExpect(jsonPath("$.items[3].questionCountWeekDay", Is.is(3)))
+                .andExpect(jsonPath("$.items[4].id", Is.is(110)))
+                .andExpect(jsonPath("$.items[4].title", Is.is("name11")))
+                .andExpect(jsonPath("$.items[4].description", Is.is("description110")))
+                .andExpect(jsonPath("$.items[4].questionCount", Is.is(2)))
+                .andExpect(jsonPath("$.items[4].questionCountOneDay", Is.is(1)))
+                .andExpect(jsonPath("$.items[4].questionCountWeekDay", Is.is(2)))
+                .andExpect(jsonPath("$.items[5].id", Is.is(109)))
+                .andExpect(jsonPath("$.items[5].title", Is.is("name10")))
+                .andExpect(jsonPath("$.items[5].description", Is.is("description109")))
+                .andExpect(jsonPath("$.items[5].questionCount", Is.is(4)))
+                .andExpect(jsonPath("$.items[5].questionCountOneDay", Is.is(1)))
+                .andExpect(jsonPath("$.items[5].questionCountWeekDay", Is.is(4)))
                 .andExpect(jsonPath("$.itemsOnPage", Is.is(6)));
     }
 
@@ -287,9 +287,9 @@ public class TestTagResourceController extends AbstractTestApi {
 
     @Test
     @SqlGroup({
-            @Sql(value = {"/script/TestTagResourceController.TestGetPageWithListTagDtoSortedByName/Before.sql"},
+            @Sql(value = {"/script/TestTagResourceController/testGetPageWithListTagDtoSortedByName/Before.sql"},
                     executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD),
-            @Sql(value = {"/script/TestTagResourceController.TestGetPageWithListTagDtoSortedByName/After.sql"},
+            @Sql(value = {"/script/TestTagResourceController/testGetPageWithListTagDtoSortedByName/After.sql"},
                     executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
     })
     public void testGetPageWithListTagDtoSortedByName() throws Exception {
@@ -346,7 +346,7 @@ public class TestTagResourceController extends AbstractTestApi {
     @Test
     @Sql(value = {"/script/TestTagResourceController/testGetSortedByPopularity/Before.sql"}, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
     @Sql(value = {"/script/TestTagResourceController/testGetSortedByPopularity/After.sql"}, executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
-    public void testGetSortedByPopularity() throws Exception{
+    public void testGetSortedByPopularity() throws Exception {
         String token = getToken("0@gmail.com", "0pwd");
 
         // пользователь не авторизован (отсутствует JWT) - ошибка
@@ -364,46 +364,46 @@ public class TestTagResourceController extends AbstractTestApi {
                 .andExpect(jsonPath("$.currentPageNumber", Is.is(1)))
                 .andExpect(jsonPath("$.items.size()", Is.is(5)))
 
-                .andExpect(jsonPath("$.items[0].id",Is.is(103)))
-                .andExpect(jsonPath("$.items[0].name",Is.is("HTML")))
-                .andExpect(jsonPath("$.items[0].description",Is.is("HTML description")))
+                .andExpect(jsonPath("$.items[0].id", Is.is(103)))
+                .andExpect(jsonPath("$.items[0].name", Is.is("HTML")))
+                .andExpect(jsonPath("$.items[0].description", Is.is("HTML description")))
 
-                .andExpect(jsonPath("$.items[1].id",Is.is(101)))
-                .andExpect(jsonPath("$.items[1].name",Is.is("JavaScript")))
-                .andExpect(jsonPath("$.items[1].description",Is.is("JavaScript description")))
+                .andExpect(jsonPath("$.items[1].id", Is.is(101)))
+                .andExpect(jsonPath("$.items[1].name", Is.is("JavaScript")))
+                .andExpect(jsonPath("$.items[1].description", Is.is("JavaScript description")))
 
-                .andExpect(jsonPath("$.items[2].id",Is.is(100)))
-                .andExpect(jsonPath("$.items[2].name",Is.is("Java")))
-                .andExpect(jsonPath("$.items[2].description",Is.is("Java description")))
+                .andExpect(jsonPath("$.items[2].id", Is.is(100)))
+                .andExpect(jsonPath("$.items[2].name", Is.is("Java")))
+                .andExpect(jsonPath("$.items[2].description", Is.is("Java description")))
 
-                .andExpect(jsonPath("$.items[3].id",Is.is(102)))
-                .andExpect(jsonPath("$.items[3].name",Is.is("C#")))
-                .andExpect(jsonPath("$.items[3].description",Is.is("C# description")))
+                .andExpect(jsonPath("$.items[3].id", Is.is(102)))
+                .andExpect(jsonPath("$.items[3].name", Is.is("C#")))
+                .andExpect(jsonPath("$.items[3].description", Is.is("C# description")))
 
-                .andExpect(jsonPath("$.items[4].id",Is.is(104)))
-                .andExpect(jsonPath("$.items[4].name",Is.is("Python")))
-                .andExpect(jsonPath("$.items[4].description",Is.is("Python description")));
+                .andExpect(jsonPath("$.items[4].id", Is.is(104)))
+                .andExpect(jsonPath("$.items[4].name", Is.is("Python")))
+                .andExpect(jsonPath("$.items[4].description", Is.is("Python description")));
 
         // получение последней 5 страницы, когда 1 тег на страницу
         this.mvc.perform(get("/api/user/tag/popular")
                         .header("Authorization", "Bearer " + token)
-                        .param("page","5")
-                        .param("items","1"))
+                        .param("page", "5")
+                        .param("items", "1"))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.totalPageCount", Is.is(5)))
                 .andExpect(jsonPath("$.totalResultCount", Is.is(5)))
                 .andExpect(jsonPath("$.currentPageNumber", Is.is(5)))
                 .andExpect(jsonPath("$.items.size()", Is.is(1)))
-                .andExpect(jsonPath("$.items[0].id",Is.is(104)))
-                .andExpect(jsonPath("$.items[0].name",Is.is("Python")))
-                .andExpect(jsonPath("$.items[0].description",Is.is("Python description")));
+                .andExpect(jsonPath("$.items[0].id", Is.is(104)))
+                .andExpect(jsonPath("$.items[0].name", Is.is("Python")))
+                .andExpect(jsonPath("$.items[0].description", Is.is("Python description")));
 
         // пустая страница
         this.mvc.perform(get("/api/user/tag/popular")
                         .header("Authorization", "Bearer " + token)
-                        .param("page","6")
-                        .param("items","1"))
+                        .param("page", "6")
+                        .param("items", "1"))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.totalPageCount", Is.is(5)))
@@ -414,9 +414,118 @@ public class TestTagResourceController extends AbstractTestApi {
         // ошибка - страница за пределами границ ( <1 )
         this.mvc.perform(get("/api/user/tag/popular")
                         .header("Authorization", "Bearer " + token)
-                        .param("page","0"))
+                        .param("page", "0"))
                 .andDo(print())
                 .andExpect(status().is4xxClientError())
                 .andExpect(jsonPath("$", Is.is("The current page cannot be less than 1")));
+    }
+
+    @Test
+    @Sql(value = {"/script/TestTagResourceController/testGetPageWithListTagDtoSortedBySyllable/Before.sql"},
+            executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+    @Sql(value = {"/script/TestTagResourceController/testGetPageWithListTagDtoSortedBySyllable/After.sql"},
+            executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
+    public void testGetPageWithListTagDtoSortedBySyllable() throws Exception {
+        String token = getToken("0@gmail.com", "0pwd");
+
+        // user not authorized (missing JWT) - error
+        this.mvc.perform(get("/api/user/tag/syllable"))
+                .andDo(print())
+                .andExpect(status().is4xxClientError());
+
+        //the following input parameters are present(page, items, syllable), matches present
+        this.mvc.perform(get("/api/user/tag/syllable")
+                        .header("Authorization", "Bearer " + token)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .param("page", "1")
+                        .param("items", "1")
+                        .param("syllable", "J")
+                )
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.currentPageNumber", Is.is(1)))
+                .andExpect(jsonPath("$.totalPageCount", Is.is(2)))
+                .andExpect(jsonPath("$.totalResultCount", Is.is(2)))
+                .andExpect(jsonPath("$.itemsOnPage", Is.is(1)))
+                .andExpect(jsonPath("$.items[0].id", Is.is(100)))
+                .andExpect(jsonPath("$.items[0].name", Is.is("Java")))
+                .andExpect(jsonPath("$.items[0].description", Is.is("Java description")));
+
+        //the following input parameters are present(page, items, syllable), matches present
+        this.mvc.perform(get("/api/user/tag/syllable")
+                        .header("Authorization", "Bearer " + token)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .param("page", "1")
+                        .param("items", "1")
+                        .param("syllable", "M")
+                )
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.currentPageNumber", Is.is(1)))
+                .andExpect(jsonPath("$.totalPageCount", Is.is(1)))
+                .andExpect(jsonPath("$.totalResultCount", Is.is(1)))
+                .andExpect(jsonPath("$.itemsOnPage", Is.is(1)))
+                .andExpect(jsonPath("$.items[0].id", Is.is(103)))
+                .andExpect(jsonPath("$.items[0].name", Is.is("HTML")))
+                .andExpect(jsonPath("$.items[0].description", Is.is("HTML description")));
+
+        //the following input parameters are present(page, items, syllable), no matches
+        this.mvc.perform(get("/api/user/tag/syllable")
+                        .header("Authorization", "Bearer " + token)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .param("page", "1")
+                        .param("items", "1")
+                        .param("syllable", "Y")
+                )
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.currentPageNumber", Is.is(1)))
+                .andExpect(jsonPath("$.totalPageCount", Is.is(0)))
+                .andExpect(jsonPath("$.totalResultCount", Is.is(0)))
+                .andExpect(jsonPath("$.itemsOnPage", Is.is(1)))
+                .andExpect(jsonPath("$.items.size()", Is.is(0)));
+
+        //the following input parameters are present(items, syllable)
+        this.mvc.perform(get("/api/user/tag/syllable")
+                        .header("Authorization", "Bearer " + token)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .param("items", "1")
+                        .param("syllable", "J")
+                )
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.currentPageNumber", Is.is(1)))
+                .andExpect(jsonPath("$.totalPageCount", Is.is(2)))
+                .andExpect(jsonPath("$.totalResultCount", Is.is(2)))
+                .andExpect(jsonPath("$.itemsOnPage", Is.is(1)))
+                .andExpect(jsonPath("$.items[0].id", Is.is(100)))
+                .andExpect(jsonPath("$.items[0].name", Is.is("Java")))
+                .andExpect(jsonPath("$.items[0].description", Is.is("Java description")));
+
+        //the following input parameters are present(syllable)
+        this.mvc.perform(get("/api/user/tag/syllable")
+                        .header("Authorization", "Bearer " + token)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .param("syllable", "J")
+                )
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.currentPageNumber", Is.is(1)))
+                .andExpect(jsonPath("$.totalPageCount", Is.is(1)))
+                .andExpect(jsonPath("$.totalResultCount", Is.is(2)))
+                .andExpect(jsonPath("$.itemsOnPage", Is.is(10)))
+                .andExpect(jsonPath("$.items[0].id", Is.is(100)))
+                .andExpect(jsonPath("$.items[0].name", Is.is("Java")))
+                .andExpect(jsonPath("$.items[0].description", Is.is("Java description")))
+                .andExpect(jsonPath("$.items[1].id", Is.is(101)))
+                .andExpect(jsonPath("$.items[1].name", Is.is("JavaScript")))
+                .andExpect(jsonPath("$.items[1].description", Is.is("JavaScript description")));
+
+        //no input parameters
+        this.mvc.perform(get("/api/user/tag/syllable")
+                        .header("Authorization", "Bearer " + token)
+                        .contentType(MediaType.APPLICATION_JSON)
+                )
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.currentPageNumber", Is.is(1)))
+                .andExpect(jsonPath("$.totalPageCount", Is.is(0)))
+                .andExpect(jsonPath("$.totalResultCount", Is.is(0)))
+                .andExpect(jsonPath("$.itemsOnPage", Is.is(10)))
+                .andExpect(jsonPath("$.items.size()", Is.is(0)));
     }
 }

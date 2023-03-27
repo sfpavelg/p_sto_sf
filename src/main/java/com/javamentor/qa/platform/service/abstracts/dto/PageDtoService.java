@@ -4,7 +4,9 @@ import com.javamentor.qa.platform.dao.abstracts.dto.PageDtoDao;
 import com.javamentor.qa.platform.exception.PaginationDtoException;
 import com.javamentor.qa.platform.exception.PaginationDtoIncorrectParametersException;
 import com.javamentor.qa.platform.models.dto.PageDto;
+import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import java.util.Map;
 
@@ -13,14 +15,16 @@ import java.util.Map;
  *
  * @param <T> The type of DTO.
  */
+@Component
+@AllArgsConstructor
 public class PageDtoService<T> {
 
     private final Map<String, PageDtoDao<T>> beansMap;
 
-    @Autowired
-    public PageDtoService(Map<String, PageDtoDao<T>> beansMap) {
-        this.beansMap = beansMap;
-    }
+//    @Autowired
+//    public PageDtoService(Map<String, PageDtoDao<T>> beansMap) {
+//        this.beansMap = beansMap;
+//    }
 
 
     /**
@@ -73,7 +77,5 @@ public class PageDtoService<T> {
         if (beansMap.get((String) params.get("daoDtoImpl")) == null) {
             throw new PaginationDtoException("The specified implementation does not exist");
         }
-
-
     }
 }

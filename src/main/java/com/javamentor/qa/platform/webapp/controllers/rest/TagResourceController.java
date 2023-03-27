@@ -13,6 +13,7 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import javassist.NotFoundException;
+import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -27,24 +28,17 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
+@AllArgsConstructor
 @RequestMapping("/api/user/tag")
-@Api("Контроллер для работы с Tag")
+@Api("Controller for working with Tag")
 public class TagResourceController {
-
     private final TagDtoService tagDtoService;
     private final TagViewDtoService tagViewDtoService;
     private final IgnoredTagService ignoredTagService;
     private final TrackedTagService trackedTagService;
 
-    public TagResourceController(TagDtoService tagDtoService, TagViewDtoService tagViewDtoService, IgnoredTagService ignoredTagService, TrackedTagService trackedTagService) {
-        this.tagDtoService = tagDtoService;
-        this.tagViewDtoService = tagViewDtoService;
-        this.ignoredTagService = ignoredTagService;
-        this.trackedTagService = trackedTagService;
-    }
-
     @GetMapping("/related")
-    @ApiOperation(value = "Получение списка самых популярных тэгов (использующихся на наибольшем количестве вопросов, макс. 10 штук)", response = List.class)
+    @ApiOperation(value = "Getting a list of the most popular tags (used on the most questions, max. 10 pieces)", response = List.class)
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Success request. List of RelatedTagDto returned"),
             @ApiResponse(code = 401, message = "Unauthorized request"),
@@ -55,7 +49,7 @@ public class TagResourceController {
     }
 
     @PostMapping("/{id}/ignored")
-    @ApiOperation(value = "Добавление Tag в Ignored. Возвращает TagDto", response = TagDto.class)
+    @ApiOperation(value = "Adding Tag to Ignored. Returns TagDto", response = TagDto.class)
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Success request. TagDto returned"),
             @ApiResponse(code = 400, message = "User already has such tag in Ignored or Tracked"),
@@ -69,7 +63,7 @@ public class TagResourceController {
     }
 
     @PostMapping("/{id}/tracked")
-    @ApiOperation(value = "Добавление Tag в Tracked. Возвращает TagDto", response = TagDto.class)
+    @ApiOperation(value = "Adding Tag to Tracked. Returns TagDto", response = TagDto.class)
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Success request. TagDto returned"),
             @ApiResponse(code = 400, message = "User already has such tag in Tracked or Ignored"),
@@ -82,9 +76,8 @@ public class TagResourceController {
         return tagDto.isPresent() ? ResponseEntity.ok(tagDto.get()) : ResponseEntity.notFound().build();
     }
 
-
     @GetMapping("/ignored")
-    @ApiOperation(value = "Получение списка игнорируемых тэгов авторизованного пользователя", response = List.class)
+    @ApiOperation(value = "Getting a list of ignored tags of an authorized user", response = List.class)
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Success request. List of IgnoredTag returned"),
             @ApiResponse(code = 401, message = "Unauthorized request"),
@@ -124,15 +117,16 @@ public class TagResourceController {
 
     /**
      * Method return JSON with list all tags sorted by name, with pagination.
+     *
      * @param itemsCountOnPage The number of users per page. Optional parameter. The default value is 10.
-     * @param pageNumber       Page number of the page to be displayed (starts from zero).
+     * @param pageNumber       Page number of the page to be displayed (starts from one).
      * @return {@link ResponseEntity} with status Ok and {@link PageDto}<{@link TagDto}> in body.
      */
     @GetMapping("/name")
     @ApiOperation(value = "Getting all tags, sorted by name", response = PageDto.class)
-    public ResponseEntity<PageDto<TagDto>> getPageWithListTagDtoSortedByName (
+    public ResponseEntity<PageDto<TagDto>> getPageWithListTagDtoSortedByName(
             @RequestParam(value = "page") Integer pageNumber,
-            @RequestParam(value = "items", required = false, defaultValue = "10") Integer itemsCountOnPage){
+            @RequestParam(value = "items", required = false, defaultValue = "10") Integer itemsCountOnPage) {
         HashMap<String, Object> param = new HashMap<>();
         param.put("currentPageNumber", pageNumber);
         param.put("itemsOnPage", itemsCountOnPage);
@@ -151,5 +145,30 @@ public class TagResourceController {
         params.put("currentPageNumber", page);
         params.put("itemsOnPage", items);
         return ResponseEntity.ok(tagDtoService.getSortedByPopularity(params));
+    }
+
+    /**
+     * The method returns JSON with a list of all tags, sorted by the presence of a symbol or syllable  in the name, with pagination.
+     *
+     * @param pageNumber       Page number of the page to be displayed (starts from one).
+     * @param itemsCountOnPage The number of users per page. Optional parameter. The default value is 10.
+     * @param syllable         Symbol or syllable for which a match will be found in the name
+     * @return {@link ResponseEntity} with status Ok and {@link PageDto}<{@link TagDto}> in body.
+     */
+    @GetMapping("/syllable")
+    @ApiOperation(value = "Getting all tags, found by latter", response = PageDto.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Success request. PageDto has been successfully returned"),
+            @ApiResponse(code = 400, message = "Invalid password"),
+            @ApiResponse(code = 403, message = "Forbidden")})
+    public ResponseEntity<PageDto<TagDto>> getPageWithListTagDtoFoundByLatter(
+            @RequestParam(value = "page", required = false, defaultValue = "1") Integer pageNumber,
+            @RequestParam(value = "items", required = false, defaultValue = "10") Integer itemsCountOnPage,
+            @RequestParam(value = "syllable", required = false, defaultValue = " ") String syllable) {
+        HashMap<String, Object> param = new HashMap<>();
+        param.put("currentPageNumber", pageNumber);
+        param.put("itemsOnPage", itemsCountOnPage);
+        param.put("syllable", syllable);
+        return ResponseEntity.ok(tagDtoService.getPageWithListTagDtoSortedBySyllable(param));
     }
 }
