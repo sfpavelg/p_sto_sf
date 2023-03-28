@@ -5,7 +5,6 @@ import com.javamentor.qa.platform.exception.PaginationDtoException;
 import com.javamentor.qa.platform.exception.PaginationDtoIncorrectParametersException;
 import com.javamentor.qa.platform.models.dto.PageDto;
 import lombok.AllArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.Map;
@@ -20,11 +19,6 @@ import java.util.Map;
 public class PageDtoService<T> {
 
     private final Map<String, PageDtoDao<T>> beansMap;
-
-//    @Autowired
-//    public PageDtoService(Map<String, PageDtoDao<T>> beansMap) {
-//        this.beansMap = beansMap;
-//    }
 
 
     /**
