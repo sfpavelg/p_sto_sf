@@ -15,5 +15,4 @@ public class PageDto<T> {
     private int totalResultCount;
     private List<T> items;
     private int itemsOnPage;
-
 }
