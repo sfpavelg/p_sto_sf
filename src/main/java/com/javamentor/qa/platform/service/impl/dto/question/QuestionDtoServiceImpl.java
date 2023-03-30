@@ -2,6 +2,7 @@ package com.javamentor.qa.platform.service.impl.dto.question;
 
 import com.javamentor.qa.platform.dao.abstracts.dto.PageDtoDao;
 import com.javamentor.qa.platform.dao.abstracts.dto.question.QuestionDtoDao;
+import com.javamentor.qa.platform.dao.abstracts.dto.question.QuestionDtoSortedByNewestPaginationDao;
 import com.javamentor.qa.platform.dao.abstracts.dto.question.QuestionDtoWithoutAnswerPaginationDao;
 import com.javamentor.qa.platform.dao.abstracts.dto.tag.TagDtoDao;
 import com.javamentor.qa.platform.models.dto.PageDto;
@@ -10,6 +11,7 @@ import com.javamentor.qa.platform.models.dto.tag.TagDto;
 import com.javamentor.qa.platform.service.abstracts.dto.PageDtoService;
 import com.javamentor.qa.platform.service.abstracts.dto.question.QuestionDtoService;
 import javassist.NotFoundException;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
@@ -27,15 +29,19 @@ public class QuestionDtoServiceImpl extends PageDtoService<QuestionDto> implemen
     private final QuestionDtoDao questionDtoDao;
     private final TagDtoDao tagDtoDao;
     private final QuestionDtoWithoutAnswerPaginationDao questionDtoWithoutAnswerPaginationDao;
+    private final QuestionDtoSortedByNewestPaginationDao questionDtoSortedByNewestPaginationDao;
 
     public QuestionDtoServiceImpl(
             QuestionDtoDao questionDtoDao,
             TagDtoDao tagDtoDao,
-            Map<String, PageDtoDao<QuestionDto>> beansMap, QuestionDtoWithoutAnswerPaginationDao questionDtoWithoutAnswerPaginationDao) {
+            Map<String, PageDtoDao<QuestionDto>> beansMap,
+            QuestionDtoWithoutAnswerPaginationDao questionDtoWithoutAnswerPaginationDao,
+            QuestionDtoSortedByNewestPaginationDao questionDtoSortedByNewestPaginationDao) {
         super(beansMap);
         this.questionDtoDao = questionDtoDao;
         this.tagDtoDao = tagDtoDao;
         this.questionDtoWithoutAnswerPaginationDao = questionDtoWithoutAnswerPaginationDao;
+        this.questionDtoSortedByNewestPaginationDao = questionDtoSortedByNewestPaginationDao;
     }
 
 
@@ -74,6 +80,22 @@ public class QuestionDtoServiceImpl extends PageDtoService<QuestionDto> implemen
             listQuestionId.add(questionDto.getId());
         }
         Map<Long, List<TagDto>> tagsMapByQuestionId = questionDtoWithoutAnswerPaginationDao.getTagsMapByQuestionId(listQuestionId);
+        for (QuestionDto questionDto : questionDtoList) {
+            questionDto.setListTagDto(tagsMapByQuestionId.get(questionDto.getId()));
+        }
+        return pageDto;
+    }
+
+    @Override
+    public PageDto<QuestionDto> getPageWithListQuestionDtoSortedByNewest(HashMap<String, Object> param) {
+        param.put("daoDtoImpl", "questionDtoSortedByNewestPaginationDaoImpl");
+        PageDto<QuestionDto> pageDto = pageDto(param);
+        List<QuestionDto> questionDtoList = pageDto.getItems();
+        List<Long> listQuestionId = new ArrayList<>();
+        for (QuestionDto questionDto : questionDtoList) {
+            listQuestionId.add(questionDto.getId());
+        }
+        Map<Long, List<TagDto>> tagsMapByQuestionId = questionDtoSortedByNewestPaginationDao.getTagsMapByQuestionId(listQuestionId);
         for (QuestionDto questionDto : questionDtoList) {
             questionDto.setListTagDto(tagsMapByQuestionId.get(questionDto.getId()));
         }

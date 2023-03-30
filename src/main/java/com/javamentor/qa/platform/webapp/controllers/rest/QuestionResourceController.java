@@ -157,4 +157,39 @@ public class QuestionResourceController {
         }
         return ResponseEntity.ok(commentDtoService.getAllCommentDtoByQuestionId(questionId));
     }
+
+    /**
+     * The method returns JSON with a paginated list of QuestionDTO objects, sorted by newest..
+     *
+     * @param pageNumber        Page number of the page to be displayed. The parameter must be greater than zero.
+     * @param itemsCountOnPage  Optional parameter. The number of items per page. The default value is 10.
+     *                          The parameter must be greater than zero
+     * @param trackedTag        Optional parameter, contains a list of ID tags of the {@link Tag} entity, for which it
+     *                          is necessary to give a list of unanswered questions.
+     * @param ignoredTag        Optional parameter, contains a list of ID tags of the {@link Tag} entity that should be
+     *                          ignored when displaying a list of unanswered questions. If the question contains at least
+     *                          one ignored tag, the question is not output.
+     * @return {@link ResponseEntity} with status Ok and {@link PageDto<QuestionDto>} in body.
+     */
+    @GetMapping("/new")
+    @ApiOperation(value = "Get all questionsDto sorted by newest",
+            notes = "currentPageNumber is a number of page with dto's.", response = QuestionDto.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Success request. QuestionDto objects returned in response."),
+            @ApiResponse(code = 401, message = "Unauthorized request"),
+            @ApiResponse(code = 403, message = "Forbidden"),
+            @ApiResponse(code = 404, message = "Questions don't exist")})
+    public ResponseEntity<?> getAllQuestionDtoSortedByNewest(
+            @RequestParam(value = "page") Integer pageNumber,
+            @RequestParam(value = "items", required = false, defaultValue = "10") Integer itemsCountOnPage,
+            @RequestParam(value = "trackedTag", required = false) List<Long> trackedTag,
+            @RequestParam(value = "ignoredTag", required = false) List<Long> ignoredTag
+    ) {
+        HashMap<String, Object> param = new HashMap<>();
+        param.put("currentPageNumber", pageNumber);
+        param.put("itemsOnPage", itemsCountOnPage);
+        param.put("trackedTag", trackedTag);
+        param.put("ignoredTag", ignoredTag);
+        return ResponseEntity.ok(questionDtoService.getPageWithListQuestionDtoSortedByNewest(param));
+    }
 }

@@ -278,6 +278,7 @@ class TestQuestionResourceController extends AbstractTestApi {
                 .andExpect(jsonPath("$.items[1].id", Is.is(101)))
                 .andExpect(status().isOk());
     }
+
     @Test
     @Sql(value = {"/script/TestQuestionResourceController/testVoteForQuestion/Before.sql"}, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
     @Sql(value = "/script/TestQuestionResourceController/testVoteForQuestion/After.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
@@ -540,12 +541,12 @@ class TestQuestionResourceController extends AbstractTestApi {
     public void getAllCommentDtoByQuestionIdTest() throws Exception {
         String token = getToken("0@gmail.com", "0pwd");
 
-        // user not authorized (missing JWT) - error
+        //Test 1. Negative test. User not authorized (missing JWT) - error
         this.mvc.perform(get("/api/user/question/104/allComments"))
                 .andDo(print())
                 .andExpect(status().is4xxClientError());
 
-        //Authorized user
+        //Test 3. Positive. Authorized user
         this.mvc.perform(get("/api/user/{id}", 100)
                         .header("Authorization", "Bearer " + token))
                 .andExpect(jsonPath("$.id", Is.is(100)))
@@ -556,14 +557,14 @@ class TestQuestionResourceController extends AbstractTestApi {
                 .andExpect(jsonPath("$.reputation", Is.is(0)))
                 .andExpect(status().isOk());
 
-        // addressing a non-existent question is an error
+        //Test 4. Negative test. Addressing a non-existent question is an error
         this.mvc.perform(get("/api/user/question/105/comments")
                         .header("Authorization", "Bearer " + token))
                 .andDo(print())
                 .andExpect(status().is4xxClientError())
                 .andExpect(jsonPath("$", Is.is("No question with such id")));
 
-        //we take a question from the database by id
+        //Test 5. Positive. We take a question from the database by id
         this.mvc.perform(get("/api/user/question/{id}", 104)
                         .header("Authorization", "Bearer " + token))
                 .andDo(print())
@@ -580,14 +581,14 @@ class TestQuestionResourceController extends AbstractTestApi {
                 .andExpect(status().isOk());
 
 
-        // We receive comments on 103 questions (no comments)
+        //Test 6. Positive. We receive comments on 103 questions (no comments)
         this.mvc.perform(get("/api/user/question/103/comments")
                         .header("Authorization", "Bearer " + token))
                 .andDo(print())
                 .andExpect(jsonPath("$", hasSize(0)))
                 .andExpect(status().isOk());
 
-        // We receive comments on 104 questions (three comments expected)
+        //Test 7. Positive. We receive comments on 104 questions (three comments expected)
         this.mvc.perform(get("/api/user/question/104/comments")
                         .header("Authorization", "Bearer " + token))
                 .andDo(print())
@@ -618,5 +619,137 @@ class TestQuestionResourceController extends AbstractTestApi {
                 .andExpect(jsonPath("$.[2].imageLink", Is.is("http://imagelink103.com")))
                 .andExpect(jsonPath("$.[2].reputation", Is.is(15)))
                 .andExpect(status().isOk());
+    }
+
+    @Test
+    @Sql(value = {"/script/TestQuestionResourceController/testGetPageWithListQuestionDtoSortedByNewest/Before.sql"},
+            executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+    @Sql(value = {"/script/TestQuestionResourceController/testGetPageWithListQuestionDtoSortedByNewest/After.sql"},
+            executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
+    public void getPageWithListQuestionDtoSortedByNewestTest() throws Exception {
+        String token = getToken("5@gmail.com", "5pwd");
+
+        //Test 1. Positive. The request parameters are passed page, items.
+        this.mvc.perform(get("/api/user/question/new")
+                        .header("Authorization", "Bearer " + token)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .param("page", "2")
+                        .param("items", "5")
+                )
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.currentPageNumber", Is.is(2)))
+                .andExpect(jsonPath("$.totalPageCount", Is.is(2)))
+                .andExpect(jsonPath("$.totalResultCount", Is.is(10)))
+                .andExpect(jsonPath("$.itemsOnPage", Is.is(5)))
+                .andExpect(jsonPath("$.items[0].id", Is.is(105)))
+                .andExpect(jsonPath("$.items[0].persistDateTime", Is.is("2023-03-11T17:18:55.740637")))
+                .andExpect(jsonPath("$.items[1].id", Is.is(104)))
+                .andExpect(jsonPath("$.items[1].persistDateTime", Is.is("2023-03-11T17:18:55.723817")))
+                .andExpect(jsonPath("$.items[2].id", Is.is(103)))
+                .andExpect(jsonPath("$.items[2].persistDateTime", Is.is("2023-03-11T17:18:55.704083")))
+                .andExpect(jsonPath("$.items[3].id", Is.is(102)))
+                .andExpect(jsonPath("$.items[3].persistDateTime", Is.is("2023-03-11T17:18:55.66548")))
+                .andExpect(jsonPath("$.items[4].id", Is.is(101)))
+                .andExpect(jsonPath("$.items[4].persistDateTime", Is.is("2023-03-11T17:18:55.618418")));
+
+        //Test 2. Positive. The request parameters are passed page, items, trackedTag, ignoredTag
+        this.mvc.perform(get("/api/user/question/new")
+                        .header("Authorization", "Bearer " + token)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .param("page", "3")
+                        .param("items", "2")
+                        .param("trackedTag", "101,102")
+                        .param("ignoredTag", "103,104")
+                )
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.currentPageNumber", Is.is(3)))
+                .andExpect(jsonPath("$.totalPageCount", Is.is(3)))
+                .andExpect(jsonPath("$.totalResultCount", Is.is(6)))
+                .andExpect(jsonPath("$.itemsOnPage", Is.is(2)))
+                .andExpect(jsonPath("$.items[0].id", Is.is(104)))
+                .andExpect(jsonPath("$.items[0].title", Is.is("question user id 104")))
+                .andExpect(jsonPath("$.items[0].authorId", Is.is(104)))
+                .andExpect(jsonPath("$.items[0].authorReputation", Is.is(15)))
+                .andExpect(jsonPath("$.items[0].authorName", Is.is("superfullname3")))
+                .andExpect(jsonPath("$.items[0].authorImage", Is.is("https://img.com/3")))
+                .andExpect(jsonPath("$.items[0].description", Is.is("Asked by user id 104")))
+                .andExpect(jsonPath("$.items[0].viewCount", Is.is(0)))
+                .andExpect(jsonPath("$.items[0].countAnswer", Is.is(0)))
+                .andExpect(jsonPath("$.items[0].countValuable", Is.is(-1)))
+                .andExpect(jsonPath("$.items[0].persistDateTime", Is.is("2023-03-11T17:18:55.723817")))
+                .andExpect(jsonPath("$.items[0].lastUpdateDateTime", Is.is("2023-03-11T17:18:55.723817")))
+                .andExpect(jsonPath("$.items[0].listTagDto[0].id", Is.is(101)))
+                .andExpect(jsonPath("$.items[0].listTagDto[0].name", Is.is("Java")))
+                .andExpect(jsonPath("$.items[0].listTagDto[0].description", Is.is("Java")));
+
+        //Test 3. Positive. The request parameters are passed page, items, trackedTag
+        this.mvc.perform(get("/api/user/question/new")
+                        .header("Authorization", "Bearer " + token)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .param("page", "3")
+                        .param("items", "2")
+                        .param("trackedTag", "101,102")
+                )
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.currentPageNumber", Is.is(3)))
+                .andExpect(jsonPath("$.totalPageCount", Is.is(5)))
+                .andExpect(jsonPath("$.totalResultCount", Is.is(9)))
+                .andExpect(jsonPath("$.itemsOnPage", Is.is(2)))
+                .andExpect(jsonPath("$.items[0].id", Is.is(105)))
+                .andExpect(jsonPath("$.items[0].title", Is.is("question user id 105")))
+                .andExpect(jsonPath("$.items[0].authorId", Is.is(105)))
+                .andExpect(jsonPath("$.items[0].authorReputation", Is.is(15)))
+                .andExpect(jsonPath("$.items[0].authorName", Is.is("superfullname4")))
+                .andExpect(jsonPath("$.items[0].authorImage", Is.is("https://img.com/4")))
+                .andExpect(jsonPath("$.items[0].description", Is.is("Asked by user id 105")))
+                .andExpect(jsonPath("$.items[0].viewCount", Is.is(0)))
+                .andExpect(jsonPath("$.items[0].countAnswer", Is.is(0)))
+                .andExpect(jsonPath("$.items[0].countValuable", Is.is(1)))
+                .andExpect(jsonPath("$.items[0].persistDateTime", Is.is("2023-03-11T17:18:55.740637")))
+                .andExpect(jsonPath("$.items[0].lastUpdateDateTime", Is.is("2023-03-11T17:18:55.740637")))
+                .andExpect(jsonPath("$.items[0].listTagDto[0].id", Is.is(102)))
+                .andExpect(jsonPath("$.items[0].listTagDto[0].name", Is.is("JavaScript")))
+                .andExpect(jsonPath("$.items[0].listTagDto[0].description", Is.is("JavaScript")));
+
+        //Test 4. Positive. The request parameters are passed page, ignoredTag
+        this.mvc.perform(get("/api/user/question/new")
+                        .header("Authorization", "Bearer " + token)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .param("page", "1")
+                        .param("ignoredTag", "103,104")
+                )
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.currentPageNumber", Is.is(1)))
+                .andExpect(jsonPath("$.totalPageCount", Is.is(1)))
+                .andExpect(jsonPath("$.totalResultCount", Is.is(6)))
+                .andExpect(jsonPath("$.itemsOnPage", Is.is(10)))
+                .andExpect(jsonPath("$.items[0].id", Is.is(110)))
+                .andExpect(jsonPath("$.items[0].listTagDto.size()", Is.is(1)))
+                .andExpect(jsonPath("$.items[0].listTagDto[0].id", Is.is(101)))
+                .andExpect(jsonPath("$.items[1].id", Is.is(107)))
+                .andExpect(jsonPath("$.items[1].listTagDto.size()", Is.is(2)))
+                .andExpect(jsonPath("$.items[1].listTagDto[0].id", Is.is(101)))
+                .andExpect(jsonPath("$.items[1].listTagDto[1].id", Is.is(102)))
+                .andExpect(jsonPath("$.items[2].id", Is.is(106)))
+                .andExpect(jsonPath("$.items[2].listTagDto.size()", Is.is(1)))
+                .andExpect(jsonPath("$.items[2].listTagDto[0].id", Is.is(101)));
+
+        //Test 5. Negative test. Incorrect page and correct ignoredTag were passed
+        this.mvc.perform(get("/api/user/question/new")
+                        .header("Authorization", "Bearer " + token)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .param("page", "0")
+                        .param("ignoredTag", "103,104")
+                )
+                .andExpect(status().is4xxClientError());
+
+        //Test 6. Negative test. The correct page and incorrect items were passed
+        this.mvc.perform(get("/api/user/question/new")
+                        .header("Authorization", "Bearer " + token)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .param("page", "1")
+                        .param("items", "0")
+                )
+                .andExpect(status().is4xxClientError());
     }
 }

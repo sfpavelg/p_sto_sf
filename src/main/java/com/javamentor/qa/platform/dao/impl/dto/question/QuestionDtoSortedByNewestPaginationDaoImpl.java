@@ -1,6 +1,6 @@
 package com.javamentor.qa.platform.dao.impl.dto.question;
 
-import com.javamentor.qa.platform.dao.abstracts.dto.question.QuestionDtoWithoutAnswerPaginationDao;
+import com.javamentor.qa.platform.dao.abstracts.dto.question.QuestionDtoSortedByNewestPaginationDao;
 import com.javamentor.qa.platform.models.dto.question.QuestionDto;
 import com.javamentor.qa.platform.models.dto.tag.TagDto;
 import org.springframework.stereotype.Repository;
@@ -9,13 +9,13 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import javax.persistence.Tuple;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.HashMap;
-import java.util.ArrayList;
 
 @Repository
-public class QuestionDtoWithoutAnswerPaginationDaoImpl implements QuestionDtoWithoutAnswerPaginationDao {
+public class QuestionDtoSortedByNewestPaginationDaoImpl implements QuestionDtoSortedByNewestPaginationDao {
     @PersistenceContext
     private EntityManager entityManager;
 
@@ -36,11 +36,9 @@ public class QuestionDtoWithoutAnswerPaginationDaoImpl implements QuestionDtoWit
                                 "(SELECT count(vq.question.id) FROM VoteQuestion vq WHERE vq.question.id = q.id AND vq.vote = 'down'), " +
                                 "q.persistDateTime, q.lastUpdateDateTime ) " +
                                 "FROM Question q " +
-                                "LEFT JOIN Answer ans on ans.question.id = q.id " +
-                                "WHERE ans.id is null " +
-                                "and q.id in (select q.id from Question q join q.tags as tags where :trackedTag is null or tags.id in :trackedTag) " +
+                                "WHERE  q.id in (select q.id from Question q join q.tags as tags where :trackedTag is null or tags.id in :trackedTag) " +
                                 "and q.id not in (select q.id from Question q join q.tags as tags where tags.id in :ignoredTag) " +
-                                "ORDER BY q.id",
+                                "ORDER BY q.persistDateTime DESC",
                         QuestionDto.class)
                 .setParameter("trackedTag", trackedTag)
                 .setParameter("ignoredTag", ignoredTag)
@@ -54,9 +52,8 @@ public class QuestionDtoWithoutAnswerPaginationDaoImpl implements QuestionDtoWit
         List<Long> trackedTag = (List<Long>) param.get("trackedTag");
         List<Long> ignoredTag = (List<Long>) param.get("ignoredTag");
         Query query = entityManager.createQuery(
-                        "SELECT q.id, ans.id FROM Question q LEFT JOIN Answer ans on ans.question.id = q.id " +
-                                "WHERE ans.id is null " +
-                                "and q.id in (select q.id from Question q join q.tags as tags where :trackedTag is null or tags.id in :trackedTag) " +
+                        "SELECT q.id  FROM Question q WHERE " +
+                                "q.id in (select q.id from Question q join q.tags as tags where :trackedTag is null or tags.id in :trackedTag) " +
                                 "and q.id not in (select q.id from Question q join q.tags as tags where tags.id in :ignoredTag) "
                 )
                 .setParameter("trackedTag", trackedTag)
