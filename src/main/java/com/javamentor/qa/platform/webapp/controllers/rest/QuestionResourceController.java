@@ -157,4 +157,36 @@ public class QuestionResourceController {
         }
         return ResponseEntity.ok(commentDtoService.getAllCommentDtoByQuestionId(questionId));
     }
+
+    /**
+     * The method returns JSON with a paginated list of QuestionDTO objects sorted by popularity..
+     *
+     * @param pageNumber       Page number of the page to be displayed. The default value is 1.
+     *                         The parameter must be greater than zero
+     * @param itemsCountOnPage Optional parameter. The number of items per page. The default value is 10.
+     *                         The parameter must be greater than zero
+     * @param trackedTag       Optional parameter, contains a list of object tags {@link Tag} that defines preferred topics
+     * @param ignoredTag       Optional parameter, contains a list of object ID tags {@link Tag} for which questions should be ignored.
+     *
+     * @return {@link ResponseEntity} with status Ok and {@link PageDto<QuestionDto>} in body.
+     */
+    @GetMapping("/mostPopular")
+    @ApiOperation(value = "Get a page with a list of QuestionDto sorted by popularity", response = PageDto.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Success request. QuestionDto object returned in response"),
+            @ApiResponse(code = 403, message = "Forbidden"),
+            @ApiResponse(code = 404, message = "Questions don't exist")})
+    public ResponseEntity<?> getPageWithListMostPopularQuestionDto(
+            @RequestParam(value = "page", required = false, defaultValue = "1") Integer pageNumber,
+            @RequestParam(value = "items", required = false, defaultValue = "10") Integer itemsCountOnPage,
+            @RequestParam(value = "trackedTag", required = false) List<Long> trackedTag,
+            @RequestParam(value = "ignoredTag", required = false) List<Long> ignoredTag
+    ) {
+        HashMap<String, Object> param = new HashMap<>();
+        param.put("currentPageNumber", pageNumber);
+        param.put("itemsOnPage", itemsCountOnPage);
+        param.put("trackedTag", trackedTag);
+        param.put("ignoredTag", ignoredTag);
+        return ResponseEntity.ok(questionDtoService.getPageWithListMostPopularQuestionDto(param));
+    }
 }
