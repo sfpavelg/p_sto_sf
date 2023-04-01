@@ -165,9 +165,8 @@ public class QuestionResourceController {
      *                         The parameter must be greater than zero
      * @param itemsCountOnPage Optional parameter. The number of items per page. The default value is 10.
      *                         The parameter must be greater than zero
-     * @param trackedTags       Optional parameter, contains a list of object tags {@link Tag} that defines preferred topics
-     * @param ignoredTags       Optional parameter, contains a list of object ID tags {@link Tag} for which questions should be ignored.
-     *
+     * @param trackedTags      Optional parameter, contains a list of object tags {@link Tag} that defines preferred topics
+     * @param ignoredTags      Optional parameter, contains a list of object ID tags {@link Tag} for which questions should be ignored.
      * @return {@link ResponseEntity} with status Ok and {@link PageDto<QuestionDto>} in body.
      */
     @GetMapping("/mostPopular")
