@@ -87,7 +87,7 @@ public class QuestionDtoServiceImpl extends PageDtoService<QuestionDto> implemen
 
     @Override
     public PageDto<QuestionDto> getPageWithListMostPopularQuestionDto(HashMap<String, Object> param) {
-        param.put("daoDtoImpl", "paginationOfAllReceivedQuestionDtoDaoSortedByPopularity");
+        param.put("daoDtoImpl", "paginationOfAllReceivedQuestionDtoDaoSortedByPopularityImpl");
 
         PageDto<QuestionDto> pageDto = pageDto(param);
         List<QuestionDto> listQuestionDto = pageDto.getItems();
