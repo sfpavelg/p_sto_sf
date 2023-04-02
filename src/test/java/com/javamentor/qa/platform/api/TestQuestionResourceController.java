@@ -619,4 +619,47 @@ class TestQuestionResourceController extends AbstractTestApi {
                 .andExpect(jsonPath("$.[2].reputation", Is.is(15)))
                 .andExpect(status().isOk());
     }
+
+    @Test
+    @Sql(value = {"/script/TestQuestionResourceController/testAddCommentForQuestionById/Before.sql"},
+            executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+    @Sql(value = {"/script/TestQuestionResourceController/testAddCommentForQuestionById/After.sql"},
+            executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
+    public void addCommentForQuestionByIdTest() throws Exception {
+        String token = getToken("0@gmail.com", "0pwd");
+
+        // Check adding Comment to existing Question
+        this.mvc.perform(post("/api/user/question/{questionId}/comment", 100)
+                        .header("Authorization", "Bearer " + token)
+                        .content("Test Comment"))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id",Is.is(1)))
+                .andExpect(jsonPath("$.questionId", Is.is(100)))
+                .andExpect(jsonPath("$.text", Is.is("Test Comment")))
+                .andExpect(jsonPath("$.userId", Is.is(100)))
+                .andExpect(jsonPath("$.imageLink", Is.is("http://imagelink100.com")))
+                .andExpect(jsonPath("$.reputation", Is.is(0)));
+
+        // Check adding Comment to nonexistent Question
+        this.mvc.perform(post("/api/user/question/{questionId}/comment", 105)
+                        .header("Authorization", "Bearer " + token)
+                        .content("Test Comment"))
+                .andDo(print())
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$", Is.is("Question with the such ID was not found")));
+
+        // Check Adding Comment without Authorization.
+        this.mvc.perform(post("/api/user/question/{questionId}/comment", 100)
+                        .content("Test Comment"))
+                .andDo(print())
+                .andExpect(status().isForbidden());
+
+        // Check Adding Empty Comment
+        this.mvc.perform(post("/api/user/question/{questionId}/comment", 100)
+                        .header("Authorization", "Bearer " + token)
+                        .content(""))
+                .andDo(print())
+                .andExpect(status().isBadRequest());
+    }
 }

@@ -7,6 +7,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @AllArgsConstructor
@@ -16,5 +17,10 @@ public class CommentDtoServiceImpl implements CommentDtoService {
     @Override
     public List<QuestionCommentDto> getAllCommentDtoByQuestionId(Long questionId) {
         return commentDtoDao.getAllCommentDtoByQuestionId(questionId);
+    }
+
+    @Override
+    public Optional<QuestionCommentDto> getCommentById(Long id) {
+        return commentDtoDao.getCommentById(id);
     }
 }
