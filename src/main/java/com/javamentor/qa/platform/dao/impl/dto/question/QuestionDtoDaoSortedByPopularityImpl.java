@@ -28,8 +28,8 @@ public class QuestionDtoDaoSortedByPopularityImpl implements QuestionDtoDaoSorte
                                 "q.user.fullName, " +
                                 "q.user.imageLink, " +
                                 "q.description, " +
-                                "(SELECT COUNT (qw.question.id) FROM QuestionViewed qw WHERE qw.question.id = q.id) AS views_count, " +
-                                "(SELECT COUNT (a.question.id) FROM Answer a WHERE a.question.id = q.id) as answers_count, " +
+                                "(SELECT COUNT (qw.question.id) FROM QuestionViewed qw WHERE qw.question.id = q.id), " +
+                                "(SELECT COUNT (a.question.id) FROM Answer a WHERE a.question.id = q.id), " +
                                 "(SELECT COUNT(vq.question.id) FROM VoteQuestion vq WHERE vq.question.id = q.id AND vq.vote = 'up') - " +
                                 "(SELECT COUNT(vq.question.id) FROM VoteQuestion vq WHERE vq.question.id = q.id AND vq.vote = 'down'), " +
                                 "q.persistDateTime, " +
@@ -37,12 +37,10 @@ public class QuestionDtoDaoSortedByPopularityImpl implements QuestionDtoDaoSorte
                                 "FROM Question q " +
                                 "WHERE q.id IN (SELECT q.id FROM Question q JOIN q.tags AS tags WHERE :trackedTags IS NULL OR tags.id IN :trackedTags ) " +
                                 "AND q.id NOT IN (SELECT q.id FROM Question q JOIN q.tags AS tags WHERE tags.id IN :ignoredTags) " +
-                                "ORDER BY (select count (qw.question.id) from QuestionViewed qw where qw.question.id = q.id) + " +
-                                "(select count (a.question.id) from Answer a where a.question.id = q.id)*2 + " +
-                                "((select count(vq.question.id) from VoteQuestion vq where vq.question.id = q.id and vq.vote = 'up') - " +
-                                "(select count(vq.question.id) from VoteQuestion vq where vq.question.id = q.id and vq.vote = 'down'))*5 DESC",
-//                                "ORDER BY " +
-//                                "views_count + (answers_count * 2) + (votes_count * 5) DESC",
+                                "ORDER BY (SELECT COUNT (qw.question.id) FROM QuestionViewed qw WHERE qw.question.id = q.id) + " +
+                                "(SELECT COUNT (a.question.id) FROM Answer a WHERE a.question.id = q.id)*2 + " +
+                                "((SELECT COUNT(vq.question.id) FROM VoteQuestion vq WHERE vq.question.id = q.id AND vq.vote = 'up') - " +
+                                "(SELECT COUNT(vq.question.id) FROM VoteQuestion vq WHERE vq.question.id = q.id AND vq.vote = 'down'))*5 DESC",
                         QuestionDto.class)
 
                 .setParameter("trackedTags", param.get("trackedTags"))
