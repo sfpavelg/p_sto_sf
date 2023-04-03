@@ -639,7 +639,7 @@ class TestQuestionResourceController extends AbstractTestApi {
                 .andExpect(jsonPath("$.text", Is.is("Test Comment")))
                 .andExpect(jsonPath("$.userId", Is.is(100)))
                 .andExpect(jsonPath("$.imageLink", Is.is("http://imagelink100.com")))
-                .andExpect(jsonPath("$.reputation", Is.is(0)));
+                .andExpect(jsonPath("$.reputation", Is.is(4)));
 
         // Check adding Comment to nonexistent Question
         this.mvc.perform(post("/api/user/question/{questionId}/comment", 105)
