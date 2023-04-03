@@ -2,8 +2,8 @@ package com.javamentor.qa.platform.service.impl.dto.question;
 
 import com.javamentor.qa.platform.dao.abstracts.dto.PageDtoDao;
 import com.javamentor.qa.platform.dao.abstracts.dto.question.QuestionDtoDao;
+import com.javamentor.qa.platform.dao.abstracts.dto.question.QuestionDtoDaoSortedByPopularity;
 import com.javamentor.qa.platform.dao.abstracts.dto.question.QuestionDtoWithoutAnswerPaginationDao;
-import com.javamentor.qa.platform.dao.abstracts.dto.question.pagination.PaginationOfAllReceivedQuestionDtoDaoSortedByPopularity;
 import com.javamentor.qa.platform.dao.abstracts.dto.tag.TagDtoDao;
 import com.javamentor.qa.platform.models.dto.PageDto;
 import com.javamentor.qa.platform.models.dto.question.QuestionDto;
@@ -28,19 +28,19 @@ public class QuestionDtoServiceImpl extends PageDtoService<QuestionDto> implemen
     private final QuestionDtoDao questionDtoDao;
     private final TagDtoDao tagDtoDao;
     private final QuestionDtoWithoutAnswerPaginationDao questionDtoWithoutAnswerPaginationDao;
-    private final PaginationOfAllReceivedQuestionDtoDaoSortedByPopularity paginationOfAllReceivedQuestionDtoDaoSortedByPopularity;
+    private final QuestionDtoDaoSortedByPopularity questionDtoDaoSortedByPopularity;
 
     public QuestionDtoServiceImpl(
             QuestionDtoDao questionDtoDao,
             TagDtoDao tagDtoDao,
             Map<String, PageDtoDao<QuestionDto>> beansMap,
             QuestionDtoWithoutAnswerPaginationDao questionDtoWithoutAnswerPaginationDao,
-            PaginationOfAllReceivedQuestionDtoDaoSortedByPopularity paginationOfAllReceivedQuestionDtoDaoSortedByPopularity) {
+            QuestionDtoDaoSortedByPopularity questionDtoDaoSortedByPopularity) {
         super(beansMap);
         this.questionDtoDao = questionDtoDao;
         this.tagDtoDao = tagDtoDao;
         this.questionDtoWithoutAnswerPaginationDao = questionDtoWithoutAnswerPaginationDao;
-        this.paginationOfAllReceivedQuestionDtoDaoSortedByPopularity = paginationOfAllReceivedQuestionDtoDaoSortedByPopularity;
+        this.questionDtoDaoSortedByPopularity = questionDtoDaoSortedByPopularity;
     }
 
 
@@ -87,7 +87,7 @@ public class QuestionDtoServiceImpl extends PageDtoService<QuestionDto> implemen
 
     @Override
     public PageDto<QuestionDto> getPageWithListMostPopularQuestionDto(HashMap<String, Object> param) {
-        param.put("daoDtoImpl", "paginationOfAllReceivedQuestionDtoDaoSortedByPopularityImpl");
+        param.put("daoDtoImpl", "questionDtoDaoSortedByPopularityImpl");
 
         PageDto<QuestionDto> pageDto = pageDto(param);
         List<QuestionDto> listQuestionDto = pageDto.getItems();
