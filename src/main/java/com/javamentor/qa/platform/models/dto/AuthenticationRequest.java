@@ -1,4 +1,4 @@
-package com.javamentor.qa.platform.security.jwt;
+package com.javamentor.qa.platform.models.dto;
 
 
 import lombok.AllArgsConstructor;
