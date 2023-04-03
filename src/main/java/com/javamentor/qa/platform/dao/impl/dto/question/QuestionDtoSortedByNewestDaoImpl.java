@@ -1,21 +1,17 @@
 package com.javamentor.qa.platform.dao.impl.dto.question;
 
-import com.javamentor.qa.platform.dao.abstracts.dto.question.QuestionDtoSortedByNewestPaginationDao;
+import com.javamentor.qa.platform.dao.abstracts.dto.question.QuestionDtoSortedByNewestDao;
 import com.javamentor.qa.platform.models.dto.question.QuestionDto;
-import com.javamentor.qa.platform.models.dto.tag.TagDto;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
-import javax.persistence.Tuple;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 @Repository
-public class QuestionDtoSortedByNewestPaginationDaoImpl implements QuestionDtoSortedByNewestPaginationDao {
+public class QuestionDtoSortedByNewestDaoImpl implements QuestionDtoSortedByNewestDao {
     @PersistenceContext
     private EntityManager entityManager;
 
@@ -59,24 +55,5 @@ public class QuestionDtoSortedByNewestPaginationDaoImpl implements QuestionDtoSo
                 .setParameter("trackedTag", trackedTag)
                 .setParameter("ignoredTag", ignoredTag);
         return query.getResultList().size();
-    }
-
-    @Override
-    public Map<Long, List<TagDto>> getTagsMapByQuestionId(List<Long> listQuestionId) {
-        List<Tuple> tags = entityManager.createQuery(
-                        "select t.id as tag_id, " +
-                                "t.name as tag_name, " +
-                                "t.description as tag_description, " +
-                                "q.id as question_id " +
-                                "from Tag t join t.questions q where q.id in :id", Tuple.class)
-                .setParameter("id", listQuestionId)
-                .getResultList();
-        Map<Long, List<TagDto>> tagsMap = new HashMap<>();
-
-        tags.forEach(tupleList -> tagsMap.computeIfAbsent((Long) tupleList.get("question_id"), key -> new ArrayList<>())
-                .add(new TagDto((Long) tupleList.get("tag_id"),
-                        (String) tupleList.get("tag_name"),
-                        (String) tupleList.get("tag_description"))));
-        return tagsMap;
     }
 }
