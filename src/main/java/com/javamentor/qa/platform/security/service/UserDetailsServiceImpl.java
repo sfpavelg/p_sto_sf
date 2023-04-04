@@ -1,4 +1,4 @@
-package com.javamentor.qa.platform.security.jwt;
+package com.javamentor.qa.platform.security.service;
 
 import com.javamentor.qa.platform.dao.abstracts.model.UserDao;
 import org.springframework.security.core.userdetails.UserDetails;

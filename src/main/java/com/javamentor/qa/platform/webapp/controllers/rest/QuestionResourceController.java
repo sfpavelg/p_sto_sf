@@ -4,11 +4,13 @@ import com.javamentor.qa.platform.models.dto.PageDto;
 import com.javamentor.qa.platform.models.dto.question.QuestionCommentDto;
 import com.javamentor.qa.platform.models.dto.question.QuestionCreateDto;
 import com.javamentor.qa.platform.models.dto.question.QuestionDto;
+import com.javamentor.qa.platform.models.entity.question.CommentQuestion;
 import com.javamentor.qa.platform.models.entity.question.Question;
 import com.javamentor.qa.platform.models.entity.question.Tag;
 import com.javamentor.qa.platform.models.entity.user.User;
 import com.javamentor.qa.platform.service.abstracts.dto.question.CommentDtoService;
 import com.javamentor.qa.platform.service.abstracts.dto.question.QuestionDtoService;
+import com.javamentor.qa.platform.service.abstracts.model.CommentQuestionService;
 import com.javamentor.qa.platform.service.abstracts.model.QuestionService;
 import com.javamentor.qa.platform.service.abstracts.model.VoteQuestionService;
 import com.javamentor.qa.platform.webapp.converters.QuestionConverter;
@@ -32,6 +34,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import javax.validation.Valid;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Optional;
 
 
 @RestController
@@ -45,6 +48,7 @@ public class QuestionResourceController {
     private final QuestionService questionService;
     private final VoteQuestionService voteQuestionService;
     private final CommentDtoService commentDtoService;
+    private final CommentQuestionService commentQuestionService;
 
 
     @GetMapping("/{id}")
@@ -187,5 +191,24 @@ public class QuestionResourceController {
         param.put("trackedTags", trackedTags);
         param.put("ignoredTags", ignoredTags);
         return ResponseEntity.ok(questionDtoService.getPageWithListMostPopularQuestionDto(param));
+    }
+
+    @PostMapping("/{questionId}/comment")
+    @ApiOperation(value = "Add new comment for question by Question element id")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Comment was successfully added to the question", response = QuestionCommentDto.class),
+            @ApiResponse(code = 401, message = "Unauthorized request"),
+            @ApiResponse(code = 403, message = "Forbidden"),
+            @ApiResponse(code = 404, message = "Question with the such ID was not found"),
+    })
+    public ResponseEntity<?> addCommentForQuestionById(@PathVariable Long questionId, @AuthenticationPrincipal User user, @RequestBody String text) {
+        Optional<Question> question = questionService.getById(questionId);
+        if (question.isEmpty()) {
+            return new ResponseEntity<>("Question with the such ID was not found", HttpStatus.NOT_FOUND);
+        }
+        CommentQuestion commentQuestion = new CommentQuestion(text, user);
+        commentQuestion.setQuestion(question.get());
+        commentQuestionService.persist(commentQuestion);
+        return ResponseEntity.ok(commentDtoService.getCommentById(commentQuestion.getComment().getId()));
     }
 }
