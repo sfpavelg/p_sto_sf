@@ -1,7 +1,10 @@
-package com.javamentor.qa.platform.security.jwt;
+package com.javamentor.qa.platform.webapp.controllers.rest;
 
 
 import com.javamentor.qa.platform.models.entity.user.User;
+import com.javamentor.qa.platform.models.dto.AuthenticationRequest;
+import com.javamentor.qa.platform.models.dto.AuthenticationResponse;
+import com.javamentor.qa.platform.security.jwt.JwtService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.http.HttpStatus;
