@@ -82,5 +82,4 @@ public class QuestionDtoWithoutAnswerPaginationDaoImpl implements QuestionDtoWit
                         (String) tupleList.get("tag_description"))));
         return tagsMap;
     }
-
 }

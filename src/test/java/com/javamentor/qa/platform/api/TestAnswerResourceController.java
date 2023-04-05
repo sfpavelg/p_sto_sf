@@ -44,7 +44,18 @@ public class TestAnswerResourceController extends AbstractTestApi {
                 .andExpect(jsonPath("$[0].dateAccept", Is.is("2023-01-27T13:01:11.245126")))
                 .andExpect(jsonPath("$[0].countValuable", Is.is(0)))
                 .andExpect(jsonPath("$[0].image", Is.is("http://imagelink1.com")))
-                .andExpect(jsonPath("$[0].nickName", Is.is("nickname1")));
+                .andExpect(jsonPath("$[0].nickName", Is.is("nickname1")))
+                .andExpect(jsonPath("$[1].id", Is.is(103)))
+                .andExpect(jsonPath("$[1].userId", Is.is(101)))
+                .andExpect(jsonPath("$[1].userReputation", Is.is(4)))
+                .andExpect(jsonPath("$[1].questionId", Is.is(100)))
+                .andExpect(jsonPath("$[1].body", Is.is("html_body4")))
+                .andExpect(jsonPath("$[1].persistDate", Is.is("2023-01-27T13:01:11.245126")))
+                .andExpect(jsonPath("$[1].isHelpful", Is.is(true)))
+                .andExpect(jsonPath("$[1].dateAccept", Is.is("2023-01-27T13:01:11.245126")))
+                .andExpect(jsonPath("$[1].countValuable", Is.is(0)))
+                .andExpect(jsonPath("$[1].image", Is.is("http://imagelink2.com")))
+                .andExpect(jsonPath("$[1].nickName", Is.is("nickname2")));
 
         //success (with votes on answer)
         this.mvc.perform(get("/api/user/question/{id}/answer", 102).header("Authorization", "Bearer " + token))
