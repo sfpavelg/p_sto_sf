@@ -37,9 +37,7 @@ public class QuestionDtoServiceImpl extends PageDtoService<QuestionDto> implemen
             TagDtoDao tagDtoDao,
             Map<String, PageDtoDao<QuestionDto>> beansMap,
             QuestionDtoWithoutAnswerPaginationDao questionDtoWithoutAnswerPaginationDao,
-            QuestionDtoDaoSortedByPopularity questionDtoDaoSortedByPopularity) {
-            Map<String, PageDtoDao<QuestionDto>> beansMap,
-            QuestionDtoWithoutAnswerPaginationDao questionDtoWithoutAnswerPaginationDao,
+            QuestionDtoDaoSortedByPopularity questionDtoDaoSortedByPopularity,
             QuestionDtoSortedByNewestDao questionDtoSortedByNewestDao) {
         super(beansMap);
         this.questionDtoDao = questionDtoDao;
