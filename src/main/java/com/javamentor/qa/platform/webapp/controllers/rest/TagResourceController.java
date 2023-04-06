@@ -3,6 +3,7 @@ package com.javamentor.qa.platform.webapp.controllers.rest;
 import com.javamentor.qa.platform.exception.PaginationDtoIncorrectParametersException;
 import com.javamentor.qa.platform.models.dto.PageDto;
 import com.javamentor.qa.platform.models.dto.tag.TagDto;
+import com.javamentor.qa.platform.models.dto.tag.TagViewDto;
 import com.javamentor.qa.platform.models.entity.user.User;
 import com.javamentor.qa.platform.service.abstracts.dto.tag.TagDtoService;
 import com.javamentor.qa.platform.service.abstracts.dto.tag.TagViewDtoService;
@@ -115,23 +116,31 @@ public class TagResourceController {
         return ResponseEntity.ok(tagDtoService.getTrackedTagsByUserId(authenticatedUser.getId()));
     }
 
+
     /**
      * Method return JSON with list all tags sorted by name, with pagination.
      *
      * @param itemsCountOnPage The number of users per page. Optional parameter. The default value is 10.
      * @param pageNumber       Page number of the page to be displayed (starts from one).
-     * @return {@link ResponseEntity} with status Ok and {@link PageDto}<{@link TagDto}> in body.
+     * @return {@link ResponseEntity} with status Ok and {@link PageDto}<{@link TagViewDto}> in body.
      */
     @GetMapping("/name")
     @ApiOperation(value = "Getting all tags, sorted by name", response = PageDto.class)
-    public ResponseEntity<PageDto<TagDto>> getPageWithListTagDtoSortedByName(
-            @RequestParam(value = "page") Integer pageNumber,
-            @RequestParam(value = "items", required = false, defaultValue = "10") Integer itemsCountOnPage) {
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Success request. PageDto has been successfully returned"),
+            @ApiResponse(code = 400, message = "Invalid password"),
+            @ApiResponse(code = 403, message = "Forbidden")})
+
+    public ResponseEntity<PageDto<TagViewDto>> getPageWithListTagDtoSortedByName(
+            @RequestParam(value = "page", defaultValue = "1") int pageNumber,
+            @RequestParam(value = "items", required = false, defaultValue = "10") int itemsCountOnPage) {
         HashMap<String, Object> param = new HashMap<>();
         param.put("currentPageNumber", pageNumber);
         param.put("itemsOnPage", itemsCountOnPage);
-        return ResponseEntity.ok(tagDtoService.getPageWithListTagDtoSortedByName(param));
+
+        return ResponseEntity.ok(tagViewDtoService.getPageWithListTagDtoSortedByName(param));
     }
+
 
     @GetMapping("/popular")
     @ApiOperation(value = "Getting all Tags sorted by popularity", response = PageDto.class)
@@ -139,13 +148,17 @@ public class TagResourceController {
             @ApiResponse(code = 200, message = "Success request. PageDto has been successfully returned"),
             @ApiResponse(code = 400, message = "Invalid password"),
             @ApiResponse(code = 403, message = "Forbidden")})
-    public ResponseEntity<PageDto<TagDto>> getSortedByPopularity(@RequestParam(defaultValue = "1") int page,
-                                                                 @RequestParam(defaultValue = "10") int items) throws PaginationDtoIncorrectParametersException {
+
+    public ResponseEntity<PageDto<TagViewDto>> getSortedByPopularity(
+            @RequestParam(value = "page", defaultValue = "1") int page,
+            @RequestParam(value = "items", required = false, defaultValue = "10") int items) {
         HashMap<String, Object> params = new HashMap<>();
         params.put("currentPageNumber", page);
         params.put("itemsOnPage", items);
-        return ResponseEntity.ok(tagDtoService.getSortedByPopularity(params));
+
+        return ResponseEntity.ok(tagViewDtoService.getSortedByPopularity(params));
     }
+
 
     /**
      * The method returns JSON with a list of all tags, sorted by the presence of a symbol or syllable  in the name, with pagination.
@@ -153,7 +166,7 @@ public class TagResourceController {
      * @param pageNumber       Page number of the page to be displayed (starts from one).
      * @param itemsCountOnPage The number of users per page. Optional parameter. The default value is 10.
      * @param syllable         Symbol or syllable for which a match will be found in the name
-     * @return {@link ResponseEntity} with status Ok and {@link PageDto}<{@link TagDto}> in body.
+     * @return {@link ResponseEntity} with status Ok and {@link PageDto}<{@link TagViewDto}> in body.
      */
     @GetMapping("/syllable")
     @ApiOperation(value = "Getting all tags, found by latter", response = PageDto.class)
@@ -161,14 +174,16 @@ public class TagResourceController {
             @ApiResponse(code = 200, message = "Success request. PageDto has been successfully returned"),
             @ApiResponse(code = 400, message = "Invalid password"),
             @ApiResponse(code = 403, message = "Forbidden")})
-    public ResponseEntity<PageDto<TagDto>> getPageWithListTagDtoFoundByLatter(
-            @RequestParam(value = "page", required = false, defaultValue = "1") Integer pageNumber,
-            @RequestParam(value = "items", required = false, defaultValue = "10") Integer itemsCountOnPage,
+
+    public ResponseEntity<PageDto<TagViewDto>> getPageWithListTagDtoFoundByLatter(
+            @RequestParam(value = "page", defaultValue = "1") int pageNumber,
+            @RequestParam(value = "items", required = false, defaultValue = "10") int itemsCountOnPage,
             @RequestParam(value = "syllable", required = false, defaultValue = " ") String syllable) {
         HashMap<String, Object> param = new HashMap<>();
         param.put("currentPageNumber", pageNumber);
         param.put("itemsOnPage", itemsCountOnPage);
         param.put("syllable", syllable);
-        return ResponseEntity.ok(tagDtoService.getPageWithListTagDtoSortedBySyllable(param));
+
+        return ResponseEntity.ok(tagViewDtoService.getPageWithListTagDtoSortedBySyllable(param));
     }
 }

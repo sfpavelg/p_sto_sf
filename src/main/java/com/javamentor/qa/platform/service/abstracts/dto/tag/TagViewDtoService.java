@@ -9,4 +9,10 @@ public interface TagViewDtoService {
 
     PageDto<TagViewDto> getSortedByDateTagList(HashMap<String, Object> params);
 
+    PageDto<TagViewDto> getPageWithListTagDtoSortedByName(HashMap<String, Object> param);
+
+    PageDto<TagViewDto> getSortedByPopularity(HashMap<String, Object> params);
+
+    PageDto<TagViewDto> getPageWithListTagDtoSortedBySyllable(HashMap<String, Object> param);
+
 }
