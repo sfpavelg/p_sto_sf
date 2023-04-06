@@ -9,6 +9,7 @@ import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.jdbc.SqlGroup;
 
 import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.hasSize;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -414,5 +415,71 @@ public class TestUserResourceController extends AbstractTestApi {
                         .contentType(MediaType.APPLICATION_JSON)
                 )
                 .andExpect(status().is4xxClientError());
+    }
+
+    @Test
+    @SqlGroup({
+            @Sql(value = {"/script/TestUserResourceController/testGetAllUserAuthorizedQuestions/Before.sql"}, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD),
+            @Sql(value = {"/script/TestUserResourceController/testGetAllUserAuthorizedQuestions/After.sql"}, executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
+    })
+    public void testGetAllUserAuthorizedQuestions() throws Exception {
+        String jwt = getToken("0@gmail.com", "0pwd");
+
+        // Check successful execution of request all UserProfileQuestionDto from authorized User
+        this.mvc.perform(get("/api/user/profile/questions")
+                        .header("Authorization", "Bearer " + jwt)
+                        .contentType(MediaType.APPLICATION_JSON))
+
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$", hasSize(3)))
+
+                .andExpect(jsonPath("$[0].questionId", Is.is(100)))
+                .andExpect(jsonPath("$[0].title", Is.is("title1")))
+                .andExpect(jsonPath("$[0].tags", hasSize(2)))
+                .andExpect(jsonPath("$[0].tags[0].name", Is.is("name1")))
+                .andExpect(jsonPath("$[0].tags[1].name", Is.is("name4")))
+                .andExpect(jsonPath("$[0].countAnswer", Is.is(3)))
+
+                .andExpect(jsonPath("$[1].questionId", Is.is(105)))
+                .andExpect(jsonPath("$[1].title", Is.is("title6")))
+                .andExpect(jsonPath("$[1].tags", hasSize(2)))
+                .andExpect(jsonPath("$[1].tags[0].name", Is.is("name6")))
+                .andExpect(jsonPath("$[1].tags[1].name", Is.is("name2")))
+                .andExpect(jsonPath("$[1].countAnswer", Is.is(1)))
+
+                .andExpect(jsonPath("$[2].questionId", Is.is(107)))
+                .andExpect(jsonPath("$[2].title", Is.is("title8")))
+                .andExpect(jsonPath("$[2].tags", hasSize(2)))
+                .andExpect(jsonPath("$[2].tags[0].name", Is.is("name1")))
+                .andExpect(jsonPath("$[2].tags[1].name", Is.is("name4")))
+                .andExpect(jsonPath("$[2].countAnswer", Is.is(0)));
+
+        // Check successful execution of request with questions that have no tags and no answers
+        String emptyTagsQuestionUser = getToken("3@gmail.com", "3pwd");
+        this.mvc.perform(get("/api/user/profile/questions")
+                        .header("Authorization", "Bearer " + emptyTagsQuestionUser)
+                        .contentType(MediaType.APPLICATION_JSON))
+
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$", hasSize(4)))
+
+                .andExpect(jsonPath("$[3].questionId", Is.is(112)))
+                .andExpect(jsonPath("$[3].title", Is.is("title13")))
+                .andExpect(jsonPath("$[3].tags", hasSize(0)))
+                .andExpect(jsonPath("$[3].countAnswer", Is.is(0)));
+
+        // Check execution of request with authenticated user who has no questions
+        String emptyQuestionsUserJWT = getToken("4@gmail.com", "4pwd");
+        this.mvc.perform(get("/api/user/profile/questions")
+                        .header("Authorization", "Bearer " + emptyQuestionsUserJWT)
+                        .contentType(MediaType.APPLICATION_JSON))
+
+                .andDo(print())
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$", Is.is("No questions were found for the current user")));
     }
 }
