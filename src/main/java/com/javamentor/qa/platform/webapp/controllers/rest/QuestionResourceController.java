@@ -22,6 +22,8 @@ import javassist.NotFoundException;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -70,6 +72,7 @@ public class QuestionResourceController {
             @ApiResponse(code = 403, message = "Forbidden"),
             @ApiResponse(code = 400, message = "Validation failed. Fields of QuestionCreateDto must be not empty or null")})
     public ResponseEntity<?> addQuestion(@Valid @RequestBody QuestionCreateDto questionCreateDto) throws NotFoundException {
+//        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Question question = questionConverter.questionCreateDtoToQuestion(questionCreateDto, new User());
         questionService.persist(question);
         return ResponseEntity.ok(questionDtoService.getQuestionDtoById(question.getId()));

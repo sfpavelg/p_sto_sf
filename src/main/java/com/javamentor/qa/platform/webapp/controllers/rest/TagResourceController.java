@@ -114,6 +114,10 @@ public class TagResourceController {
         User authenticatedUser = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         return ResponseEntity.ok(tagDtoService.getTrackedTagsByUserId(authenticatedUser.getId()));
     }
+    @GetMapping("/tagSearchByName")
+    public ResponseEntity<List<TagDto>> getTagListByName(@RequestParam() String tagName){
+        return ResponseEntity.ok(tagDtoService.getTagsByName(tagName));
+    }
 
     /**
      * Method return JSON with list all tags sorted by name, with pagination.

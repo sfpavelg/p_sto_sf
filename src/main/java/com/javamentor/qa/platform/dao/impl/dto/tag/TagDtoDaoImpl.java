@@ -93,4 +93,19 @@ public class TagDtoDaoImpl implements TagDtoDao {
                 .setParameter("id", userId);
         return (List<TagDto>) query.getResultList();
     }
+
+    @Override
+    public List<TagDto> getTagsByName(String tagName) {
+        Query query = entityManager.createQuery("SELECT new com.javamentor.qa.platform.models.dto.tag.TagDto(" +
+                        "t.id, " +
+                        "t.name, " +
+                        "t.description" +
+                        ")" +
+                        "FROM Tag t WHERE upper(t.name) like concat('%', upper(:name), '%')")
+                .setParameter("name", tagName)
+                .setMaxResults(6);
+        return (List<TagDto>) query.getResultList();
+    }
+
+
 }
