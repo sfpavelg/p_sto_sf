@@ -18,6 +18,12 @@ needMoreTags.style.color = 'red'
 let menu = document.getElementById('dropdown-tags')
 let tagsArrayForQuestion = new Array;
 
+function isEmpty(str) {
+    if (str.trim() === '') {
+        return true;
+    }
+    return false;
+}
 function validateQuestion(title, description, tags){
     if(title.value === null | title.value.length <= 1){
         titleBlock.appendChild(tooShortTitle)
@@ -27,7 +33,7 @@ function validateQuestion(title, description, tags){
             titleBlock.removeChild(tooShortTitle)
         }
     }
-    if(description[0].childNodes === null | description[0].childNodes.length <= 1){
+    if(description[0].childNodes === null | isEmpty(description[0].firstChild.textContent)){
         descriptionBlock.appendChild(tooShortDescription)
         return false;
     }else{
@@ -117,7 +123,8 @@ function sendQuestion(event) {
     event.preventDefault();
     if(validateQuestion(title,description, tags) === false){
     }else{
-        fetch('http://localhost:8091/api/user/question',
+        let promise1 = new Promise(function (resolve, reject){
+            fetch('http://localhost:8091/api/user/question',
             {
                 method: "POST",
                 headers:{
@@ -125,15 +132,25 @@ function sendQuestion(event) {
                     'Content-type': 'application/json'
                 },
                 body: convertDataToJson(title, description, tags)
-            }).then((res) =>{
-            if (res.status >= 200 && res.status < 300) {
-                window.location.replace('http://localhost:8091/questions')
+            }).then(async (res) => {
+                if (res.status >= 200 && res.status < 300) {
+                    const reader = res.body.getReader();
+                    let decoder = new TextDecoder();
+                    while (true) {
+                        const {done, value} = await reader.read();
+                        if (done) {
+                            break;
+                        }
+                        let data = decoder.decode(value)
+                        let questionId = JSON.parse(data).id
+                        window.location.replace('http://localhost:8091/question/' + questionId)
+                    }
                 }
-            }
 
+            }
         )
-    }
-}
+        })
+    }}
 
 function tagFilter(){
     let massTags = tags.value.split(/\,|;| /);
