@@ -472,14 +472,14 @@ public class TestUserResourceController extends AbstractTestApi {
                 .andExpect(jsonPath("$[3].tags", hasSize(0)))
                 .andExpect(jsonPath("$[3].countAnswer", Is.is(0)));
 
-        // Check execution of request with authenticated user who has no questions
+        // Check successful execution of request with authenticated user who has no questions
         String emptyQuestionsUserJWT = getToken("4@gmail.com", "4pwd");
         this.mvc.perform(get("/api/user/profile/questions")
                         .header("Authorization", "Bearer " + emptyQuestionsUserJWT)
                         .contentType(MediaType.APPLICATION_JSON))
 
                 .andDo(print())
-                .andExpect(status().isNotFound())
-                .andExpect(jsonPath("$", Is.is("No questions were found for the current user")));
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", hasSize(0)));
     }
 }

@@ -26,7 +26,6 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.HashMap;
-import java.util.List;
 
 @RestController
 @AllArgsConstructor
@@ -80,7 +79,7 @@ public class UserResourceController {
             @ApiResponse(code = 403, message = "Forbidden"),
             @ApiResponse(code = 404, message = "Users don't exist")})
     public ResponseEntity<?> getAllUsersByPersistDateAndTime(@RequestParam(defaultValue = "1") int currentPageNumber,
-                                         @RequestParam(defaultValue = "10") int itemsOnPage) throws NotFoundException {
+                                                             @RequestParam(defaultValue = "10") int itemsOnPage) throws NotFoundException {
         HashMap<String, Object> param = new HashMap<>();
         param.put("currentPageNumber", currentPageNumber);
         param.put("itemsOnPage", itemsOnPage);
@@ -122,13 +121,8 @@ public class UserResourceController {
             @ApiResponse(code = 200, message = "Success request. List of UserProfileQuestionDto has been successfully returned"),
             @ApiResponse(code = 400, message = "Invalid password"),
             @ApiResponse(code = 403, message = "Forbidden"),
-            @ApiResponse(code = 404, message = "No questions were found for the current user")
     })
     public ResponseEntity<?> getAllUserAuthorizedQuestions(@AuthenticationPrincipal User user) {
-        List<UserProfileQuestionDto> userAuthorizedQuestions = userProfileQuestionDtoService.getAllUserAuthorizedQuestions(user);
-        if (userAuthorizedQuestions.isEmpty()) {
-            return new ResponseEntity<>("No questions were found for the current user", HttpStatus.NOT_FOUND);
-        }
-       return ResponseEntity.ok(userAuthorizedQuestions);
+        return ResponseEntity.ok(userProfileQuestionDtoService.getAllUserProfileQuestionDtoByUserId(user.getId()));
     }
 }

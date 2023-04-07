@@ -1,8 +1,10 @@
 package com.javamentor.qa.platform.dao.abstracts.dto.user;
 
 import com.javamentor.qa.platform.models.dto.user.UserDto;
+import com.javamentor.qa.platform.models.dto.user.UserProfileQuestionDto;
 import com.javamentor.qa.platform.models.entity.user.User;
 
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -11,4 +13,5 @@ import java.util.Optional;
 public interface UserDtoDao  {
     Optional<UserDto> getById(Long id);
 
+    List<UserProfileQuestionDto> getAllUserProfileQuestionDtoByUserId(Long userId);
 }
