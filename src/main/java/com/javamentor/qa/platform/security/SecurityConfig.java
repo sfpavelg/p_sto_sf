@@ -31,7 +31,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter implements WebM
     public void configure(WebSecurity web) throws Exception {
         web
                 .ignoring()
-                .antMatchers("/js/**", "/css/**", "/html/**", "/images/**");
+                .antMatchers("/js/**", "/css/**", "/html/**", "/images/**", "/question/{questionId}");
     }
 
     @Override
