@@ -339,49 +339,6 @@ public class TestTagResourceController extends AbstractTestApi {
                 .andExpect(jsonPath("$.items[3].questionCountWeekDay", Is.is(4)));
 
 
-        // getting 4 Tags on page number 2 ordered by name
-        this.mvc.perform(get("/api/user/tag/name")
-                        .header("Authorization", "Bearer " + token)
-                        .param("currentPageNumber", "2")
-                        .param("itemsOnPage", "4"))
-
-                .andDo(print())
-                .andExpect(status().isOk())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-
-                .andExpect(jsonPath("$.currentPageNumber", Is.is(2)))
-                .andExpect(jsonPath("$.totalPageCount", Is.is(3)))
-                .andExpect(jsonPath("$.totalResultCount", Is.is(9)))
-                .andExpect(jsonPath("$.itemsOnPage", Is.is(4)))
-
-                .andExpect(jsonPath("$.items[0].id", Is.is(103)))
-                .andExpect(jsonPath("$.items[0].title", Is.is("name5")))
-                .andExpect(jsonPath("$.items[0].description", Is.is("description103")))
-                .andExpect(jsonPath("$.items[0].questionCount", Is.is(3)))
-                .andExpect(jsonPath("$.items[0].questionCountOneDay", Is.is(2)))
-                .andExpect(jsonPath("$.items[0].questionCountWeekDay", Is.is(3)))
-
-                .andExpect(jsonPath("$.items[1].id", Is.is(105)))
-                .andExpect(jsonPath("$.items[1].title", Is.is("name6")))
-                .andExpect(jsonPath("$.items[1].description", Is.is("description105")))
-                .andExpect(jsonPath("$.items[1].questionCount", Is.is(1)))
-                .andExpect(jsonPath("$.items[1].questionCountOneDay", Is.is(1)))
-                .andExpect(jsonPath("$.items[1].questionCountWeekDay", Is.is(1)))
-
-                .andExpect(jsonPath("$.items[2].id", Is.is(106)))
-                .andExpect(jsonPath("$.items[2].title", Is.is("name7")))
-                .andExpect(jsonPath("$.items[2].description", Is.is("description106")))
-                .andExpect(jsonPath("$.items[2].questionCount", Is.is(1)))
-                .andExpect(jsonPath("$.items[2].questionCountOneDay", Is.is(0)))
-                .andExpect(jsonPath("$.items[2].questionCountWeekDay", Is.is(1)))
-
-                .andExpect(jsonPath("$.items[3].id", Is.is(108)))
-                .andExpect(jsonPath("$.items[3].title", Is.is("name8")))
-                .andExpect(jsonPath("$.items[3].description", Is.is("description108")))
-                .andExpect(jsonPath("$.items[3].questionCount", Is.is(2)))
-                .andExpect(jsonPath("$.items[3].questionCountOneDay", Is.is(1)))
-                .andExpect(jsonPath("$.items[3].questionCountWeekDay", Is.is(2)));
-
         // getting Tag from last page number 3
         this.mvc.perform(get("/api/user/tag/name")
                         .header("Authorization", "Bearer " + token)
@@ -405,14 +362,15 @@ public class TestTagResourceController extends AbstractTestApi {
                 .andExpect(jsonPath("$.items[0].questionCountWeekDay", Is.is(1)));
 
 
-
-
+        // getting Tags if  itemsOnPage is empty
         this.mvc.perform(get("/api/user/tag/name")
                         .header("Authorization", "Bearer " + token)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .param("currentPageNumber", "1")
-                )
+                        .param("currentPageNumber", "1"))
+
                 .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+
                 .andExpect(jsonPath("$.currentPageNumber", Is.is(1)))
                 .andExpect(jsonPath("$.totalPageCount", Is.is(1)))
                 .andExpect(jsonPath("$.totalResultCount", Is.is(9)))
@@ -424,25 +382,63 @@ public class TestTagResourceController extends AbstractTestApi {
                 .andExpect(jsonPath("$.items[3].questionCount", Is.is(4)))
                 .andExpect(jsonPath("$.items[3].questionCountOneDay", Is.is(2)))
                 .andExpect(jsonPath("$.items[3].questionCountWeekDay", Is.is(4)));
-//
-//        this.mvc.perform(get("/api/user/tag/name")
-//                .header("Authorization", "Bearer " + token)
-//                .contentType(MediaType.APPLICATION_JSON)
-//        ).andExpect(status().isBadRequest());
-//
-//        this.mvc.perform(get("/api/user/tag/name")
-//                .header("Authorization", "Bearer " + token)
-//                .contentType(MediaType.APPLICATION_JSON)
-//                .param("page", "0")
-//        ).andExpect(status().isBadRequest());
-//
-//        this.mvc.perform(get("/api/user/tag/name")
-//                .header("Authorization", "Bearer " + token)
-//                .contentType(MediaType.APPLICATION_JSON)
-//                .param("page", "1")
-//                .param("items", "0")
-//        ).andExpect(status().isBadRequest());
+
+
+        // getting Tags if  currentPageNumber is empty
+        this.mvc.perform(get("/api/user/tag/name")
+                        .header("Authorization", "Bearer " + token)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .param("itemsOnPage", "5"))
+
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+
+                .andExpect(jsonPath("$.currentPageNumber", Is.is(1)))
+                .andExpect(jsonPath("$.totalPageCount", Is.is(2)))
+                .andExpect(jsonPath("$.totalResultCount", Is.is(9)))
+                .andExpect(jsonPath("$.itemsOnPage", Is.is(5)))
+
+                .andExpect(jsonPath("$.items[3].id", Is.is(104)))
+                .andExpect(jsonPath("$.items[3].title", Is.is("name4")))
+                .andExpect(jsonPath("$.items[3].description", Is.is("description104")))
+                .andExpect(jsonPath("$.items[3].questionCount", Is.is(4)))
+                .andExpect(jsonPath("$.items[3].questionCountOneDay", Is.is(2)))
+                .andExpect(jsonPath("$.items[3].questionCountWeekDay", Is.is(4)));
+
+
+        // getting Tags for default settings
+        this.mvc.perform(get("/api/user/tag/name")
+                        .header("Authorization", "Bearer " + token)
+                        .contentType(MediaType.APPLICATION_JSON))
+
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+
+                .andExpect(jsonPath("$.currentPageNumber", Is.is(1)))
+                .andExpect(jsonPath("$.totalPageCount", Is.is(1)))
+                .andExpect(jsonPath("$.totalResultCount", Is.is(9)))
+                .andExpect(jsonPath("$.itemsOnPage", Is.is(10)));
+
+
+        // getting Tags if currentPageNumber is 0
+        this.mvc.perform(get("/api/user/tag/name")
+                .header("Authorization", "Bearer " + token)
+                .contentType(MediaType.APPLICATION_JSON)
+                .param("currentPageNumber", "0"))
+
+                .andExpect(status().isBadRequest());
+
+
+        // getting Tags if itemsOnPage is 0
+        this.mvc.perform(get("/api/user/tag/name")
+                .header("Authorization", "Bearer " + token)
+                .contentType(MediaType.APPLICATION_JSON)
+                .param("itemsOnPage", "0"))
+                
+                .andExpect(status().isBadRequest());
     }
+
+
 
     @Test
     @Sql(value = {"/script/TestTagResourceController/testGetSortedByPopularity/Before.sql"}, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
