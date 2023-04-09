@@ -27,21 +27,19 @@ VALUES (100, 'description100', 'false', '2023-01-27 13:01:11.245126', CURRENT_TI
        (105, 'description105', 'false', '2023-01-27 13:01:11.245126', CURRENT_TIMESTAMP - INTERVAL '3 days', 'title105', 100),
        (106, 'description106', 'false', '2023-01-27 13:01:11.245126', CURRENT_TIMESTAMP, 'title106', 101),
        (107, 'description107', 'false', '2023-01-27 13:01:11.245126', CURRENT_TIMESTAMP - INTERVAL '3 days', 'title107', 102),
-       (108, 'description108', 'false', '2023-01-27 13:01:11.245126', CURRENT_TIMESTAMP, 'title108', 103),
-       (109, 'description109', 'false', '2023-01-27 13:01:11.245126', CURRENT_TIMESTAMP - INTERVAL '3 days', 'title109', 104);
+       (108, 'description108', 'false', '2023-01-27 13:01:11.245126', CURRENT_TIMESTAMP, 'title108', 103);
 
 INSERT INTO "tag"
 ("id", "description", "name", "persist_date")
-VALUES (100, 'description100', 'name100', CURRENT_TIMESTAMP - INTERVAL '9 days'),
-       (101, 'description101', 'name101', CURRENT_TIMESTAMP - INTERVAL '8 days'),
-       (102, 'description102', 'name102', CURRENT_TIMESTAMP - INTERVAL '7 days'),
-       (103, 'description103', 'name103', CURRENT_TIMESTAMP - INTERVAL '6 days'),
-       (104, 'description104', 'name104', CURRENT_TIMESTAMP - INTERVAL '5 days'),
-       (105, 'description105', 'name105', CURRENT_TIMESTAMP - INTERVAL '4 days'),
-       (106, 'description106', 'name106', CURRENT_TIMESTAMP - INTERVAL '3 days'),
-       (107, 'description107', 'name107', CURRENT_TIMESTAMP - INTERVAL '2 days'),
-       (108, 'description108', 'name108', CURRENT_TIMESTAMP - INTERVAL '1 days'),
-       (109, 'description109', 'name109', CURRENT_TIMESTAMP - INTERVAL '0 days');
+VALUES (100, 'description100', 'name1', CURRENT_TIMESTAMP - INTERVAL '9 days'),
+       (101, 'description101', 'name2', CURRENT_TIMESTAMP - INTERVAL '8 days'),
+       (102, 'description102', 'name3', CURRENT_TIMESTAMP - INTERVAL '7 days'),
+       (103, 'description103', 'name5', CURRENT_TIMESTAMP - INTERVAL '6 days'),
+       (104, 'description104', 'name4', CURRENT_TIMESTAMP - INTERVAL '5 days'),
+       (105, 'description105', 'name6', CURRENT_TIMESTAMP - INTERVAL '4 days'),
+       (106, 'description106', 'name7', CURRENT_TIMESTAMP - INTERVAL '3 days'),
+       (107, 'description107', 'name9', CURRENT_TIMESTAMP - INTERVAL '2 days'),
+       (108, 'description108', 'name8', CURRENT_TIMESTAMP - INTERVAL '1 days');
 
 INSERT INTO "question_has_tag"
 ("question_id", "tag_id")
@@ -54,14 +52,12 @@ VALUES (100,100),
        (106,103),
        (107,103),
        (108,103),
-       (109,103),
        (100,104),
        (101,104),
        (102,104),
        (103,104),
-       (104,104),
-       (105,105),
-       (106,106),
-       (107,107),
-       (108,109),
-       (109,109);
+       (104,105),
+       (105,106),
+       (106,107),
+       (107,108),
+       (108,108);
