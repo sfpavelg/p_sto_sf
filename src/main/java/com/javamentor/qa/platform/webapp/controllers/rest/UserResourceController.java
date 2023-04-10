@@ -2,8 +2,10 @@ package com.javamentor.qa.platform.webapp.controllers.rest;
 
 import com.javamentor.qa.platform.models.dto.PageDto;
 import com.javamentor.qa.platform.models.dto.user.UserDto;
+import com.javamentor.qa.platform.models.dto.user.UserProfileQuestionDto;
 import com.javamentor.qa.platform.models.entity.user.User;
 import com.javamentor.qa.platform.service.abstracts.dto.user.UserDtoService;
+import com.javamentor.qa.platform.service.abstracts.dto.user.UserProfileQuestionDtoService;
 import com.javamentor.qa.platform.service.abstracts.model.UserService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -13,6 +15,7 @@ import javassist.NotFoundException;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -31,8 +34,8 @@ import java.util.HashMap;
 public class UserResourceController {
 
     private final UserDtoService userDtoService;
-
     private final UserService userService;
+    private final UserProfileQuestionDtoService userProfileQuestionDtoService;
 
     @GetMapping("/{id}")
     @ApiOperation(value = "Get user", response = UserDto.class)
@@ -76,7 +79,7 @@ public class UserResourceController {
             @ApiResponse(code = 403, message = "Forbidden"),
             @ApiResponse(code = 404, message = "Users don't exist")})
     public ResponseEntity<?> getAllUsersByPersistDateAndTime(@RequestParam(defaultValue = "1") int currentPageNumber,
-                                         @RequestParam(defaultValue = "10") int itemsOnPage) throws NotFoundException {
+                                                             @RequestParam(defaultValue = "10") int itemsOnPage) throws NotFoundException {
         HashMap<String, Object> param = new HashMap<>();
         param.put("currentPageNumber", currentPageNumber);
         param.put("itemsOnPage", itemsOnPage);
@@ -110,4 +113,16 @@ public class UserResourceController {
         return ResponseEntity.ok(userDtoService.getAllUsersByVotes(parameters));
     }
 
+    @GetMapping("/profile/questions")
+    @ApiOperation(
+            value = "Getting all UserProfileQuestionDto of authorized User",
+            response = UserProfileQuestionDto.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Success request. List of UserProfileQuestionDto has been successfully returned"),
+            @ApiResponse(code = 400, message = "Invalid password"),
+            @ApiResponse(code = 403, message = "Forbidden"),
+    })
+    public ResponseEntity<?> getAllUserAuthorizedQuestions(@AuthenticationPrincipal User user) {
+        return ResponseEntity.ok(userProfileQuestionDtoService.getAllUserProfileQuestionDtoByUserId(user.getId()));
+    }
 }
