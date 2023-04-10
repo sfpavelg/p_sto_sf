@@ -45,6 +45,11 @@ public class TagDtoServiceImpl extends PageDtoService<TagDto> implements TagDtoS
     }
 
     @Override
+    public List<TagDto> getTagsByName(String tagName) {
+        return tagDtoDao.getTagsByName(tagName);
+    }
+
+    @Override
     public PageDto<TagDto> getPageWithListTagDtoSortedByName(HashMap<String, Object> param) {
         param.put("daoDtoImpl", "tagDtoPaginationSortedByNameDaoImpl");
         return pageDto(param);

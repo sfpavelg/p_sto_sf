@@ -20,4 +20,6 @@ public interface TagDtoDao {
 
     List<TagDto> getTrackedTagsByUserId(Long userId);
 
+    List<TagDto> getTagsByName(String tagName);
+
 }

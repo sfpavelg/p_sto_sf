@@ -18,6 +18,8 @@ public interface TagDtoService {
 
     List<TagDto> getTrackedTagsByUserId(Long userId);
 
+    List<TagDto> getTagsByName(String tagName);
+
     PageDto<TagDto> getPageWithListTagDtoSortedByName(HashMap<String, Object> param);
 
     PageDto<TagDto> getSortedByPopularity(HashMap<String, Object> params) throws PaginationDtoIncorrectParametersException;
