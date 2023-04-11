@@ -1,7 +1,7 @@
 package com.javamentor.qa.platform.api;
 
 import com.javamentor.qa.platform.AbstractTestApi;
-import com.javamentor.qa.platform.security.jwt.AuthenticationRequest;
+import com.javamentor.qa.platform.models.dto.AuthenticationRequest;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;

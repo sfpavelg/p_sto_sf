@@ -4,11 +4,13 @@ import com.javamentor.qa.platform.models.dto.PageDto;
 import com.javamentor.qa.platform.models.dto.question.QuestionCommentDto;
 import com.javamentor.qa.platform.models.dto.question.QuestionCreateDto;
 import com.javamentor.qa.platform.models.dto.question.QuestionDto;
+import com.javamentor.qa.platform.models.entity.question.CommentQuestion;
 import com.javamentor.qa.platform.models.entity.question.Question;
 import com.javamentor.qa.platform.models.entity.question.Tag;
 import com.javamentor.qa.platform.models.entity.user.User;
 import com.javamentor.qa.platform.service.abstracts.dto.question.CommentDtoService;
 import com.javamentor.qa.platform.service.abstracts.dto.question.QuestionDtoService;
+import com.javamentor.qa.platform.service.abstracts.model.CommentQuestionService;
 import com.javamentor.qa.platform.service.abstracts.model.QuestionService;
 import com.javamentor.qa.platform.service.abstracts.model.VoteQuestionService;
 import com.javamentor.qa.platform.webapp.converters.QuestionConverter;
@@ -20,6 +22,8 @@ import javassist.NotFoundException;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -32,6 +36,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import javax.validation.Valid;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Optional;
 
 
 @RestController
@@ -45,6 +50,7 @@ public class QuestionResourceController {
     private final QuestionService questionService;
     private final VoteQuestionService voteQuestionService;
     private final CommentDtoService commentDtoService;
+    private final CommentQuestionService commentQuestionService;
 
 
     @GetMapping("/{id}")
@@ -156,5 +162,90 @@ public class QuestionResourceController {
             return new ResponseEntity<>("No question with such id", HttpStatus.NOT_FOUND);
         }
         return ResponseEntity.ok(commentDtoService.getAllCommentDtoByQuestionId(questionId));
+    }
+
+    /**
+     * The method returns JSON with a paginated list of QuestionDTO objects sorted by popularity..
+     *
+     * @param pageNumber       Page number of the page to be displayed. The default value is 1.
+     *                         The parameter must be greater than zero
+     * @param itemsCountOnPage Optional parameter. The number of items per page. The default value is 10.
+     *                         The parameter must be greater than zero
+     * @param trackedTags      Optional parameter, contains a list of object tags {@link Tag} that defines preferred topics
+     * @param ignoredTags      Optional parameter, contains a list of object ID tags {@link Tag} for which questions should be ignored.
+     * @return {@link ResponseEntity} with status Ok and {@link PageDto<QuestionDto>} in body.
+     */
+    @GetMapping("/mostPopular")
+    @ApiOperation(value = "Get a page with a list of QuestionDto sorted by popularity", response = PageDto.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Success request. QuestionDto object returned in response"),
+            @ApiResponse(code = 403, message = "Forbidden"),
+            @ApiResponse(code = 404, message = "Questions don't exist")})
+    public ResponseEntity<?> getPageWithListMostPopularQuestionDto(
+            @RequestParam(value = "page", required = false, defaultValue = "1") Integer pageNumber,
+            @RequestParam(value = "items", required = false, defaultValue = "10") Integer itemsCountOnPage,
+            @RequestParam(value = "trackedTags", required = false) List<Long> trackedTags,
+            @RequestParam(value = "ignoredTags", required = false) List<Long> ignoredTags)
+            throws NotFoundException {
+        HashMap<String, Object> param = new HashMap<>();
+        param.put("currentPageNumber", pageNumber);
+        param.put("itemsOnPage", itemsCountOnPage);
+        param.put("trackedTags", trackedTags);
+        param.put("ignoredTags", ignoredTags);
+        return ResponseEntity.ok(questionDtoService.getPageWithListMostPopularQuestionDto(param));
+    }
+
+    /**
+     * The method returns JSON with a paginated list of QuestionDTO objects, sorted by newest..
+     *
+     * @param pageNumber        Page number of the page to be displayed. The parameter must be greater than zero.
+     * @param itemsCountOnPage  Optional parameter. The number of items per page. The default value is 10.
+     *                          The parameter must be greater than zero
+     * @param trackedTag        Optional parameter, contains a list of ID tags of the {@link Tag} entity, for which it
+     *                          is necessary to give a list of unanswered questions.
+     * @param ignoredTag        Optional parameter, contains a list of ID tags of the {@link Tag} entity that should be
+     *                          ignored when displaying a list of unanswered questions. If the question contains at least
+     *                          one ignored tag, the question is not output.
+     * @return {@link ResponseEntity} with status Ok and {@link PageDto<QuestionDto>} in body.
+     */
+    @GetMapping("/new")
+    @ApiOperation(value = "Get all questionsDto sorted by newest",
+            notes = "currentPageNumber is a number of page with dto's.", response = QuestionDto.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Success request. QuestionDto objects returned in response."),
+            @ApiResponse(code = 401, message = "Unauthorized request"),
+            @ApiResponse(code = 403, message = "Forbidden"),
+            @ApiResponse(code = 404, message = "Questions don't exist")})
+    public ResponseEntity<?> getAllQuestionDtoSortedByNewest(
+            @RequestParam(value = "page") Integer pageNumber,
+            @RequestParam(value = "items", required = false, defaultValue = "10") Integer itemsCountOnPage,
+            @RequestParam(value = "trackedTag", required = false) List<Long> trackedTag,
+            @RequestParam(value = "ignoredTag", required = false) List<Long> ignoredTag
+    ) {
+        HashMap<String, Object> param = new HashMap<>();
+        param.put("currentPageNumber", pageNumber);
+        param.put("itemsOnPage", itemsCountOnPage);
+        param.put("trackedTag", trackedTag);
+        param.put("ignoredTag", ignoredTag);
+        return ResponseEntity.ok(questionDtoService.getPageWithListQuestionDtoSortedByNewest(param));
+    }
+
+    @PostMapping("/{questionId}/comment")
+    @ApiOperation(value = "Add new comment for question by Question element id")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Comment was successfully added to the question", response = QuestionCommentDto.class),
+            @ApiResponse(code = 401, message = "Unauthorized request"),
+            @ApiResponse(code = 403, message = "Forbidden"),
+            @ApiResponse(code = 404, message = "Question with the such ID was not found"),
+    })
+    public ResponseEntity<?> addCommentForQuestionById(@PathVariable Long questionId, @AuthenticationPrincipal User user, @RequestBody String text) {
+        Optional<Question> question = questionService.getById(questionId);
+        if (question.isEmpty()) {
+            return new ResponseEntity<>("Question with the such ID was not found", HttpStatus.NOT_FOUND);
+        }
+        CommentQuestion commentQuestion = new CommentQuestion(text, user);
+        commentQuestion.setQuestion(question.get());
+        commentQuestionService.persist(commentQuestion);
+        return ResponseEntity.ok(commentDtoService.getCommentById(commentQuestion.getComment().getId()));
     }
 }

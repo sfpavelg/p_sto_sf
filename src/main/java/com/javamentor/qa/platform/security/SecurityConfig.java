@@ -31,7 +31,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter implements WebM
     public void configure(WebSecurity web) throws Exception {
         web
                 .ignoring()
-                .antMatchers("/js/**", "/css/**", "/html/**");
+                .antMatchers("/js/**", "/css/**", "/html/**", "/images/**", "/question/{questionId}");
     }
 
     @Override
@@ -43,12 +43,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter implements WebM
         http.cors();
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
         http
+                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .authorizeRequests()
-                .antMatchers("/*", "/api/auth/token/**").permitAll()
+                .antMatchers("/**", "/api/auth/token/**").permitAll()
                 .antMatchers("/api/user/**").hasRole("USER")
-                .anyRequest().authenticated()
-                .and()
-                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+                .anyRequest().authenticated();
 
 
     }

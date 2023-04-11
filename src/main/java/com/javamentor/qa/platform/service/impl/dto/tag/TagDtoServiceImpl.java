@@ -38,4 +38,8 @@ public class TagDtoServiceImpl implements TagDtoService {
         return tagDtoDao.getTrackedTagsByUserId(userId);
     }
 
+    @Override
+    public List<TagDto> getTagsByName(String tagName) {
+        return tagDtoDao.getTagsByName(tagName);
+    }
 }

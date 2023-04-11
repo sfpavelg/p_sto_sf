@@ -3,7 +3,7 @@ package com.javamentor.qa.platform;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.database.rider.core.api.configuration.DBUnit;
 import com.github.database.rider.junit5.api.DBRider;
-import com.javamentor.qa.platform.security.jwt.AuthenticationRequest;
+import com.javamentor.qa.platform.models.dto.AuthenticationRequest;
 import com.javamentor.qa.platform.webapp.configs.JmApplication;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
