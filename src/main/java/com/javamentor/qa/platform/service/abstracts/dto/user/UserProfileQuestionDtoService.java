@@ -7,4 +7,5 @@ import java.util.List;
 public interface UserProfileQuestionDtoService {
     
     List<UserProfileQuestionDto> getAllUserProfileQuestionDtoByUserId(Long userId);
+    public List<UserProfileQuestionDto> getAllUserRemovedQuestion(Long id);
 }

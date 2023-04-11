@@ -27,4 +27,10 @@ public class UserProfileQuestionDtoServiceImpl implements UserProfileQuestionDto
                         tagDtoDao.getTagDtoById(userProfileQuestionDto.getQuestionId())
                 )).collect(Collectors.toList());
     }
+
+    @Override
+    public List<UserProfileQuestionDto> getAllUserRemovedQuestion(Long id) {
+        return userDtoDao.getAllUserRemovedQuestion(id).stream().peek(userProfileQuestionDto -> userProfileQuestionDto
+                .setTags(tagDtoDao.getTagDtoById(userProfileQuestionDto.getQuestionId()))).collect(Collectors.toList());
+    }
 }

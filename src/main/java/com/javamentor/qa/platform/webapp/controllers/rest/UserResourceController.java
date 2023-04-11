@@ -26,6 +26,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.HashMap;
+import java.util.List;
 
 @RestController
 @AllArgsConstructor
@@ -124,5 +125,22 @@ public class UserResourceController {
     })
     public ResponseEntity<?> getAllUserAuthorizedQuestions(@AuthenticationPrincipal User user) {
         return ResponseEntity.ok(userProfileQuestionDtoService.getAllUserProfileQuestionDtoByUserId(user.getId()));
+    }
+
+
+    /**
+     * Method return JSON with list all removed questions
+     * @return {@link ResponseEntity} with status Ok and {@link List <UserProfileQuestionDto>} in body
+     */
+    @GetMapping("/profile/delete/questions")
+    @ApiOperation(
+            value = "Getting all removed UserProfileQuestionDto",
+            response = UserProfileQuestionDto.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Success request. UserProfileQuestionDto has been successfully returned"),
+            @ApiResponse(code = 400, message = "Invalid password"),
+            @ApiResponse(code = 403, message = "Forbidden")})
+    public ResponseEntity <?> getUserRemovedQuestion (@AuthenticationPrincipal User user) {
+        return ResponseEntity.ok(userProfileQuestionDtoService.getAllUserRemovedQuestion(user.getId()));
     }
 }

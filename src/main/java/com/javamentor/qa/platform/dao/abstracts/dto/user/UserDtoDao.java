@@ -14,4 +14,5 @@ public interface UserDtoDao  {
     Optional<UserDto> getById(Long id);
 
     List<UserProfileQuestionDto> getAllUserProfileQuestionDtoByUserId(Long userId);
+    List<UserProfileQuestionDto> getAllUserRemovedQuestion(Long id);
 }
