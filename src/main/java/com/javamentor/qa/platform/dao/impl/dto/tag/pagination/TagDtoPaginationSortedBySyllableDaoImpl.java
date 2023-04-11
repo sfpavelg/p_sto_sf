@@ -22,7 +22,7 @@ public class TagDtoPaginationSortedBySyllableDaoImpl implements TagDtoPagination
     public List<TagViewDto> getItems(Map<String, Object> param) {
 
         int itemsOnPageParam = (int) param.get("itemsOnPage");
-        int itemsPositionParam = (int) param.get("currentPageNumber");
+        int itemsPositionParam = (int) param.get("currentPageNumber") * itemsOnPageParam - itemsOnPageParam;
         LocalDateTime now = LocalDateTime.now();
         LocalDateTime today = now.minusHours(24L);
         LocalDateTime weekBefore = now.minusDays(7L);
@@ -40,7 +40,7 @@ public class TagDtoPaginationSortedBySyllableDaoImpl implements TagDtoPagination
                 .setParameter("today", today)
                 .setParameter("weekBefore", weekBefore)
                 .setParameter("now", now)
-                .setFirstResult(itemsPositionParam <= 1 ? itemsPositionParam - 1 : itemsPositionParam)
+                .setFirstResult(itemsPositionParam)
                 .setMaxResults(itemsOnPageParam);
 
         return (List<TagViewDto>) query.getResultList();

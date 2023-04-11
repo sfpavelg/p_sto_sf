@@ -1,6 +1,5 @@
 package com.javamentor.qa.platform.webapp.controllers.rest;
 
-import com.javamentor.qa.platform.exception.PaginationDtoIncorrectParametersException;
 import com.javamentor.qa.platform.models.dto.PageDto;
 import com.javamentor.qa.platform.models.dto.tag.TagDto;
 import com.javamentor.qa.platform.models.dto.tag.TagViewDto;
@@ -95,7 +94,7 @@ public class TagResourceController {
             @ApiResponse(code = 401, message = "Unauthorized request"),
             @ApiResponse(code = 403, message = "Forbidden")})
     public ResponseEntity<?> getSortedByDateTagList(@RequestParam(defaultValue = "1") int currentPageNumber,
-                                                    @RequestParam(defaultValue = "10") int itemsOnPage) throws NotFoundException {
+                                                    @RequestParam(defaultValue = "10") int itemsOnPage) {
         HashMap<String, Object> params = new HashMap<>();
         params.put("currentPageNumber", currentPageNumber);
         params.put("itemsOnPage", itemsOnPage);
@@ -141,7 +140,13 @@ public class TagResourceController {
         return ResponseEntity.ok(tagViewDtoService.getPageWithListTagDtoSortedByName(params));
     }
 
-
+    /**
+     * Method return JSON with list all tags sorted by popular, with pagination.
+     *
+     * @param itemsOnPage       The number of users per page. Optional parameter. The default value is 10.
+     * @param currentPageNumber Page number of the page to be displayed (starts from one).
+     * @return {@link ResponseEntity} with status Ok and {@link PageDto}<{@link TagViewDto}> in body.
+     */
     @GetMapping("/popular")
     @ApiOperation(value = "Getting all Tags sorted by popularity", response = PageDto.class)
     @ApiResponses(value = {
@@ -150,11 +155,11 @@ public class TagResourceController {
             @ApiResponse(code = 403, message = "Forbidden")})
 
     public ResponseEntity<PageDto<TagViewDto>> getSortedByPopularity(
-            @RequestParam(value = "page", defaultValue = "1") int page,
-            @RequestParam(value = "items", required = false, defaultValue = "10") int items) {
+            @RequestParam(defaultValue = "1") int currentPageNumber,
+            @RequestParam(defaultValue = "10") int itemsOnPage) {
         HashMap<String, Object> params = new HashMap<>();
-        params.put("currentPageNumber", page);
-        params.put("itemsOnPage", items);
+        params.put("currentPageNumber", currentPageNumber);
+        params.put("itemsOnPage", itemsOnPage);
 
         return ResponseEntity.ok(tagViewDtoService.getSortedByPopularity(params));
     }
@@ -163,8 +168,8 @@ public class TagResourceController {
     /**
      * The method returns JSON with a list of all tags, sorted by the presence of a symbol or syllable  in the name, with pagination.
      *
-     * @param pageNumber       Page number of the page to be displayed (starts from one).
-     * @param itemsCountOnPage The number of users per page. Optional parameter. The default value is 10.
+     * @param currentPageNumber       Page number of the page to be displayed (starts from one).
+     * @param itemsOnPage The number of users per page. Optional parameter. The default value is 10.
      * @param syllable         Symbol or syllable for which a match will be found in the name
      * @return {@link ResponseEntity} with status Ok and {@link PageDto}<{@link TagViewDto}> in body.
      */
@@ -176,12 +181,12 @@ public class TagResourceController {
             @ApiResponse(code = 403, message = "Forbidden")})
 
     public ResponseEntity<PageDto<TagViewDto>> getPageWithListTagDtoFoundByLatter(
-            @RequestParam(value = "page", defaultValue = "1") int pageNumber,
-            @RequestParam(value = "items", required = false, defaultValue = "10") int itemsCountOnPage,
-            @RequestParam(value = "syllable", required = false, defaultValue = " ") String syllable) {
+            @RequestParam(defaultValue = "1") int currentPageNumber,
+            @RequestParam(defaultValue = "10") int itemsOnPage,
+            @RequestParam(defaultValue = " ") String syllable) {
         HashMap<String, Object> param = new HashMap<>();
-        param.put("currentPageNumber", pageNumber);
-        param.put("itemsOnPage", itemsCountOnPage);
+        param.put("currentPageNumber", currentPageNumber);
+        param.put("itemsOnPage", itemsOnPage);
         param.put("syllable", syllable);
 
         return ResponseEntity.ok(tagViewDtoService.getPageWithListTagDtoSortedBySyllable(param));

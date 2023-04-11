@@ -295,7 +295,7 @@ public class TestTagResourceController extends AbstractTestApi {
     public void testGetPageWithListTagDtoSortedByName() throws Exception {
         String token = getToken("0@gmail.com", "0pwd");
 
-        // getting 4 Tags on page number 1 ordered by name
+        // getting 4 Tags from page number 1 ordered by name
         this.mvc.perform(get("/api/user/tag/name")
                         .header("Authorization", "Bearer " + token)
                         .param("currentPageNumber", "1")
@@ -422,207 +422,398 @@ public class TestTagResourceController extends AbstractTestApi {
 
         // getting Tags if currentPageNumber is 0
         this.mvc.perform(get("/api/user/tag/name")
-                .header("Authorization", "Bearer " + token)
-                .contentType(MediaType.APPLICATION_JSON)
-                .param("currentPageNumber", "0"))
+                        .header("Authorization", "Bearer " + token)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .param("currentPageNumber", "0"))
 
-                .andExpect(status().isBadRequest());
+                .andExpect(status().is4xxClientError());
 
 
         // getting Tags if itemsOnPage is 0
         this.mvc.perform(get("/api/user/tag/name")
-                .header("Authorization", "Bearer " + token)
-                .contentType(MediaType.APPLICATION_JSON)
-                .param("itemsOnPage", "0"))
-                
-                .andExpect(status().isBadRequest());
+                        .header("Authorization", "Bearer " + token)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .param("itemsOnPage", "0"))
+
+                .andExpect(status().is4xxClientError());
+
+
+        // user is not authenticated
+        this.mvc.perform(get("/api/user/tag/name"))
+
+                .andExpect(status().is4xxClientError());
     }
 
 
-
     @Test
-    @Sql(value = {"/script/TestTagResourceController/testGetSortedByPopularity/Before.sql"}, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
-    @Sql(value = {"/script/TestTagResourceController/testGetSortedByPopularity/After.sql"}, executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
+    @SqlGroup({
+            @Sql(value = {"/script/TestTagResourceController/testGetSortedByPopularity/Before.sql"},
+                    executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD),
+            @Sql(value = {"/script/TestTagResourceController/testGetSortedByPopularity/After.sql"},
+                    executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
+    })
     public void testGetSortedByPopularity() throws Exception {
         String token = getToken("0@gmail.com", "0pwd");
 
-        // пользователь не авторизован (отсутствует JWT) - ошибка
-        this.mvc.perform(get("/api/user/tag/popular"))
+        // getting 4 Tags from page number 1 ordered by popular
+        this.mvc.perform(get("/api/user/tag/popular")
+                        .header("Authorization", "Bearer " + token)
+                        .param("currentPageNumber", "1")
+                        .param("itemsOnPage", "4"))
+
                 .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+
+                .andExpect(jsonPath("$.currentPageNumber", Is.is(1)))
+                .andExpect(jsonPath("$.totalPageCount", Is.is(3)))
+                .andExpect(jsonPath("$.totalResultCount", Is.is(9)))
+                .andExpect(jsonPath("$.itemsOnPage", Is.is(4)))
+
+                .andExpect(jsonPath("$.items[0].id", Is.is(104)))
+                .andExpect(jsonPath("$.items[0].title", Is.is("name4")))
+                .andExpect(jsonPath("$.items[0].description", Is.is("description104")))
+                .andExpect(jsonPath("$.items[0].questionCount", Is.is(5)))
+                .andExpect(jsonPath("$.items[0].questionCountOneDay", Is.is(3)))
+                .andExpect(jsonPath("$.items[0].questionCountWeekDay", Is.is(5)))
+
+                .andExpect(jsonPath("$.items[1].id", Is.is(102)))
+                .andExpect(jsonPath("$.items[1].title", Is.is("name3")))
+                .andExpect(jsonPath("$.items[1].description", Is.is("description102")))
+                .andExpect(jsonPath("$.items[1].questionCount", Is.is(3)))
+                .andExpect(jsonPath("$.items[1].questionCountOneDay", Is.is(1)))
+                .andExpect(jsonPath("$.items[1].questionCountWeekDay", Is.is(3)))
+
+                .andExpect(jsonPath("$.items[2].id", Is.is(103)))
+                .andExpect(jsonPath("$.items[2].title", Is.is("name5")))
+                .andExpect(jsonPath("$.items[2].description", Is.is("description103")))
+                .andExpect(jsonPath("$.items[2].questionCount", Is.is(3)))
+                .andExpect(jsonPath("$.items[2].questionCountOneDay", Is.is(2)))
+                .andExpect(jsonPath("$.items[2].questionCountWeekDay", Is.is(3)))
+
+                .andExpect(jsonPath("$.items[3].id", Is.is(101)))
+                .andExpect(jsonPath("$.items[3].title", Is.is("name2")))
+                .andExpect(jsonPath("$.items[3].description", Is.is("description101")))
+                .andExpect(jsonPath("$.items[3].questionCount", Is.is(2)))
+                .andExpect(jsonPath("$.items[3].questionCountOneDay", Is.is(1)))
+                .andExpect(jsonPath("$.items[3].questionCountWeekDay", Is.is(2)));
+
+
+        // getting Tag from last page number 3
+        this.mvc.perform(get("/api/user/tag/popular")
+                        .header("Authorization", "Bearer " + token)
+                        .param("currentPageNumber", "3")
+                        .param("itemsOnPage", "4"))
+
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+
+                .andExpect(jsonPath("$.currentPageNumber", Is.is(3)))
+                .andExpect(jsonPath("$.totalPageCount", Is.is(3)))
+                .andExpect(jsonPath("$.totalResultCount", Is.is(9)))
+                .andExpect(jsonPath("$.itemsOnPage", Is.is(4)))
+
+                .andExpect(jsonPath("$.items[0].id", Is.is(105)))
+                .andExpect(jsonPath("$.items[0].title", Is.is("name6")))
+                .andExpect(jsonPath("$.items[0].description", Is.is("description105")))
+                .andExpect(jsonPath("$.items[0].questionCount", Is.is(0)))
+                .andExpect(jsonPath("$.items[0].questionCountOneDay", Is.is(0)))
+                .andExpect(jsonPath("$.items[0].questionCountWeekDay", Is.is(0)));
+
+
+        // getting Tags if  itemsOnPage is empty
+        this.mvc.perform(get("/api/user/tag/popular")
+                        .header("Authorization", "Bearer " + token)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .param("currentPageNumber", "1"))
+
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+
+                .andExpect(jsonPath("$.currentPageNumber", Is.is(1)))
+                .andExpect(jsonPath("$.totalPageCount", Is.is(1)))
+                .andExpect(jsonPath("$.totalResultCount", Is.is(9)))
+                .andExpect(jsonPath("$.itemsOnPage", Is.is(10)))
+
+                .andExpect(jsonPath("$.items[0].id", Is.is(104)))
+                .andExpect(jsonPath("$.items[0].title", Is.is("name4")))
+                .andExpect(jsonPath("$.items[0].description", Is.is("description104")))
+                .andExpect(jsonPath("$.items[0].questionCount", Is.is(5)))
+                .andExpect(jsonPath("$.items[0].questionCountOneDay", Is.is(3)))
+                .andExpect(jsonPath("$.items[0].questionCountWeekDay", Is.is(5)));
+
+
+        // getting Tags if  currentPageNumber is empty
+        this.mvc.perform(get("/api/user/tag/popular")
+                        .header("Authorization", "Bearer " + token)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .param("itemsOnPage", "4"))
+
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+
+                .andExpect(jsonPath("$.currentPageNumber", Is.is(1)))
+                .andExpect(jsonPath("$.totalPageCount", Is.is(3)))
+                .andExpect(jsonPath("$.totalResultCount", Is.is(9)))
+                .andExpect(jsonPath("$.itemsOnPage", Is.is(4)))
+
+                .andExpect(jsonPath("$.items[3].id", Is.is(101)))
+                .andExpect(jsonPath("$.items[3].title", Is.is("name2")))
+                .andExpect(jsonPath("$.items[3].description", Is.is("description101")))
+                .andExpect(jsonPath("$.items[3].questionCount", Is.is(2)))
+                .andExpect(jsonPath("$.items[3].questionCountOneDay", Is.is(1)))
+                .andExpect(jsonPath("$.items[3].questionCountWeekDay", Is.is(2)));
+
+
+        // getting Tags for default settings
+        this.mvc.perform(get("/api/user/tag/popular")
+                        .header("Authorization", "Bearer " + token)
+                        .contentType(MediaType.APPLICATION_JSON))
+
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+
+                .andExpect(jsonPath("$.currentPageNumber", Is.is(1)))
+                .andExpect(jsonPath("$.totalPageCount", Is.is(1)))
+                .andExpect(jsonPath("$.totalResultCount", Is.is(9)))
+                .andExpect(jsonPath("$.itemsOnPage", Is.is(10)));
+
+
+        // getting Tags if currentPageNumber is 0
+        this.mvc.perform(get("/api/user/tag/popular")
+                        .header("Authorization", "Bearer " + token)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .param("currentPageNumber", "0"))
+
                 .andExpect(status().is4xxClientError());
 
-        // получение тегов
-        this.mvc.perform(get("/api/user/tag/popular")
-                        .header("Authorization", "Bearer " + token))
-                .andDo(print())
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.totalPageCount", Is.is(1)))
-                .andExpect(jsonPath("$.totalResultCount", Is.is(5)))
-                .andExpect(jsonPath("$.currentPageNumber", Is.is(1)))
-                .andExpect(jsonPath("$.items.size()", Is.is(5)))
 
-                .andExpect(jsonPath("$.items[0].id", Is.is(103)))
-                .andExpect(jsonPath("$.items[0].name", Is.is("HTML")))
-                .andExpect(jsonPath("$.items[0].description", Is.is("HTML description")))
-
-                .andExpect(jsonPath("$.items[1].id", Is.is(101)))
-                .andExpect(jsonPath("$.items[1].name", Is.is("JavaScript")))
-                .andExpect(jsonPath("$.items[1].description", Is.is("JavaScript description")))
-
-                .andExpect(jsonPath("$.items[2].id", Is.is(100)))
-                .andExpect(jsonPath("$.items[2].name", Is.is("Java")))
-                .andExpect(jsonPath("$.items[2].description", Is.is("Java description")))
-
-                .andExpect(jsonPath("$.items[3].id", Is.is(102)))
-                .andExpect(jsonPath("$.items[3].name", Is.is("C#")))
-                .andExpect(jsonPath("$.items[3].description", Is.is("C# description")))
-
-                .andExpect(jsonPath("$.items[4].id", Is.is(104)))
-                .andExpect(jsonPath("$.items[4].name", Is.is("Python")))
-                .andExpect(jsonPath("$.items[4].description", Is.is("Python description")));
-
-        // получение последней 5 страницы, когда 1 тег на страницу
+        // getting Tags if itemsOnPage is 0
         this.mvc.perform(get("/api/user/tag/popular")
                         .header("Authorization", "Bearer " + token)
-                        .param("page", "5")
-                        .param("items", "1"))
-                .andDo(print())
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.totalPageCount", Is.is(5)))
-                .andExpect(jsonPath("$.totalResultCount", Is.is(5)))
-                .andExpect(jsonPath("$.currentPageNumber", Is.is(5)))
-                .andExpect(jsonPath("$.items.size()", Is.is(1)))
-                .andExpect(jsonPath("$.items[0].id", Is.is(104)))
-                .andExpect(jsonPath("$.items[0].name", Is.is("Python")))
-                .andExpect(jsonPath("$.items[0].description", Is.is("Python description")));
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .param("itemsOnPage", "0"))
 
-        // пустая страница
-        this.mvc.perform(get("/api/user/tag/popular")
-                        .header("Authorization", "Bearer " + token)
-                        .param("page", "6")
-                        .param("items", "1"))
-                .andDo(print())
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.totalPageCount", Is.is(5)))
-                .andExpect(jsonPath("$.totalResultCount", Is.is(5)))
-                .andExpect(jsonPath("$.currentPageNumber", Is.is(6)))
-                .andExpect(jsonPath("$.items.size()", Is.is(0)));
+                .andExpect(status().is4xxClientError());
 
-        // ошибка - страница за пределами границ ( <1 )
-        this.mvc.perform(get("/api/user/tag/popular")
-                        .header("Authorization", "Bearer " + token)
-                        .param("page", "0"))
-                .andDo(print())
-                .andExpect(status().is4xxClientError())
-                .andExpect(jsonPath("$", Is.is("The current page cannot be less than 1")));
+
+        // user is not authenticated
+        this.mvc.perform(get("/api/user/tag/popular"))
+
+                .andExpect(status().is4xxClientError());
     }
 
+
     @Test
-    @Sql(value = {"/script/TestTagResourceController/testGetPageWithListTagDtoSortedBySyllable/Before.sql"},
-            executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
-    @Sql(value = {"/script/TestTagResourceController/testGetPageWithListTagDtoSortedBySyllable/After.sql"},
-            executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
+    @SqlGroup({
+            @Sql(value = {"/script/TestTagResourceController/testGetPageWithListTagDtoSortedBySyllable/Before.sql"},
+                    executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD),
+            @Sql(value = {"/script/TestTagResourceController/testGetPageWithListTagDtoSortedBySyllable/After.sql"},
+                    executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
+    })
+
     public void testGetPageWithListTagDtoSortedBySyllable() throws Exception {
         String token = getToken("0@gmail.com", "0pwd");
 
-        // user not authorized (missing JWT) - error
-        this.mvc.perform(get("/api/user/tag/syllable"))
+
+        //get the page containing "me"
+        this.mvc.perform(get("/api/user/tag/syllable")
+                        .header("Authorization", "Bearer " + token)
+                        .param("currentPageNumber", "1")
+                        .param("itemsOnPage", "4")
+                        .param("syllable", "me"))
+
                 .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+
+                .andExpect(jsonPath("$.currentPageNumber", Is.is(1)))
+                .andExpect(jsonPath("$.totalPageCount", Is.is(3)))
+                .andExpect(jsonPath("$.totalResultCount", Is.is(9)))
+                .andExpect(jsonPath("$.itemsOnPage", Is.is(4)))
+
+                .andExpect(jsonPath("$.items[0].id", Is.is(100)))
+                .andExpect(jsonPath("$.items[0].title", Is.is("name1")))
+                .andExpect(jsonPath("$.items[0].description", Is.is("description100")))
+                .andExpect(jsonPath("$.items[0].questionCount", Is.is(1)))
+                .andExpect(jsonPath("$.items[0].questionCountOneDay", Is.is(1)))
+                .andExpect(jsonPath("$.items[0].questionCountWeekDay", Is.is(1)))
+
+                .andExpect(jsonPath("$.items[1].id", Is.is(101)))
+                .andExpect(jsonPath("$.items[1].title", Is.is("name2")))
+                .andExpect(jsonPath("$.items[1].description", Is.is("description101")))
+                .andExpect(jsonPath("$.items[1].questionCount", Is.is(2)))
+                .andExpect(jsonPath("$.items[1].questionCountOneDay", Is.is(1)))
+                .andExpect(jsonPath("$.items[1].questionCountWeekDay", Is.is(2)))
+
+                .andExpect(jsonPath("$.items[2].id", Is.is(102)))
+                .andExpect(jsonPath("$.items[2].title", Is.is("name3")))
+                .andExpect(jsonPath("$.items[2].description", Is.is("description102")))
+                .andExpect(jsonPath("$.items[2].questionCount", Is.is(3)))
+                .andExpect(jsonPath("$.items[2].questionCountOneDay", Is.is(1)))
+                .andExpect(jsonPath("$.items[2].questionCountWeekDay", Is.is(3)))
+
+                .andExpect(jsonPath("$.items[3].id", Is.is(103)))
+                .andExpect(jsonPath("$.items[3].title", Is.is("name4")))
+                .andExpect(jsonPath("$.items[3].description", Is.is("description103")))
+                .andExpect(jsonPath("$.items[3].questionCount", Is.is(3)))
+                .andExpect(jsonPath("$.items[3].questionCountOneDay", Is.is(2)))
+                .andExpect(jsonPath("$.items[3].questionCountWeekDay", Is.is(3)));
+
+
+        //get the last page number 3 containing "me"
+        this.mvc.perform(get("/api/user/tag/syllable")
+                        .header("Authorization", "Bearer " + token)
+                        .param("currentPageNumber", "3")
+                        .param("itemsOnPage", "4")
+                        .param("syllable", "me"))
+
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+
+                .andExpect(jsonPath("$.currentPageNumber", Is.is(3)))
+                .andExpect(jsonPath("$.totalPageCount", Is.is(3)))
+                .andExpect(jsonPath("$.totalResultCount", Is.is(9)))
+                .andExpect(jsonPath("$.itemsOnPage", Is.is(4)))
+
+                .andExpect(jsonPath("$.items[0].id", Is.is(108)))
+                .andExpect(jsonPath("$.items[0].title", Is.is("name95")))
+                .andExpect(jsonPath("$.items[0].description", Is.is("description108")))
+                .andExpect(jsonPath("$.items[0].questionCount", Is.is(2)))
+                .andExpect(jsonPath("$.items[0].questionCountOneDay", Is.is(1)))
+                .andExpect(jsonPath("$.items[0].questionCountWeekDay", Is.is(2)));
+
+
+        // getting Tags containing "1" if  itemsOnPage is empty
+        this.mvc.perform(get("/api/user/tag/syllable")
+                        .header("Authorization", "Bearer " + token)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .param("currentPageNumber", "1")
+                        .param("syllable", "1"))
+
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+
+                .andExpect(jsonPath("$.currentPageNumber", Is.is(1)))
+                .andExpect(jsonPath("$.totalPageCount", Is.is(1)))
+                .andExpect(jsonPath("$.totalResultCount", Is.is(2)))
+                .andExpect(jsonPath("$.itemsOnPage", Is.is(10)))
+
+                .andExpect(jsonPath("$.items[0].id", Is.is(100)))
+                .andExpect(jsonPath("$.items[0].title", Is.is("name1")))
+                .andExpect(jsonPath("$.items[0].description", Is.is("description100")))
+                .andExpect(jsonPath("$.items[0].questionCount", Is.is(1)))
+                .andExpect(jsonPath("$.items[0].questionCountOneDay", Is.is(1)))
+                .andExpect(jsonPath("$.items[0].questionCountWeekDay", Is.is(1)))
+
+                .andExpect(jsonPath("$.items[1].id", Is.is(104)))
+                .andExpect(jsonPath("$.items[1].title", Is.is("name51")))
+                .andExpect(jsonPath("$.items[1].description", Is.is("description104")))
+                .andExpect(jsonPath("$.items[1].questionCount", Is.is(5)))
+                .andExpect(jsonPath("$.items[1].questionCountOneDay", Is.is(3)))
+                .andExpect(jsonPath("$.items[1].questionCountWeekDay", Is.is(5)));
+
+
+        // getting Tags containing "1" if  currentPageNumber is empty
+        this.mvc.perform(get("/api/user/tag/syllable")
+                        .header("Authorization", "Bearer " + token)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .param("itemsOnPage", "10")
+                        .param("syllable", "1"))
+
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+
+                .andExpect(jsonPath("$.currentPageNumber", Is.is(1)))
+                .andExpect(jsonPath("$.totalPageCount", Is.is(1)))
+                .andExpect(jsonPath("$.totalResultCount", Is.is(2)))
+                .andExpect(jsonPath("$.itemsOnPage", Is.is(10)))
+
+                .andExpect(jsonPath("$.items[0].id", Is.is(100)))
+                .andExpect(jsonPath("$.items[0].title", Is.is("name1")))
+                .andExpect(jsonPath("$.items[0].description", Is.is("description100")))
+                .andExpect(jsonPath("$.items[0].questionCount", Is.is(1)))
+                .andExpect(jsonPath("$.items[0].questionCountOneDay", Is.is(1)))
+                .andExpect(jsonPath("$.items[0].questionCountWeekDay", Is.is(1)))
+
+                .andExpect(jsonPath("$.items[1].id", Is.is(104)))
+                .andExpect(jsonPath("$.items[1].title", Is.is("name51")))
+                .andExpect(jsonPath("$.items[1].description", Is.is("description104")))
+                .andExpect(jsonPath("$.items[1].questionCount", Is.is(5)))
+                .andExpect(jsonPath("$.items[1].questionCountOneDay", Is.is(3)))
+                .andExpect(jsonPath("$.items[1].questionCountWeekDay", Is.is(5)));
+
+
+        // getting Tags if syllable is empty
+        this.mvc.perform(get("/api/user/tag/syllable")
+                        .header("Authorization", "Bearer " + token)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .param("currentPageNumber", "1")
+                        .param("itemsOnPage", "10"))
+
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+
+                .andExpect(jsonPath("$.currentPageNumber", Is.is(1)))
+                .andExpect(jsonPath("$.totalPageCount", Is.is(0)))
+                .andExpect(jsonPath("$.totalResultCount", Is.is(0)))
+                .andExpect(jsonPath("$.itemsOnPage", Is.is(10)));
+
+
+        // getting Tags for default settings
+        this.mvc.perform(get("/api/user/tag/syllable")
+                        .header("Authorization", "Bearer " + token)
+                        .contentType(MediaType.APPLICATION_JSON))
+
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+
+                .andExpect(jsonPath("$.currentPageNumber", Is.is(1)))
+                .andExpect(jsonPath("$.totalPageCount", Is.is(0)))
+                .andExpect(jsonPath("$.totalResultCount", Is.is(0)))
+                .andExpect(jsonPath("$.itemsOnPage", Is.is(10)));
+
+
+        // getting Tags if syllable is not found
+        this.mvc.perform(get("/api/user/tag/syllable")
+                        .header("Authorization", "Bearer " + token)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .param("currentPageNumber", "1")
+                        .param("itemsOnPage", "10")
+                        .param("syllable", "ZZ"))
+
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+
+                .andExpect(jsonPath("$.currentPageNumber", Is.is(1)))
+                .andExpect(jsonPath("$.totalPageCount", Is.is(0)))
+                .andExpect(jsonPath("$.totalResultCount", Is.is(0)))
+                .andExpect(jsonPath("$.itemsOnPage", Is.is(10)));
+
+
+        // getting Tags if currentPageNumber is 0
+        this.mvc.perform(get("/api/user/tag/syllable")
+                        .header("Authorization", "Bearer " + token)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .param("currentPageNumber", "0"))
+
                 .andExpect(status().is4xxClientError());
 
-        //the following input parameters are present(page, items, syllable), matches present
-        this.mvc.perform(get("/api/user/tag/syllable")
-                        .header("Authorization", "Bearer " + token)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .param("page", "1")
-                        .param("items", "1")
-                        .param("syllable", "J")
-                )
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.currentPageNumber", Is.is(1)))
-                .andExpect(jsonPath("$.totalPageCount", Is.is(2)))
-                .andExpect(jsonPath("$.totalResultCount", Is.is(2)))
-                .andExpect(jsonPath("$.itemsOnPage", Is.is(1)))
-                .andExpect(jsonPath("$.items[0].id", Is.is(100)))
-                .andExpect(jsonPath("$.items[0].name", Is.is("Java")))
-                .andExpect(jsonPath("$.items[0].description", Is.is("Java description")));
 
-        //the following input parameters are present(page, items, syllable), matches present
+        // getting Tags if itemsOnPage is 0
         this.mvc.perform(get("/api/user/tag/syllable")
                         .header("Authorization", "Bearer " + token)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .param("page", "1")
-                        .param("items", "1")
-                        .param("syllable", "M")
-                )
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.currentPageNumber", Is.is(1)))
-                .andExpect(jsonPath("$.totalPageCount", Is.is(1)))
-                .andExpect(jsonPath("$.totalResultCount", Is.is(1)))
-                .andExpect(jsonPath("$.itemsOnPage", Is.is(1)))
-                .andExpect(jsonPath("$.items[0].id", Is.is(103)))
-                .andExpect(jsonPath("$.items[0].name", Is.is("HTML")))
-                .andExpect(jsonPath("$.items[0].description", Is.is("HTML description")));
+                        .param("itemsOnPage", "0"))
 
-        //the following input parameters are present(page, items, syllable), no matches
-        this.mvc.perform(get("/api/user/tag/syllable")
-                        .header("Authorization", "Bearer " + token)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .param("page", "1")
-                        .param("items", "1")
-                        .param("syllable", "Y")
-                )
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.currentPageNumber", Is.is(1)))
-                .andExpect(jsonPath("$.totalPageCount", Is.is(0)))
-                .andExpect(jsonPath("$.totalResultCount", Is.is(0)))
-                .andExpect(jsonPath("$.itemsOnPage", Is.is(1)))
-                .andExpect(jsonPath("$.items.size()", Is.is(0)));
+                .andExpect(status().is4xxClientError());
 
-        //the following input parameters are present(items, syllable)
-        this.mvc.perform(get("/api/user/tag/syllable")
-                        .header("Authorization", "Bearer " + token)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .param("items", "1")
-                        .param("syllable", "J")
-                )
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.currentPageNumber", Is.is(1)))
-                .andExpect(jsonPath("$.totalPageCount", Is.is(2)))
-                .andExpect(jsonPath("$.totalResultCount", Is.is(2)))
-                .andExpect(jsonPath("$.itemsOnPage", Is.is(1)))
-                .andExpect(jsonPath("$.items[0].id", Is.is(100)))
-                .andExpect(jsonPath("$.items[0].name", Is.is("Java")))
-                .andExpect(jsonPath("$.items[0].description", Is.is("Java description")));
 
-        //the following input parameters are present(syllable)
-        this.mvc.perform(get("/api/user/tag/syllable")
-                        .header("Authorization", "Bearer " + token)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .param("syllable", "J")
-                )
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.currentPageNumber", Is.is(1)))
-                .andExpect(jsonPath("$.totalPageCount", Is.is(1)))
-                .andExpect(jsonPath("$.totalResultCount", Is.is(2)))
-                .andExpect(jsonPath("$.itemsOnPage", Is.is(10)))
-                .andExpect(jsonPath("$.items[0].id", Is.is(100)))
-                .andExpect(jsonPath("$.items[0].name", Is.is("Java")))
-                .andExpect(jsonPath("$.items[0].description", Is.is("Java description")))
-                .andExpect(jsonPath("$.items[1].id", Is.is(101)))
-                .andExpect(jsonPath("$.items[1].name", Is.is("JavaScript")))
-                .andExpect(jsonPath("$.items[1].description", Is.is("JavaScript description")));
+        // user is not authenticated
+        this.mvc.perform(get("/api/user/tag/syllable"))
 
-        //no input parameters
-        this.mvc.perform(get("/api/user/tag/syllable")
-                        .header("Authorization", "Bearer " + token)
-                        .contentType(MediaType.APPLICATION_JSON)
-                )
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.currentPageNumber", Is.is(1)))
-                .andExpect(jsonPath("$.totalPageCount", Is.is(0)))
-                .andExpect(jsonPath("$.totalResultCount", Is.is(0)))
-                .andExpect(jsonPath("$.itemsOnPage", Is.is(10)))
-                .andExpect(jsonPath("$.items.size()", Is.is(0)));
+                .andExpect(status().is4xxClientError());
     }
 }
