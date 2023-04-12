@@ -113,4 +113,17 @@ public class QuestionDtoServiceImpl extends PageDtoService<QuestionDto> implemen
 
         return pageDto;
     }
+
+    @Override
+    public PageDto<QuestionDto> getPageWithListMostPopularQuestionForMonthDto(HashMap<String, Object> param) throws NotFoundException {
+        param.put("daoDtoImpl", "questionDtoDaoSortedByPopularityForMonthImpl");
+
+        PageDto<QuestionDto> pageDto = pageDto(param);
+        List<QuestionDto> listQuestionDto = pageDto.getItems();
+        List<Long> questionId = listQuestionDto.stream().map(QuestionDto::getId).collect(toList());
+        Map<Long, List<TagDto>> tagsMap = tagDtoDao.getTagsMapByQuestionId(questionId);
+        listQuestionDto.forEach(lQuestionDto -> lQuestionDto.setListTagDto(tagsMap.get(lQuestionDto.getId())));
+
+        return pageDto;
+    }
 }

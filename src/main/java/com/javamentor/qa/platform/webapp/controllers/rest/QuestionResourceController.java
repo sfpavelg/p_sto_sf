@@ -22,8 +22,6 @@ import javassist.NotFoundException;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -248,4 +246,25 @@ public class QuestionResourceController {
         commentQuestionService.persist(commentQuestion);
         return ResponseEntity.ok(commentDtoService.getCommentById(commentQuestion.getComment().getId()));
     }
+
+    @GetMapping("/mostPopularForMonth")
+    @ApiOperation(value = "Get a page with a list of QuestionDto sorted by popularity by last month", response = PageDto.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Success request. QuestionDto object returned in response"),
+            @ApiResponse(code = 403, message = "Forbidden"),
+            @ApiResponse(code = 404, message = "Questions don't exist")})
+    public ResponseEntity<?> getPageWithListMostPopularQuestionByMonthDto(
+            @RequestParam(value = "page", required = false, defaultValue = "1") Integer pageNumber,
+            @RequestParam(value = "items", required = false, defaultValue = "10") Integer itemsCountOnPage,
+            @RequestParam(value = "trackedTags", required = false) List<Long> trackedTags,
+            @RequestParam(value = "ignoredTags", required = false) List<Long> ignoredTags)
+            throws NotFoundException {
+        HashMap<String, Object> param = new HashMap<>();
+        param.put("currentPageNumber", pageNumber);
+        param.put("itemsOnPage", itemsCountOnPage);
+        param.put("trackedTags", trackedTags);
+        param.put("ignoredTags", ignoredTags);
+        return ResponseEntity.ok(questionDtoService.getPageWithListMostPopularQuestionForMonthDto(param));
+    }
+
 }

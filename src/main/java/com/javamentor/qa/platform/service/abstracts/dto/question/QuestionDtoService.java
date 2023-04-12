@@ -15,4 +15,5 @@ public interface QuestionDtoService {
 
     PageDto<QuestionDto> getPageWithListQuestionDtoSortedByNewest(HashMap<String, Object> param);
     PageDto<QuestionDto> getPageWithListMostPopularQuestionDto(HashMap<String, Object> param)throws NotFoundException;
+    PageDto<QuestionDto> getPageWithListMostPopularQuestionForMonthDto(HashMap<String, Object> param) throws NotFoundException;
 }
