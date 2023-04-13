@@ -1,5 +1,6 @@
 package com.javamentor.qa.platform.service.impl;
 
+import com.javamentor.qa.platform.models.entity.BookMarks;
 import com.javamentor.qa.platform.models.entity.Comment;
 import com.javamentor.qa.platform.models.entity.CommentType;
 import com.javamentor.qa.platform.models.entity.question.*;
@@ -44,6 +45,7 @@ public class TestDataInitService {
     private final CommentQuestionService commentQuestionService;
     private final CommentAnswerService commentAnswerService;
     private final ReputationService reputationService;
+    private final BookMarkService bookMarkService;
 
     @Autowired
     public TestDataInitService(RoleService roleService, UserService userService, QuestionService questionService,
@@ -51,7 +53,7 @@ public class TestDataInitService {
                                TrackedTagService trackedTagService, QuestionViewedService questionViewedService,
                                VoteQuestionService voteQuestionService, VoteAnswerService voteAnswerService,
                                CommentQuestionService commentQuestionService, CommentAnswerService commentAnswerService,
-                               ReputationService reputationService) {
+                               ReputationService reputationService, BookMarkService bookMarkService) {
         this.roleService = roleService;
         this.userService = userService;
         this.questionService = questionService;
@@ -65,6 +67,7 @@ public class TestDataInitService {
         this.commentQuestionService = commentQuestionService;
         this.commentAnswerService = commentAnswerService;
         this.reputationService = reputationService;
+        this.bookMarkService = bookMarkService;
     }
 
     public void createSuperUser(int count) {
@@ -330,6 +333,15 @@ public class TestDataInitService {
         }
     }
 
+    public void createBookMarks(int count) {
+        for (int i = 0; i < count; i++) {
+            BookMarks bookMarks = new BookMarks();
+            bookMarks.setUser(userService.getAll().get(rand(0, 20)));
+            bookMarks.setQuestion(questionService.getAll().get(rand(1, 8)));
+            bookMarkService.persist(bookMarks);
+        }
+    }
+
     public void init() {
         roleService.persist(ROLE_ADMIN);
         roleService.persist(ROLE_USER);
@@ -345,5 +357,6 @@ public class TestDataInitService {
         createCommentQuestion(20);
         createCommentAnswer(20);
         createReputation();
+        createBookMarks(10);
     }
 }
