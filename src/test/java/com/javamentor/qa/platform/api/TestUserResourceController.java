@@ -482,4 +482,28 @@ public class TestUserResourceController extends AbstractTestApi {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", hasSize(0)));
     }
+
+    @Test
+    @SqlGroup({
+            @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD,
+                    value = {"/script/TestUserResourceController/testGetAllAuthorizedUserAnswersPerWeek/Before.sql"}),
+            @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD,
+                    value = {"/script/TestUserResourceController/testGetAllAuthorizedUserAnswersPerWeek/After.sql"})
+    })
+    public void testGetAllAuthorizedUserAnswersPerWeek() throws Exception {
+        String jwt = getToken("0@gmail.com", "0pwd");
+
+        // Check successful execution of request to get the count of answers from users per week
+        this.mvc.perform(get("/api/user/profile/question/week")
+                        .header("Authorization", "Bearer " + jwt))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", Is.is(5)));
+
+        // Check successful execution of request to get the count of answers from users who haven't answered per week
+        String emptyAnswersUserToken = getToken("4@gmail.com", "4pwd");
+        this.mvc.perform(get("/api/user/profile/question/week")
+                        .header("Authorization", "Bearer " + emptyAnswersUserToken))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", Is.is(0)));
+    }
 }
