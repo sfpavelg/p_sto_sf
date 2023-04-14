@@ -51,6 +51,10 @@ public class CommentAnswer implements Serializable {
             throw new ApiRequestException("У экземпляра Comment, связанного с CommentAnswer, " +
                     "поле commentType должно принимать значение CommentType.ANSWER");
         }
+        if (this.answer == null) {
+            throw new ApiRequestException("Экземпляр Answer, связанный с CommentAnswer " +
+                    "должен быть инициализирован и содержать корректные значения");
+        }
     }
 
     @Override
