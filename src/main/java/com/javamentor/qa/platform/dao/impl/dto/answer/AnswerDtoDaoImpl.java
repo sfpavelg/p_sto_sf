@@ -6,6 +6,8 @@ import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Repository
@@ -29,5 +31,17 @@ public class AnswerDtoDaoImpl implements AnswerDtoDao {
                         "a.user.nickname) " +
                         "from Answer a where a.question.id = :id and a.isDeleted = false", AnswerDto.class)
                 .setParameter("id", id).getResultList();
+    }
+
+    @Override
+    public Long getCountPerWeekByUserId(Long userId) {
+        Query query = entityManager.createQuery("SELECT count(a.id) FROM Answer a " +
+                "WHERE a.user.id = :userId " +
+                "AND a.isDeleted = false " +
+                "AND a.persistDateTime BETWEEN :weekAgo AND :today")
+                .setParameter("userId", userId)
+                .setParameter("weekAgo", LocalDateTime.now().minusWeeks(1))
+                .setParameter("today", LocalDateTime.now());
+        return (long) query.getSingleResult();
     }
 }

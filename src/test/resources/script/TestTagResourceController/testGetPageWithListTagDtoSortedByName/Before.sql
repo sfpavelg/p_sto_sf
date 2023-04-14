@@ -1,35 +1,63 @@
-ALTER TABLE public.tag DISABLE TRIGGER ALL;
-DELETE FROM public.tag;
-ALTER TABLE public.tag ENABLE TRIGGER ALL;
-DELETE FROM public.user_entity;
-DELETE FROM public.role;
-
-INSERT INTO public.tag(id, description, name, persist_date)
-VALUES (101, 'description5', 'name5', current_date),
-       (102, 'description4', 'name4', current_date),
-       (103, 'description3', 'name3', current_date),
-       (104, 'description2', 'name2', current_date),
-       (105, 'description1', 'name1', current_date);
+INSERT INTO "role"
+("id", "name")
+VALUES (100, 'ROLE_ADMIN'),
+       (200, 'ROLE_USER');
 
 
+INSERT INTO "user_entity"
+("id", "email", "full_name", "is_deleted", "is_enabled", "last_redaction_date", "nickname", "password", "persist_date", "role_id")
+VALUES (100, '0@gmail.com', 'name100', 'f', 't',
+        '2023-01-10 15:17:18.280368', 'nickname100', '$2a$10$/Hq12PgE.XuzB3ZizNOIXuBnCjyK/9/oHJ1Y/FRPbJZO8jSBzD1F.', '2023-01-21 15:17:18.280368', 200),
+       (101, 'email2@domain.com', 'name101', 'f', 't',
+        '2023-01-10 15:17:18.280368', 'nickname101', 'password', '2023-01-21 15:17:18.280368', 200),
+       (102, 'email3@domain.com', 'name102', 'f', 't',
+        '2023-01-10 15:17:18.280368', 'nickname102', 'password', '2023-01-21 15:17:18.280368', 100),
+       (103, 'email4@domain.com', 'name103', 'f', 't',
+        '2023-01-10 15:17:18.280368', 'nickname103', 'password', '2023-01-21 15:17:18.280368', 200),
+       (104, 'email5@domain.com', 'name104', 'f', 't',
+        '2023-01-10 15:17:18.280368', 'nickname104', 'password', '2023-01-21 15:17:18.280368', 100);
 
-INSERT INTO public."role"  ("id", "name") VALUES
-                                              (100, 'ROLE_ADMIN'),
-                                              (200, 'ROLE_USER')
-;
+INSERT INTO "question"
+("id", "description", "is_deleted", "last_redaction_date", "persist_date", "title", "user_id")
+VALUES (100, 'description100', 'false', '2023-01-27 13:01:11.245126', CURRENT_TIMESTAMP, 'title100', 100),
+       (101, 'description101', 'false', '2023-01-27 13:01:11.245126', CURRENT_TIMESTAMP - INTERVAL '3 days', 'title101', 101),
+       (102, 'description102', 'false', '2023-01-27 13:01:11.245126', CURRENT_TIMESTAMP, 'title102', 102),
+       (103, 'description103', 'false', '2023-01-27 13:01:11.245126', CURRENT_TIMESTAMP - INTERVAL '3 days', 'title103', 103),
+       (104, 'description104', 'false', '2023-01-27 13:01:11.245126', CURRENT_TIMESTAMP, 'title104', 104),
+       (105, 'description105', 'false', '2023-01-27 13:01:11.245126', CURRENT_TIMESTAMP - INTERVAL '3 days', 'title105', 100),
+       (106, 'description106', 'false', '2023-01-27 13:01:11.245126', CURRENT_TIMESTAMP, 'title106', 101),
+       (107, 'description107', 'false', '2023-01-27 13:01:11.245126', CURRENT_TIMESTAMP - INTERVAL '3 days', 'title107', 102),
+       (108, 'description108', 'false', '2023-01-27 13:01:11.245126', CURRENT_TIMESTAMP, 'title108', 103);
 
-INSERT INTO public.user_entity
-("id", "about", "city", "email", "full_name", "image_link", "is_deleted","is_enabled", "last_redaction_date", "link_github", "link_site", "link_vk", "nickname", "password", "persist_date", "role_id")
-VALUES
-    (101, 'about0', 'city0', 'super0@gmail.com', 'superfullname0', 'https://img.com/0', false, true, '2023-03-01 13:45:13.087177', 'https://github.com/0', '0.com', 'https://vk.com/0', 'supernickname0', '$2a$10$CedsmtFiFcjwTXltVyPaS.BDiR8BHgu3ibBAE.jvo0s3Skd69LMfm', '2023-03-01 13:45:13.087177', 100),
-    (102, 'about1', 'city1', 'super1@gmail.com', 'superfullname1', 'https://img.com/1', false, true, '2023-03-01 13:45:13.157876', 'https://github.com/1', '1.com', 'https://vk.com/1', 'supernickname1', '$2a$10$tzt5G/kpUYKwW1J5poHcG.eOJFnuUWk336HgmLYYqUMAaLsteGj/W', '2023-03-01 13:45:13.157876', 100),
-    (103, 'about2', 'city2', 'super2@gmail.com', 'superfullname2', 'https://img.com/2', false, true, '2023-03-01 13:45:13.228975', 'https://github.com/2', '2.com', 'https://vk.com/2', 'supernickname2', '$2a$10$ik1ZSY50/K1610/r1uPCaOqeUk5NS25g9iJbZP2uJ0SyhWjz5Cdq6', '2023-03-01 13:45:13.228975', 100),
-    (104, 'about3', 'city3', 'super3@gmail.com', 'superfullname3', 'https://img.com/3', false, true, '2023-03-01 13:45:13.296487', 'https://github.com/3', '3.com', 'https://vk.com/3', 'supernickname3', '$2a$10$137l1tGJAY.cjRAOTT.ATO1dNzezqGtcatZFX21Iqa/1NdStQcUMC', '2023-03-01 13:45:13.296487', 100),
-    (105, 'about4', 'city4', 'super4@gmail.com', 'superfullname4', 'https://img.com/4', false, true, '2023-03-01 13:45:13.362387', 'https://github.com/4', '4.com', 'https://vk.com/4', 'supernickname4', '$2a$10$DxNa.GJfhJsSDgjI1exiiOE8v9fp6xty.wAOi8wC0jE3bZtuAkvLm', '2023-03-01 13:45:13.362387', 100),
-    (106, 'about0', 'city0', '0@gmail.com', 'fullname0', 'https://img.com/0', false, true, '2023-03-01 13:45:13.42879', 'https://github.com/0', '0.com', 'https://vk.com/0', 'nickname0', '$2a$10$i/0lEwj/muRl8KlMwOxfB.ZrWdn2wGdf2hXk0zDdv1QINHQ/06FLm', '2023-03-01 13:45:13.42879', 200),
-    (107, 'about1', 'city1', '1@gmail.com', 'fullname1', 'https://img.com/1', false, true, '2023-03-01 13:45:13.496799', 'https://github.com/1', '1.com', 'https://vk.com/1', 'nickname1', '$2a$10$n407wDJOGs5GSAV/hSpTReJf3mCGQFCljB3J5P8ejto0Sxc5UNKWa', '2023-03-01 13:45:13.496799', 200),
-    (108, 'about2', 'city2', '2@gmail.com', 'fullname2', 'https://img.com/2', false, true, '2023-03-01 13:45:13.563375', 'https://github.com/2', '2.com', 'https://vk.com/2', 'nickname2', '$2a$10$740WgJpe4J06777v8sMD6exrcjQyafTLNvN56ilAXxF5GqxfKqgjC', '2023-03-01 13:45:13.563375', 200),
-    (109, 'about3', 'city3', '3@gmail.com', 'fullname3', 'https://img.com/3', false, true, '2023-03-01 13:45:13.631383', 'https://github.com/3', '3.com', 'https://vk.com/3', 'nickname3', '$2a$10$6vYbC2Bb8jHtY8mMmPTTo.79Y1ckReyzVQsr10CboktgsoxCxhIFO', '2023-03-01 13:45:13.631383', 200),
-    (110, 'about4', 'city4', '4@gmail.com', 'fullname4', 'https://img.com/4', false, true, '2023-03-01 13:45:13.69844', 'https://github.com/4', '4.com', 'https://vk.com/4', 'nickname4', '$2a$10$9RTuQcqtHMt6J9i7ONyznelYVRCrRp6Z3zKmiUg0ulgULyjs0XIem', '2023-03-01 13:45:13.69844', 200),
-    (111, 'about5', 'city5', '5@gmail.com', 'fullname5', 'https://img.com/5', false, true, '2023-03-01 13:45:13.76366', 'https://github.com/5', '5.com', 'https://vk.com/5', 'nickname5', '$2a$10$STxp2IlLSM1EJYG3/1ynuemJe7wvROVBiVJLrkW7GnLGikLW1IXxC', '2023-03-01 13:45:13.76366', 200)
-;
+INSERT INTO "tag"
+("id", "description", "name", "persist_date")
+VALUES (100, 'description100', 'name1', CURRENT_TIMESTAMP - INTERVAL '9 days'),
+       (101, 'description101', 'name2', CURRENT_TIMESTAMP - INTERVAL '8 days'),
+       (102, 'description102', 'name3', CURRENT_TIMESTAMP - INTERVAL '7 days'),
+       (103, 'description103', 'name5', CURRENT_TIMESTAMP - INTERVAL '6 days'),
+       (104, 'description104', 'name4', CURRENT_TIMESTAMP - INTERVAL '5 days'),
+       (105, 'description105', 'name6', CURRENT_TIMESTAMP - INTERVAL '4 days'),
+       (106, 'description106', 'name7', CURRENT_TIMESTAMP - INTERVAL '3 days'),
+       (107, 'description107', 'name9', CURRENT_TIMESTAMP - INTERVAL '2 days'),
+       (108, 'description108', 'name8', CURRENT_TIMESTAMP - INTERVAL '1 days');
+
+INSERT INTO "question_has_tag"
+("question_id", "tag_id")
+VALUES (100,100),
+       (101,101),
+       (102,101),
+       (103,102),
+       (104,102),
+       (105,102),
+       (106,103),
+       (107,103),
+       (108,103),
+       (100,104),
+       (101,104),
+       (102,104),
+       (103,104),
+       (104,105),
+       (105,106),
+       (106,107),
+       (107,108),
+       (108,108);

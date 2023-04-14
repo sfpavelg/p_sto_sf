@@ -7,4 +7,6 @@ import java.util.List;
 
 public interface AnswerDtoDao {
     List<AnswerDto> getAllByQuestionId(Long id);
+
+    Long getCountPerWeekByUserId(Long userId);
 }
