@@ -6,6 +6,7 @@ import com.javamentor.qa.platform.models.dto.user.UserProfileQuestionDto;
 import com.javamentor.qa.platform.service.abstracts.dto.user.UserProfileQuestionDtoService;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -26,5 +27,17 @@ public class UserProfileQuestionDtoServiceImpl implements UserProfileQuestionDto
                 userProfileQuestionDto -> userProfileQuestionDto.setTags(
                         tagDtoDao.getTagDtoById(userProfileQuestionDto.getQuestionId())
                 )).collect(Collectors.toList());
+    }
+
+    @Override
+    public List<UserProfileQuestionDto> getAllUserRemovedQuestion(Long id) {
+        List<UserProfileQuestionDto> list = new ArrayList<>();
+        userDtoDao.getAllUserRemovedQuestion(id).stream().forEach(userProfileQuestionDto -> {
+            userProfileQuestionDto
+                    .setTags(tagDtoDao.getTagDtoById(userProfileQuestionDto.getQuestionId()));
+
+            list.add(userProfileQuestionDto);
+        });
+        return list;
     }
 }
