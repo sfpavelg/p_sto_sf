@@ -16,13 +16,12 @@ import com.javamentor.qa.platform.service.abstracts.model.*;
 import com.javamentor.qa.platform.service.abstracts.model.tag.IgnoredTagService;
 import com.javamentor.qa.platform.service.abstracts.model.tag.TagService;
 import com.javamentor.qa.platform.service.abstracts.model.tag.TrackedTagService;
+import io.swagger.models.auth.In;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -334,10 +333,11 @@ public class TestDataInitService {
     }
 
     public void createBookMarks(int count) {
+
         for (int i = 0; i < count; i++) {
             BookMarks bookMarks = new BookMarks();
-            bookMarks.setUser(userService.getAll().get(rand(0, 20)));
-            bookMarks.setQuestion(questionService.getAll().get(rand(1, 8)));
+            bookMarks.setUser(userService.getAll().get(i));
+            bookMarks.setQuestion(questionService.getAll().get(i));
             bookMarkService.persist(bookMarks);
         }
     }
