@@ -4,15 +4,14 @@ import com.javamentor.qa.platform.models.dto.PageDto;
 import com.javamentor.qa.platform.models.dto.question.QuestionCommentDto;
 import com.javamentor.qa.platform.models.dto.question.QuestionCreateDto;
 import com.javamentor.qa.platform.models.dto.question.QuestionDto;
+import com.javamentor.qa.platform.models.entity.BookMarks;
 import com.javamentor.qa.platform.models.entity.question.CommentQuestion;
 import com.javamentor.qa.platform.models.entity.question.Question;
 import com.javamentor.qa.platform.models.entity.question.Tag;
 import com.javamentor.qa.platform.models.entity.user.User;
 import com.javamentor.qa.platform.service.abstracts.dto.question.CommentDtoService;
 import com.javamentor.qa.platform.service.abstracts.dto.question.QuestionDtoService;
-import com.javamentor.qa.platform.service.abstracts.model.CommentQuestionService;
-import com.javamentor.qa.platform.service.abstracts.model.QuestionService;
-import com.javamentor.qa.platform.service.abstracts.model.VoteQuestionService;
+import com.javamentor.qa.platform.service.abstracts.model.*;
 import com.javamentor.qa.platform.webapp.converters.QuestionConverter;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -49,6 +48,8 @@ public class QuestionResourceController {
     private final VoteQuestionService voteQuestionService;
     private final CommentDtoService commentDtoService;
     private final CommentQuestionService commentQuestionService;
+    private final UserService userService;
+    private final BookmarkService bookmarkService;
 
 
     @GetMapping("/{id}")
@@ -196,14 +197,14 @@ public class QuestionResourceController {
     /**
      * The method returns JSON with a paginated list of QuestionDTO objects, sorted by newest..
      *
-     * @param pageNumber        Page number of the page to be displayed. The parameter must be greater than zero.
-     * @param itemsCountOnPage  Optional parameter. The number of items per page. The default value is 10.
-     *                          The parameter must be greater than zero
-     * @param trackedTag        Optional parameter, contains a list of ID tags of the {@link Tag} entity, for which it
-     *                          is necessary to give a list of unanswered questions.
-     * @param ignoredTag        Optional parameter, contains a list of ID tags of the {@link Tag} entity that should be
-     *                          ignored when displaying a list of unanswered questions. If the question contains at least
-     *                          one ignored tag, the question is not output.
+     * @param pageNumber       Page number of the page to be displayed. The parameter must be greater than zero.
+     * @param itemsCountOnPage Optional parameter. The number of items per page. The default value is 10.
+     *                         The parameter must be greater than zero
+     * @param trackedTag       Optional parameter, contains a list of ID tags of the {@link Tag} entity, for which it
+     *                         is necessary to give a list of unanswered questions.
+     * @param ignoredTag       Optional parameter, contains a list of ID tags of the {@link Tag} entity that should be
+     *                         ignored when displaying a list of unanswered questions. If the question contains at least
+     *                         one ignored tag, the question is not output.
      * @return {@link ResponseEntity} with status Ok and {@link PageDto<QuestionDto>} in body.
      */
     @GetMapping("/new")
@@ -245,5 +246,24 @@ public class QuestionResourceController {
         commentQuestion.setQuestion(question.get());
         commentQuestionService.persist(commentQuestion);
         return ResponseEntity.ok(commentDtoService.getCommentById(commentQuestion.getComment().getId()));
+    }
+
+    @PostMapping("/{questionId}/bookmark")
+    @ApiOperation(value = "Add question to user bookmark.", response = Long.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Success request."),
+            @ApiResponse(code = 401, message = "Unauthorized request"),
+            @ApiResponse(code = 403, message = "Forbidden"),
+            @ApiResponse(code = 400, message = "Invalid password"),
+            @ApiResponse(code = 404, message = "Incorrect id Question. Question with id not found")})
+    public ResponseEntity<?> addQuestionToCurrentUserBookmark(@PathVariable("questionId") Long questionId,
+                                                              @AuthenticationPrincipal User user) {
+        User authorizedUser = userService.getById(user.getId()).orElseThrow(() -> new RuntimeException("User not found"));
+        Question question = questionService.getById(questionId).orElseThrow(() -> new RuntimeException("Question not found"));
+        BookMarks bookMark = new BookMarks();
+        bookMark.setUser(authorizedUser);
+        bookMark.setQuestion(question);
+        bookmarkService.persist(bookMark);
+        return ResponseEntity.ok("Bookmark successfully added");
     }
 }
