@@ -20,4 +20,9 @@ public class AnswerDtoServiceImpl implements AnswerDtoService {
     public List<AnswerDto> getAllByQuestionId(Long id) throws NotFoundException {
         return answerDtoDao.getAllByQuestionId(id);
     }
+
+    @Override
+    public Long getCountAllAnswersPerWeekByUserId(Long userId) {
+        return answerDtoDao.getCountPerWeekByUserId(userId);
+    }
 }
