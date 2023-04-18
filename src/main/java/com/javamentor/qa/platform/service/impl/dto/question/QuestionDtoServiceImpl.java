@@ -14,11 +14,8 @@ import com.javamentor.qa.platform.service.abstracts.dto.question.QuestionDtoServ
 import javassist.NotFoundException;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.List;
-import java.util.Optional;
-import java.util.ArrayList;
+import java.time.LocalDateTime;
+import java.util.*;
 
 import static java.util.stream.Collectors.toList;
 
@@ -113,11 +110,10 @@ public class QuestionDtoServiceImpl extends PageDtoService<QuestionDto> implemen
 
         return pageDto;
     }
-
     @Override
     public PageDto<QuestionDto> getPageWithListMostPopularQuestionForMonthDto(HashMap<String, Object> param) throws NotFoundException {
         param.put("daoDtoImpl", "questionDtoDaoSortedByPopularityForMonthImpl");
-
+        param.put("monthAgo", "'" + LocalDateTime.now().minusMonths(1) + "'");
         PageDto<QuestionDto> pageDto = pageDto(param);
         List<QuestionDto> listQuestionDto = pageDto.getItems();
         List<Long> questionId = listQuestionDto.stream().map(QuestionDto::getId).collect(toList());
