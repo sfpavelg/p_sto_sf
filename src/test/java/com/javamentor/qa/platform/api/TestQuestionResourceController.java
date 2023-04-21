@@ -933,14 +933,25 @@ class TestQuestionResourceController extends AbstractTestApi {
     @Sql(value = {"/script/TestQuestionResourceController/testAddQuestionToCurrentUserBookmark/After.sql"}, executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
     public void testAddQuestionToCurrentUserBookmark() throws Exception {
         String token = getToken("0@gmail.com", "0pwd");
+        //Тест на добавление вопроса в закладки.
         this.mvc.perform(post("/api/user/question/{questionId}/bookmark", 100)
                 .header("Authorization", "Bearer " + token))
-//                .contentType(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$",Is.is("Bookmark successfully added")))
-                .andExpect(jsonPath("$.id", Is.is(1)));
-//                .andExpect(jsonPath("$.question_id",Is.is(100)))
-//                .andExpect(jsonPath("$.user_id",Is.is(100)));
+                .andExpect(jsonPath("$.id", Is.is(1)))
+                .andExpect(jsonPath("$.questionId",Is.is(100)))
+                .andExpect(jsonPath("$.userId",Is.is(100)));
+        //Тест на добавление несуществующего вопроса.
+        this.mvc.perform(post("/api/user/question/{questionId}/bookmark", 120)
+                        .header("Authorization", "Bearer " + token))
+                .andDo(print())
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$", Is.is("Question not found")));
+        //Тест на добавление одного и того же вопроса.
+        this.mvc.perform(post("/api/user/question/{questionId}/bookmark", 100)
+                        .header("Authorization", "Bearer " + token))
+                .andDo(print())
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$", Is.is("Question already exist")));
     }
 }

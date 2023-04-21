@@ -79,9 +79,6 @@ public class Question implements Serializable {
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "question", orphanRemoval = true)
     private List<VoteQuestion> voteQuestions = new ArrayList<>();
 
-//    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "question", orphanRemoval = true)
-//    private List<BookMarks> bookMarks;
-
     @PrePersist
     private void prePersistFunction() {
         checkConstraints();
