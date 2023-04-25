@@ -82,7 +82,7 @@ public class TestDataInitService {
             user.setLinkGitHub("https://github.com/" + i);
             user.setLinkVk("https://vk.com/" + i);
             user.setAbout("about" + i);
-            user.setImageLink("https://img.com/" + i);
+            user.setImageLink("https://cdn-icons-png.flaticon.com/512/1144/1144709.png");
             user.setNickname("supernickname" + i);
             user.setRole(ROLE_ADMIN);
             userService.persist(user);
@@ -102,7 +102,7 @@ public class TestDataInitService {
             user.setLinkGitHub("https://github.com/" + i);
             user.setLinkVk("https://vk.com/" + i);
             user.setAbout("about" + i);
-            user.setImageLink("https://img.com/" + i);
+            user.setImageLink("https://cdn-icons-png.flaticon.com/512/1144/1144760.png");
             user.setNickname("nickname" + i);
             user.setRole(ROLE_USER);
             userService.persist(user);
