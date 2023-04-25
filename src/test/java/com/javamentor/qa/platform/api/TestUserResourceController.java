@@ -369,18 +369,19 @@ public class TestUserResourceController extends AbstractTestApi {
                 .andExpect(jsonPath("$.totalPageCount", Is.is(25)))
                 .andExpect(jsonPath("$.totalResultCount", Is.is(50)))
                 .andExpect(jsonPath("$.itemsOnPage", Is.is(2)))
-                .andExpect(jsonPath("$.items[0].id", Is.is(103)))
-                .andExpect(jsonPath("$.items[0].email", Is.is("super2@gmail.com")))
-                .andExpect(jsonPath("$.items[0].fullName", Is.is("superfullname2")))
-                .andExpect(jsonPath("$.items[0].city", Is.is("city2")))
-                .andExpect(jsonPath("$.items[0].imageLink", Is.is("https://img.com/2")))
-                .andExpect(jsonPath("$.items[0].reputation", Is.is(3)))
-                .andExpect(jsonPath("$.items[1].id", Is.is(104)))
-                .andExpect(jsonPath("$.items[1].email", Is.is("super3@gmail.com")))
-                .andExpect(jsonPath("$.items[1].fullName", Is.is("superfullname3")))
-                .andExpect(jsonPath("$.items[1].city", Is.is("city3")))
-                .andExpect(jsonPath("$.items[1].imageLink", Is.is("https://img.com/3")))
-                .andExpect(jsonPath("$.items[1].reputation", Is.is(4)));
+                .andExpect(jsonPath("$.items[0].id", Is.is(148)))
+                .andExpect(jsonPath("$.items[0].email", Is.is("42@gmail.com")))
+                .andExpect(jsonPath("$.items[0].fullName", Is.is("fullname42")))
+                .andExpect(jsonPath("$.items[0].city", Is.is("city42")))
+                .andExpect(jsonPath("$.items[0].imageLink", Is.is("https://img.com/42")))
+                .andExpect(jsonPath("$.items[0].reputation", Is.is(48)))
+
+                .andExpect(jsonPath("$.items[1].id", Is.is(147)))
+                .andExpect(jsonPath("$.items[1].email", Is.is("41@gmail.com")))
+                .andExpect(jsonPath("$.items[1].fullName", Is.is("fullname41")))
+                .andExpect(jsonPath("$.items[1].city", Is.is("city41")))
+                .andExpect(jsonPath("$.items[1].imageLink", Is.is("https://img.com/41")))
+                .andExpect(jsonPath("$.items[1].reputation", Is.is(47)));
 
         // Positive Test. Output of the second page in order without specifying the optional parameter "items"
         this.mvc.perform(get("/api/user/reputation")
@@ -393,12 +394,12 @@ public class TestUserResourceController extends AbstractTestApi {
                 .andExpect(jsonPath("$.totalPageCount", Is.is(5)))
                 .andExpect(jsonPath("$.totalResultCount", Is.is(50)))
                 .andExpect(jsonPath("$.itemsOnPage", Is.is(10)))
-                .andExpect(jsonPath("$.items[0].id", Is.is(111)))
-                .andExpect(jsonPath("$.items[0].email", Is.is("5@gmail.com")))
-                .andExpect(jsonPath("$.items[0].fullName", Is.is("fullname5")))
-                .andExpect(jsonPath("$.items[0].city", Is.is("city5")))
-                .andExpect(jsonPath("$.items[0].imageLink", Is.is("https://img.com/5")))
-                .andExpect(jsonPath("$.items[0].reputation", Is.is(11)));
+                .andExpect(jsonPath("$.items[0].id", Is.is(140)))
+                .andExpect(jsonPath("$.items[0].email", Is.is("34@gmail.com")))
+                .andExpect(jsonPath("$.items[0].fullName", Is.is("fullname34")))
+                .andExpect(jsonPath("$.items[0].city", Is.is("city34")))
+                .andExpect(jsonPath("$.items[0].imageLink", Is.is("https://img.com/34")))
+                .andExpect(jsonPath("$.items[0].reputation", Is.is(40)));
 
         // Negative Test. A negative page number is set incorrect
         this.mvc.perform(get("/api/user/reputation")
