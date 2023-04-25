@@ -1,6 +1,5 @@
 package com.javamentor.qa.platform.webapp.controllers.rest;
 
-import com.javamentor.qa.platform.dao.abstracts.model.BookmarkDao;
 import com.javamentor.qa.platform.models.dto.PageDto;
 import com.javamentor.qa.platform.models.dto.question.QuestionCommentDto;
 import com.javamentor.qa.platform.models.dto.question.QuestionCreateDto;
@@ -23,14 +22,8 @@ import javassist.NotFoundException;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.HashMap;
@@ -266,10 +259,7 @@ public class QuestionResourceController {
             @ApiResponse(code = 404, message = "Incorrect id Question. Question with id not found")})
     public ResponseEntity<?> addQuestionToCurrentUserBookmark(@PathVariable("questionId") Long questionId,
                                                               @AuthenticationPrincipal User user) throws NotFoundException {
-        BookMarks bookMarks = new BookMarks();
-        bookmarkService.persistByQuestionId(questionId, user, bookMarks);
-        return ResponseEntity.ok()
-                .header("message", "Bookmark successfully added")
-                .body(bookmarkDtoService.getBookmarkById(bookMarks.getId()));
+        BookMarks bookMark = bookmarkService.persistByQuestionId(questionId, user);
+        return ResponseEntity.ok(bookmarkDtoService.getBookmarkById(bookMark.getId()));
     }
 }
