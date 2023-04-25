@@ -2,8 +2,11 @@ package com.javamentor.qa.platform.webapp.controllers.rest;
 
 import com.javamentor.qa.platform.models.dto.PageDto;
 import com.javamentor.qa.platform.models.dto.user.UserDto;
+import com.javamentor.qa.platform.models.dto.user.UserProfileQuestionDto;
 import com.javamentor.qa.platform.models.entity.user.User;
+import com.javamentor.qa.platform.service.abstracts.dto.answer.AnswerDtoService;
 import com.javamentor.qa.platform.service.abstracts.dto.user.UserDtoService;
+import com.javamentor.qa.platform.service.abstracts.dto.user.UserProfileQuestionDtoService;
 import com.javamentor.qa.platform.service.abstracts.model.UserService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -13,6 +16,7 @@ import javassist.NotFoundException;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -23,6 +27,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.HashMap;
+import java.util.List;
 
 @RestController
 @AllArgsConstructor
@@ -31,8 +36,10 @@ import java.util.HashMap;
 public class UserResourceController {
 
     private final UserDtoService userDtoService;
-
     private final UserService userService;
+    private final UserProfileQuestionDtoService userProfileQuestionDtoService;
+    private final AnswerDtoService answerDtoService;
+
 
     @GetMapping("/{id}")
     @ApiOperation(value = "Get user", response = UserDto.class)
@@ -76,7 +83,7 @@ public class UserResourceController {
             @ApiResponse(code = 403, message = "Forbidden"),
             @ApiResponse(code = 404, message = "Users don't exist")})
     public ResponseEntity<?> getAllUsersByPersistDateAndTime(@RequestParam(defaultValue = "1") int currentPageNumber,
-                                         @RequestParam(defaultValue = "10") int itemsOnPage) throws NotFoundException {
+                                                             @RequestParam(defaultValue = "10") int itemsOnPage) throws NotFoundException {
         HashMap<String, Object> param = new HashMap<>();
         param.put("currentPageNumber", currentPageNumber);
         param.put("itemsOnPage", itemsOnPage);
@@ -110,4 +117,45 @@ public class UserResourceController {
         return ResponseEntity.ok(userDtoService.getAllUsersByVotes(parameters));
     }
 
+    @GetMapping("/profile/questions")
+    @ApiOperation(
+            value = "Getting all UserProfileQuestionDto of authorized User",
+            response = UserProfileQuestionDto.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Success request. List of UserProfileQuestionDto has been successfully returned"),
+            @ApiResponse(code = 400, message = "Invalid password"),
+            @ApiResponse(code = 403, message = "Forbidden"),
+    })
+    public ResponseEntity<?> getAllUserAuthorizedQuestions(@AuthenticationPrincipal User user) {
+        return ResponseEntity.ok(userProfileQuestionDtoService.getAllUserProfileQuestionDtoByUserId(user.getId()));
+    }
+
+
+    /**
+     * Method return JSON with list all removed questions
+     * @return {@link ResponseEntity} with status Ok and {@link List <UserProfileQuestionDto>} in body
+     */
+    @GetMapping("/profile/delete/questions")
+    @ApiOperation(
+            value = "Getting all removed UserProfileQuestionDto",
+            response = UserProfileQuestionDto.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Success request. UserProfileQuestionDto has been successfully returned"),
+            @ApiResponse(code = 400, message = "Invalid password"),
+            @ApiResponse(code = 403, message = "Forbidden")})
+    public ResponseEntity <?> getUserRemovedQuestion (@AuthenticationPrincipal User user) {
+        return ResponseEntity.ok(userProfileQuestionDtoService.getAllUserRemovedQuestion(user.getId()));
+    }
+
+    @GetMapping("/profile/question/week")
+    @ApiOperation(
+            value = "Getting the count of all user's answers by user ID per week")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Success request. The count of all user's answers has been successfully returned"),
+            @ApiResponse(code = 400, message = "Invalid password"),
+            @ApiResponse(code = 403, message = "Forbidden")})
+    public ResponseEntity<?> getAllAuthorizedUserAnswersPerWeek(@AuthenticationPrincipal User user) {
+        return ResponseEntity.ok(answerDtoService.getCountAllAnswersPerWeekByUserId(user.getId()));
+    }
 }
+

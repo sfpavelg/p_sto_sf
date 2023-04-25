@@ -25,13 +25,16 @@ import javassist.NotFoundException;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+
 import org.springframework.web.bind.annotation.RequestBody;
 
 import javax.validation.Valid;
@@ -201,14 +204,14 @@ public class QuestionResourceController {
     /**
      * The method returns JSON with a paginated list of QuestionDTO objects, sorted by newest..
      *
-     * @param pageNumber       Page number of the page to be displayed. The parameter must be greater than zero.
-     * @param itemsCountOnPage Optional parameter. The number of items per page. The default value is 10.
-     *                         The parameter must be greater than zero
-     * @param trackedTag       Optional parameter, contains a list of ID tags of the {@link Tag} entity, for which it
-     *                         is necessary to give a list of unanswered questions.
-     * @param ignoredTag       Optional parameter, contains a list of ID tags of the {@link Tag} entity that should be
-     *                         ignored when displaying a list of unanswered questions. If the question contains at least
-     *                         one ignored tag, the question is not output.
+     * @param pageNumber        Page number of the page to be displayed. The parameter must be greater than zero.
+     * @param itemsCountOnPage  Optional parameter. The number of items per page. The default value is 10.
+     *                          The parameter must be greater than zero
+     * @param trackedTag        Optional parameter, contains a list of ID tags of the {@link Tag} entity, for which it
+     *                          is necessary to give a list of unanswered questions.
+     * @param ignoredTag        Optional parameter, contains a list of ID tags of the {@link Tag} entity that should be
+     *                          ignored when displaying a list of unanswered questions. If the question contains at least
+     *                          one ignored tag, the question is not output.
      * @return {@link ResponseEntity} with status Ok and {@link PageDto<QuestionDto>} in body.
      */
     @GetMapping("/new")

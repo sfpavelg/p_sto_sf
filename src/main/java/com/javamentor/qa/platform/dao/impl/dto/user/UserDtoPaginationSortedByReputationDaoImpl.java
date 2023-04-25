@@ -25,7 +25,7 @@ public class UserDtoPaginationSortedByReputationDaoImpl implements UserDtoPagina
                                 "cast(coalesce(sum(r.count), 0) as integer ) as rep )  " +
                                 "from User u left join Reputation r with r.author.id = u.id " +
                                 "group by u.id " +
-                                "order by rep asc ",
+                                "order by rep desc ",
                         UserDto.class)
                 .setMaxResults(itemsOnPageParam)
                 .setFirstResult(itemsPositionParam);

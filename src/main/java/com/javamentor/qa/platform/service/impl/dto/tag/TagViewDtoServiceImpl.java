@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
 import java.util.Map;
+
 @Service
 public class TagViewDtoServiceImpl extends PageDtoService<TagViewDto> implements TagViewDtoService {
 
@@ -17,8 +18,26 @@ public class TagViewDtoServiceImpl extends PageDtoService<TagViewDto> implements
     }
 
     @Override
-    public PageDto<TagViewDto> getSortedByDateTagList(HashMap<String, Object> params){
+    public PageDto<TagViewDto> getSortedByDateTagList(HashMap<String, Object> params) {
         params.put("daoDtoImpl", "tagViewDtoDaoImpl");
         return pageDto(params);
+    }
+
+    @Override
+    public PageDto<TagViewDto> getPageWithListTagDtoSortedByName(HashMap<String, Object> param) {
+        param.put("daoDtoImpl", "tagDtoPaginationSortedByNameDaoImpl");
+        return pageDto(param);
+    }
+
+    @Override
+    public PageDto<TagViewDto> getSortedByPopularity(HashMap<String, Object> params) {
+        params.put("daoDtoImpl", "tagPageByPopularityImpl");
+        return pageDto(params);
+    }
+
+    @Override
+    public PageDto<TagViewDto> getPageWithListTagDtoSortedBySyllable(HashMap<String, Object> param) {
+        param.put("daoDtoImpl", "tagDtoPaginationSortedBySyllableDaoImpl");
+        return pageDto(param);
     }
 }
