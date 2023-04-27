@@ -113,7 +113,7 @@ public class QuestionDtoServiceImpl extends PageDtoService<QuestionDto> implemen
     @Override
     public PageDto<QuestionDto> getPageWithListMostPopularQuestionForMonthDto(HashMap<String, Object> param) throws NotFoundException {
         param.put("daoDtoImpl", "questionDtoDaoSortedByPopularityForMonthImpl");
-        param.put("monthAgo", "'" + LocalDateTime.now().minusMonths(1) + "'");
+        param.put("monthAgo", LocalDateTime.now().minusMonths(1));
         PageDto<QuestionDto> pageDto = pageDto(param);
         List<QuestionDto> listQuestionDto = pageDto.getItems();
         List<Long> questionId = listQuestionDto.stream().map(QuestionDto::getId).collect(toList());
