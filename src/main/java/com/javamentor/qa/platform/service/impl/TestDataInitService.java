@@ -1,5 +1,6 @@
 package com.javamentor.qa.platform.service.impl;
 
+import com.javamentor.qa.platform.models.entity.BookMarks;
 import com.javamentor.qa.platform.models.entity.Comment;
 import com.javamentor.qa.platform.models.entity.CommentType;
 import com.javamentor.qa.platform.models.entity.question.*;
@@ -15,13 +16,12 @@ import com.javamentor.qa.platform.service.abstracts.model.*;
 import com.javamentor.qa.platform.service.abstracts.model.tag.IgnoredTagService;
 import com.javamentor.qa.platform.service.abstracts.model.tag.TagService;
 import com.javamentor.qa.platform.service.abstracts.model.tag.TrackedTagService;
+import io.swagger.models.auth.In;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -44,6 +44,7 @@ public class TestDataInitService {
     private final CommentQuestionService commentQuestionService;
     private final CommentAnswerService commentAnswerService;
     private final ReputationService reputationService;
+    private final BookMarkService bookMarkService;
 
     @Autowired
     public TestDataInitService(RoleService roleService, UserService userService, QuestionService questionService,
@@ -51,7 +52,7 @@ public class TestDataInitService {
                                TrackedTagService trackedTagService, QuestionViewedService questionViewedService,
                                VoteQuestionService voteQuestionService, VoteAnswerService voteAnswerService,
                                CommentQuestionService commentQuestionService, CommentAnswerService commentAnswerService,
-                               ReputationService reputationService) {
+                               ReputationService reputationService, BookMarkService bookMarkService) {
         this.roleService = roleService;
         this.userService = userService;
         this.questionService = questionService;
@@ -65,6 +66,7 @@ public class TestDataInitService {
         this.commentQuestionService = commentQuestionService;
         this.commentAnswerService = commentAnswerService;
         this.reputationService = reputationService;
+        this.bookMarkService = bookMarkService;
     }
 
     public void createSuperUser(int count) {
@@ -80,7 +82,7 @@ public class TestDataInitService {
             user.setLinkGitHub("https://github.com/" + i);
             user.setLinkVk("https://vk.com/" + i);
             user.setAbout("about" + i);
-            user.setImageLink("https://img.com/" + i);
+            user.setImageLink("https://cdn-icons-png.flaticon.com/512/1144/1144709.png");
             user.setNickname("supernickname" + i);
             user.setRole(ROLE_ADMIN);
             userService.persist(user);
@@ -100,7 +102,7 @@ public class TestDataInitService {
             user.setLinkGitHub("https://github.com/" + i);
             user.setLinkVk("https://vk.com/" + i);
             user.setAbout("about" + i);
-            user.setImageLink("https://img.com/" + i);
+            user.setImageLink("https://cdn-icons-png.flaticon.com/512/1144/1144760.png");
             user.setNickname("nickname" + i);
             user.setRole(ROLE_USER);
             userService.persist(user);
@@ -330,6 +332,16 @@ public class TestDataInitService {
         }
     }
 
+    public void createBookMarks(int count) {
+
+        for (int i = 0; i < count; i++) {
+            BookMarks bookMarks = new BookMarks();
+            bookMarks.setUser(userService.getAll().get(i));
+            bookMarks.setQuestion(questionService.getAll().get(i));
+            bookMarkService.persist(bookMarks);
+        }
+    }
+
     public void init() {
         roleService.persist(ROLE_ADMIN);
         roleService.persist(ROLE_USER);
@@ -345,5 +357,6 @@ public class TestDataInitService {
         createCommentQuestion(20);
         createCommentAnswer(20);
         createReputation();
+        createBookMarks(10);
     }
 }
