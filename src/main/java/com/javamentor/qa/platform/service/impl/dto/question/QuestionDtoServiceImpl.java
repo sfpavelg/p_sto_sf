@@ -2,10 +2,10 @@ package com.javamentor.qa.platform.service.impl.dto.question;
 
 import com.javamentor.qa.platform.dao.abstracts.dto.PageDtoDao;
 import com.javamentor.qa.platform.dao.abstracts.dto.answer.AnswerDtoDao;
-import com.javamentor.qa.platform.dao.abstracts.dto.question.QuestionDtoDao;
-import com.javamentor.qa.platform.dao.abstracts.dto.question.QuestionDtoSortedByNewestDao;
-import com.javamentor.qa.platform.dao.abstracts.dto.question.QuestionDtoDaoSortedByPopularity;
-import com.javamentor.qa.platform.dao.abstracts.dto.question.QuestionDtoWithoutAnswerPaginationDao;
+import com.javamentor.qa.platform.dao.abstracts.dto.question.pagination.QuestionDtoDao;
+import com.javamentor.qa.platform.dao.abstracts.dto.question.pagination.QuestionDtoSortedByNewestDao;
+import com.javamentor.qa.platform.dao.abstracts.dto.question.pagination.QuestionDtoDaoSortedByPopularity;
+import com.javamentor.qa.platform.dao.abstracts.dto.question.pagination.QuestionDtoWithoutAnswerPaginationDao;
 import com.javamentor.qa.platform.dao.abstracts.dto.tag.TagDtoDao;
 import com.javamentor.qa.platform.models.dto.PageDto;
 import com.javamentor.qa.platform.models.dto.answer.AnswerDto;

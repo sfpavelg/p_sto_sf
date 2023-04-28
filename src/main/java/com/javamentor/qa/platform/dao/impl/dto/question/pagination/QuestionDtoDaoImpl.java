@@ -1,6 +1,6 @@
-package com.javamentor.qa.platform.dao.impl.dto.question;
+package com.javamentor.qa.platform.dao.impl.dto.question.pagination;
 
-import com.javamentor.qa.platform.dao.abstracts.dto.question.QuestionDtoDao;
+import com.javamentor.qa.platform.dao.abstracts.dto.question.pagination.QuestionDtoDao;
 import com.javamentor.qa.platform.dao.util.SingleResultUtil;
 import com.javamentor.qa.platform.models.dto.question.QuestionViewDto;
 import org.springframework.stereotype.Repository;
@@ -20,7 +20,7 @@ public class QuestionDtoDaoImpl implements QuestionDtoDao {
     @Override
     public Optional<QuestionViewDto> getQuestionDtoById(Long id) {
         Query query = entityManager.createQuery(
-                        "select new com.javamentor.qa.platform.models.dto.question.QuestionViewDto ( q.id, " +
+                        "select new com.javamentor.qa.platform.models.dto.question.pagination.QuestionViewDto ( q.id, " +
                                 "q.title , " +
                                 "u.id, " +
                                 "coalesce(sum(r.count),0), " +
@@ -33,7 +33,6 @@ public class QuestionDtoDaoImpl implements QuestionDtoDao {
                                 "(select count(vq.question.id) from VoteQuestion vq where vq.question.id = :id and vq.vote = 'down'), " +
                                 "q.persistDateTime, " +
                                 "q.lastUpdateDateTime) " +
-
                                 "from Question q " +
                                 "LEFT JOIN User u ON u.id = q.user.id " +
                                 "LEFT JOIN Reputation r ON u.id = r.author.id " +

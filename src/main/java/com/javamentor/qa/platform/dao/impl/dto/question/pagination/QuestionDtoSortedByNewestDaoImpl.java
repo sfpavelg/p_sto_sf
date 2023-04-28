@@ -1,6 +1,6 @@
-package com.javamentor.qa.platform.dao.impl.dto.question;
+package com.javamentor.qa.platform.dao.impl.dto.question.pagination;
 
-import com.javamentor.qa.platform.dao.abstracts.dto.question.QuestionDtoSortedByNewestDao;
+import com.javamentor.qa.platform.dao.abstracts.dto.question.pagination.QuestionDtoSortedByNewestDao;
 import com.javamentor.qa.platform.models.dto.question.QuestionViewDto;
 import org.springframework.stereotype.Repository;
 
@@ -19,7 +19,7 @@ public class QuestionDtoSortedByNewestDaoImpl implements QuestionDtoSortedByNewe
         int itemsOnPageParam = (int) param.get("itemsOnPage");
         int itemsPositionParam = (int) param.get("currentPageNumber") * itemsOnPageParam - itemsOnPageParam;
         return entityManager.createQuery(
-                        "SELECT new com.javamentor.qa.platform.models.dto.question.QuestionViewDto( " +
+                        "SELECT new com.javamentor.qa.platform.models.dto.question.pagination.QuestionViewDto( " +
                                 "q.id, q.title , q.user.id, " +
                                 "(SELECT coalesce(sum(rep.count),0) FROM Reputation rep WHERE rep.author.id = q.user.id), " +
                                 "q.user.fullName, q.user.imageLink, q.description , " +

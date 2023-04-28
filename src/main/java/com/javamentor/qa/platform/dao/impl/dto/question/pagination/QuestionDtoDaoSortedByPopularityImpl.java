@@ -1,6 +1,6 @@
-package com.javamentor.qa.platform.dao.impl.dto.question;
+package com.javamentor.qa.platform.dao.impl.dto.question.pagination;
 
-import com.javamentor.qa.platform.dao.abstracts.dto.question.QuestionDtoDaoSortedByPopularity;
+import com.javamentor.qa.platform.dao.abstracts.dto.question.pagination.QuestionDtoDaoSortedByPopularity;
 import com.javamentor.qa.platform.models.dto.question.QuestionViewDto;
 import org.springframework.stereotype.Repository;
 
@@ -20,7 +20,7 @@ public class QuestionDtoDaoSortedByPopularityImpl implements QuestionDtoDaoSorte
         int itemsPositionParam = (int) param.get("currentPageNumber") * itemsOnPageParam - itemsOnPageParam;
 
         return entityManager.createQuery(
-                        "SELECT new com.javamentor.qa.platform.models.dto.question.QuestionViewDto ( " +
+                        "SELECT new com.javamentor.qa.platform.models.dto.question.pagination.QuestionViewDto ( " +
                                 "q.id, " +
                                 "q.title , " +
                                 "q.user.id, " +
