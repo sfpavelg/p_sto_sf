@@ -26,7 +26,7 @@ public class QuestionDtoWithoutAnswerPaginationDaoImpl implements QuestionDtoWit
         List<Long> trackedTag = (List<Long>) param.get("trackedTag");
         List<Long> ignoredTag = (List<Long>) param.get("ignoredTag");
         Query query = entityManager.createQuery(
-                        "SELECT new com.javamentor.qa.platform.models.dto.question.pagination.QuestionViewDto( " +
+                        "SELECT new com.javamentor.qa.platform.models.dto.question.QuestionViewDto( " +
                                 "q.id, q.title , q.user.id, " +
                                 "(SELECT coalesce(sum(rep.count),0) FROM Reputation rep WHERE rep.author.id = q.user.id), " +
                                 "q.user.fullName, q.user.imageLink, q.description , " +

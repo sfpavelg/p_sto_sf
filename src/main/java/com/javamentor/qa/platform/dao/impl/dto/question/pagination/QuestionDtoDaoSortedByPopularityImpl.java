@@ -20,7 +20,7 @@ public class QuestionDtoDaoSortedByPopularityImpl implements QuestionDtoDaoSorte
         int itemsPositionParam = (int) param.get("currentPageNumber") * itemsOnPageParam - itemsOnPageParam;
 
         return entityManager.createQuery(
-                        "SELECT new com.javamentor.qa.platform.models.dto.question.pagination.QuestionViewDto ( " +
+                        "SELECT new com.javamentor.qa.platform.models.dto.question.QuestionViewDto ( " +
                                 "q.id, " +
                                 "q.title , " +
                                 "q.user.id, " +

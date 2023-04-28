@@ -20,7 +20,7 @@ public class QuestionDtoDaoImpl implements QuestionDtoDao {
     @Override
     public Optional<QuestionViewDto> getQuestionDtoById(Long id) {
         Query query = entityManager.createQuery(
-                        "select new com.javamentor.qa.platform.models.dto.question.pagination.QuestionViewDto ( q.id, " +
+                        "select new com.javamentor.qa.platform.models.dto.question.QuestionViewDto ( q.id, " +
                                 "q.title , " +
                                 "u.id, " +
                                 "coalesce(sum(r.count),0), " +
