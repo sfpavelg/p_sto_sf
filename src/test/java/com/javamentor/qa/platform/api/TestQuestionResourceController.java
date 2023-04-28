@@ -1,13 +1,5 @@
 package com.javamentor.qa.platform.api;
 
-import static org.hamcrest.Matchers.hasSize;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-
 import com.javamentor.qa.platform.AbstractTestApi;
 import com.javamentor.qa.platform.models.dto.question.QuestionCreateDto;
 import com.javamentor.qa.platform.models.dto.tag.TagDto;
@@ -19,6 +11,12 @@ import org.springframework.test.context.jdbc.Sql;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static org.hamcrest.Matchers.hasSize;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 
 class TestQuestionResourceController extends AbstractTestApi {
@@ -929,5 +927,31 @@ class TestQuestionResourceController extends AbstractTestApi {
                         .content(""))
                 .andDo(print())
                 .andExpect(status().isBadRequest());
+    }
+    @Test
+    @Sql(value = {"/script/TestQuestionResourceController/testAddQuestionToCurrentUserBookmark/Before.sql"}, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+    @Sql(value = {"/script/TestQuestionResourceController/testAddQuestionToCurrentUserBookmark/After.sql"}, executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
+    public void testAddQuestionToCurrentUserBookmark() throws Exception {
+        String token = getToken("0@gmail.com", "0pwd");
+        //Тест на добавление вопроса в закладки.
+        this.mvc.perform(post("/api/user/question/{questionId}/bookmark", 100)
+                .header("Authorization", "Bearer " + token))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id", Is.is(1)))
+                .andExpect(jsonPath("$.questionId",Is.is(100)))
+                .andExpect(jsonPath("$.userId",Is.is(100)));
+        //Тест на добавление несуществующего вопроса.
+        this.mvc.perform(post("/api/user/question/{questionId}/bookmark", 120)
+                        .header("Authorization", "Bearer " + token))
+                .andDo(print())
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$", Is.is("Question not found")));
+        //Тест на добавление одного и того же вопроса.
+        this.mvc.perform(post("/api/user/question/{questionId}/bookmark", 100)
+                        .header("Authorization", "Bearer " + token))
+                .andDo(print())
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$", Is.is("Question already exist")));
     }
 }
