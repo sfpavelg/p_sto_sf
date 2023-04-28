@@ -2,6 +2,7 @@ package com.javamentor.qa.platform.dao.impl.dto.question.pagination;
 
 import com.javamentor.qa.platform.dao.abstracts.dto.question.pagination.QuestionDtoDao;
 import com.javamentor.qa.platform.dao.util.SingleResultUtil;
+import com.javamentor.qa.platform.models.dto.question.QuestionDto;
 import com.javamentor.qa.platform.models.dto.question.QuestionViewDto;
 import org.springframework.stereotype.Repository;
 
@@ -18,9 +19,9 @@ public class QuestionDtoDaoImpl implements QuestionDtoDao {
 
 
     @Override
-    public Optional<QuestionViewDto> getQuestionDtoById(Long id) {
+    public Optional<QuestionDto> getQuestionDtoById(Long id) {
         Query query = entityManager.createQuery(
-                        "select new com.javamentor.qa.platform.models.dto.question.QuestionViewDto ( q.id, " +
+                        "select new com.javamentor.qa.platform.models.dto.question.QuestionDto ( q.id, " +
                                 "q.title , " +
                                 "u.id, " +
                                 "coalesce(sum(r.count),0), " +
@@ -37,7 +38,7 @@ public class QuestionDtoDaoImpl implements QuestionDtoDao {
                                 "LEFT JOIN User u ON u.id = q.user.id " +
                                 "LEFT JOIN Reputation r ON u.id = r.author.id " +
 
-                                "where q.id = :id group by q.id, u.id", QuestionViewDto.class)
+                                "where q.id = :id group by q.id, u.id", QuestionDto.class)
                 .setParameter("id", id);
 
         return SingleResultUtil.getSingleResultOrNull(query);
