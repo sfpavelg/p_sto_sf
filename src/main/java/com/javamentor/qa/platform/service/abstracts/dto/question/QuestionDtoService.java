@@ -13,6 +13,7 @@ public interface QuestionDtoService {
 
     PageDto<QuestionViewDto> getAllQuestionDto(HashMap<String, Object> param) throws NotFoundException;
 
+    PageDto<QuestionDto> getPageWithListMostPopularQuestionForMonthDto(HashMap<String, Object> param) throws NotFoundException;
     PageDto<QuestionViewDto> getPageWithListQuestionDtoSortedByNewest(HashMap<String, Object> param);
     PageDto<QuestionViewDto> getPageWithListMostPopularQuestionDto(HashMap<String, Object> param)throws NotFoundException;
 }

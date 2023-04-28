@@ -272,4 +272,25 @@ public class QuestionResourceController {
         BookMarks bookMark = bookmarkService.persistByQuestionId(questionId, user);
         return ResponseEntity.ok(bookmarkDtoService.getBookmarkById(bookMark.getId()));
     }
+
+    @GetMapping("/mostPopularForMonth")
+    @ApiOperation(value = "Get a page with a list of QuestionDto sorted by popularity by last month", response = PageDto.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Success request. QuestionDto object returned in response"),
+            @ApiResponse(code = 403, message = "Forbidden"),
+            @ApiResponse(code = 404, message = "Questions don't exist")})
+    public ResponseEntity<?> getPageWithListMostPopularQuestionByMonthDto(
+            @RequestParam(value = "page", required = false, defaultValue = "1") Integer pageNumber,
+            @RequestParam(value = "items", required = false, defaultValue = "10") Integer itemsCountOnPage,
+            @RequestParam(value = "trackedTags", required = false) List<Long> trackedTags,
+            @RequestParam(value = "ignoredTags", required = false) List<Long> ignoredTags)
+            throws NotFoundException {
+        HashMap<String, Object> param = new HashMap<>();
+        param.put("currentPageNumber", pageNumber);
+        param.put("itemsOnPage", itemsCountOnPage);
+        param.put("trackedTags", trackedTags);
+        param.put("ignoredTags", ignoredTags);
+        return ResponseEntity.ok(questionDtoService.getPageWithListMostPopularQuestionForMonthDto(param));
+    }
+
 }

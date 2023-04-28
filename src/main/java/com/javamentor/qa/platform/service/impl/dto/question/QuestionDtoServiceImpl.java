@@ -16,11 +16,13 @@ import com.javamentor.qa.platform.service.abstracts.dto.question.QuestionDtoServ
 import javassist.NotFoundException;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.List;
 import java.util.Optional;
 import java.util.ArrayList;
+
 
 import static java.util.stream.Collectors.toList;
 
@@ -123,6 +125,20 @@ public class QuestionDtoServiceImpl extends PageDtoService<QuestionViewDto> impl
         listQuestionViewDto.forEach(lQuestionDto -> lQuestionDto.setListTagDto(tagsMap.get(lQuestionDto.getId())));
         Map<Long, List<AnswerDto>> answersMap = answerDtoDao.getAnswersMapByQuestionId(questionId);
         listQuestionViewDto.forEach(lQuestionDto -> lQuestionDto.setListAnswerDto(answersMap.get(lQuestionDto.getId())));
+
+        return pageDto;
+    }
+    @Override
+    public PageDto<QuestionDto> getPageWithListMostPopularQuestionForMonthDto(HashMap<String, Object> param) throws NotFoundException {
+        param.put("daoDtoImpl", "questionDtoDaoSortedByPopularityForMonthImpl");
+        param.put("monthAgo", LocalDateTime.now().minusMonths(1));
+        PageDto<QuestionDto> pageDto = pageDto(param);
+        List<QuestionDto> listQuestionDto = pageDto.getItems();
+        List<Long> questionId = listQuestionDto.stream().map(QuestionDto::getId).collect(toList());
+        Map<Long, List<TagDto>> tagsMap = tagDtoDao.getTagsMapByQuestionId(questionId);
+        listQuestionDto.forEach(lQuestionDto -> lQuestionDto.setListTagDto(tagsMap.get(lQuestionDto.getId())));
+        Map<Long, List<AnswerDto>> answersMap = answerDtoDao.getAnswersMapByQuestionId(questionId);
+        listQuestionDto.forEach(lQuestionDto -> lQuestionDto.setListAnswerDto(answersMap.get(lQuestionDto.getId())));
 
         return pageDto;
     }

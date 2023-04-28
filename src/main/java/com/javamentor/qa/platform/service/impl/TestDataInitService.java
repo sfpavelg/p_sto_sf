@@ -44,7 +44,7 @@ public class TestDataInitService {
     private final CommentQuestionService commentQuestionService;
     private final CommentAnswerService commentAnswerService;
     private final ReputationService reputationService;
-    private final BookMarkService bookMarkService;
+    private final BookmarkService bookMarkService;
 
     @Autowired
     public TestDataInitService(RoleService roleService, UserService userService, QuestionService questionService,
@@ -52,7 +52,7 @@ public class TestDataInitService {
                                TrackedTagService trackedTagService, QuestionViewedService questionViewedService,
                                VoteQuestionService voteQuestionService, VoteAnswerService voteAnswerService,
                                CommentQuestionService commentQuestionService, CommentAnswerService commentAnswerService,
-                               ReputationService reputationService, BookMarkService bookMarkService) {
+                               ReputationService reputationService, BookmarkService bookMarkService) {
         this.roleService = roleService;
         this.userService = userService;
         this.questionService = questionService;
