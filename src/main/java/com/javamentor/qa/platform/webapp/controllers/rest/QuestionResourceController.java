@@ -4,12 +4,15 @@ import com.javamentor.qa.platform.models.dto.PageDto;
 import com.javamentor.qa.platform.models.dto.question.QuestionCommentDto;
 import com.javamentor.qa.platform.models.dto.question.QuestionCreateDto;
 import com.javamentor.qa.platform.models.dto.question.QuestionDto;
+import com.javamentor.qa.platform.models.entity.BookMarks;
 import com.javamentor.qa.platform.models.entity.question.CommentQuestion;
 import com.javamentor.qa.platform.models.entity.question.Question;
 import com.javamentor.qa.platform.models.entity.question.Tag;
 import com.javamentor.qa.platform.models.entity.user.User;
+import com.javamentor.qa.platform.service.abstracts.dto.BookmarkDtoService;
 import com.javamentor.qa.platform.service.abstracts.dto.question.CommentDtoService;
 import com.javamentor.qa.platform.service.abstracts.dto.question.QuestionDtoService;
+import com.javamentor.qa.platform.service.abstracts.model.BookmarkService;
 import com.javamentor.qa.platform.service.abstracts.model.CommentQuestionService;
 import com.javamentor.qa.platform.service.abstracts.model.QuestionService;
 import com.javamentor.qa.platform.service.abstracts.model.VoteQuestionService;
@@ -29,6 +32,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+
 import org.springframework.web.bind.annotation.RequestBody;
 
 import javax.validation.Valid;
@@ -49,6 +53,8 @@ public class QuestionResourceController {
     private final VoteQuestionService voteQuestionService;
     private final CommentDtoService commentDtoService;
     private final CommentQuestionService commentQuestionService;
+    private final BookmarkService bookmarkService;
+    private final BookmarkDtoService bookmarkDtoService;
 
 
     @GetMapping("/{id}")
@@ -245,6 +251,26 @@ public class QuestionResourceController {
         commentQuestion.setQuestion(question.get());
         commentQuestionService.persist(commentQuestion);
         return ResponseEntity.ok(commentDtoService.getCommentById(commentQuestion.getComment().getId()));
+    }
+    /**
+     * The method returns JSON with table fields containing bookmark id, question id and user id.
+     *
+     * @param questionId       Question id passed to the URL for adding a question to bookmarks.
+     * @param user             Authenticated user logged in.
+     * @return {@link ResponseEntity} with status Ok.
+     */
+    @PostMapping("/{questionId}/bookmark")
+    @ApiOperation(value = "Add question to user bookmark.", response = Long.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Bookmark successfully added"),
+            @ApiResponse(code = 401, message = "Unauthorized request"),
+            @ApiResponse(code = 403, message = "Forbidden"),
+            @ApiResponse(code = 400, message = "Invalid password"),
+            @ApiResponse(code = 404, message = "Incorrect id Question. Question with id not found")})
+    public ResponseEntity<?> addQuestionToCurrentUserBookmark(@PathVariable("questionId") Long questionId,
+                                                              @AuthenticationPrincipal User user) throws NotFoundException {
+        BookMarks bookMark = bookmarkService.persistByQuestionId(questionId, user);
+        return ResponseEntity.ok(bookmarkDtoService.getBookmarkById(bookMark.getId()));
     }
 
     @GetMapping("/mostPopularForMonth")
