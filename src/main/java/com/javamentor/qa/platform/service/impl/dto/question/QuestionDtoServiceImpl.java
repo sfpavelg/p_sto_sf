@@ -140,6 +140,8 @@ public class QuestionDtoServiceImpl extends PageDtoService<QuestionDto> implemen
         List<Long> questionId = listQuestionDto.stream().map(QuestionDto::getId).collect(toList());
         Map<Long, List<TagDto>> tagsMap = tagDtoDao.getTagsMapByQuestionId(questionId);
         listQuestionDto.forEach(lQuestionDto -> lQuestionDto.setListTagDto(tagsMap.get(lQuestionDto.getId())));
+        Map<Long, List<AnswerDto>> answersMap = answerDtoDao.getAnswersMapByQuestionId(questionId);
+        listQuestionDto.forEach(lQuestionDto -> lQuestionDto.setListAnswerDto(answersMap.get(lQuestionDto.getId())));
 
         return pageDto;
     }
