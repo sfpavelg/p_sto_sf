@@ -8,7 +8,10 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Repository
 public class AnswerDtoDaoImpl implements AnswerDtoDao {
@@ -44,4 +47,73 @@ public class AnswerDtoDaoImpl implements AnswerDtoDao {
                 .setParameter("today", LocalDateTime.now());
         return (long) query.getSingleResult();
     }
+
+    public Map<Long, List<AnswerDto>> getAnswersMapByQuestionId(List<Long> qId) {
+        List<AnswerDto> answers = entityManager.createQuery(
+                        "select new com.javamentor.qa.platform.models.dto.answer.AnswerDto(" +
+                                "a.id, " +
+                                "a.user.id, " +
+                                "(select coalesce(sum(rep.count), 0) from Reputation as rep where rep.author.id = a.user.id), " +
+                                "a.question.id, " +
+                                "a.htmlBody, " +
+                                "a.persistDateTime, " +
+                                "a.isHelpful, " +
+                                "a.dateAcceptTime, " +
+                                "(SELECT COUNT(va.answer.id) FROM VoteAnswer va WHERE va.answer.id = a.id AND va.vote = 'UP_VOTE') - " +
+                                "(SELECT COUNT(va.answer.id) FROM VoteAnswer va WHERE va.answer.id = a.id AND va.vote = 'DOWN_VOTE')," +
+                                "a.user.imageLink, " +
+                                "a.user.nickname) " +
+                                "from Answer a " +
+                                "JOIN a.question q where a.question.id IN :id and a.isDeleted = false " +
+                                "ORDER BY " +
+                                "a.isHelpful DESC," +
+                                "(SELECT COUNT(va.answer.id) FROM VoteAnswer va WHERE va.answer.id = a.id AND va.vote = 'UP_VOTE') - " +
+                                "(SELECT COUNT(va.answer.id) FROM VoteAnswer va WHERE va.answer.id = a.id AND va.vote = 'DOWN_VOTE') DESC"
+                        , AnswerDto.class)
+                .setParameter("id", qId)
+                .getResultList();
+        Map<Long, List<AnswerDto>> answersMap = new HashMap<>();
+
+        answers.forEach(answerList -> answersMap.computeIfAbsent(answerList.getQuestionId(), key -> new ArrayList<>())
+                .add(new AnswerDto(
+                        answerList.getId(),
+                        answerList.getUserId(),
+                        answerList.getUserReputation(),
+                        answerList.getQuestionId(),
+                        answerList.getBody(),
+                        answerList.getPersistDate(),
+                        answerList.getIsHelpful(),
+                        answerList.getDateAccept(),
+                        answerList.getCountValuable(),
+                        answerList.getImage(),
+                        answerList.getNickName()
+                )));
+        return answersMap;
+    }
+
+    public List<AnswerDto> getAllByQuestionIdSortedByUsefulAndCount(Long id) {
+
+        return entityManager.createQuery("select new com.javamentor.qa.platform.models.dto.answer.AnswerDto(" +
+                                "a.id, " +
+                                "a.user.id, " +
+                                "(select coalesce(sum(rep.count), 0) from Reputation as rep where rep.author.id = a.user.id), " +
+                                "a.question.id, " +
+                                "a.htmlBody, " +
+                                "a.persistDateTime, " +
+                                "a.isHelpful, " +
+                                "a.dateAcceptTime, " +
+                                "(SELECT COUNT(va.answer.id) FROM VoteAnswer va WHERE va.answer.id = a.id AND va.vote = 'UP_VOTE') - " +
+                                "(SELECT COUNT(va.answer.id) FROM VoteAnswer va WHERE va.answer.id = a.id AND va.vote = 'DOWN_VOTE')," +
+                                "a.user.imageLink, " +
+                                "a.user.nickname) " +
+                                "from Answer a " +
+                                "JOIN a.question q where a.question.id IN :id and a.isDeleted = false " +
+                                "ORDER BY " +
+                                "a.isHelpful DESC," +
+                                "(SELECT COUNT(va.answer.id) FROM VoteAnswer va WHERE va.answer.id = a.id AND va.vote = 'UP_VOTE') - " +
+                                "(SELECT COUNT(va.answer.id) FROM VoteAnswer va WHERE va.answer.id = a.id AND va.vote = 'DOWN_VOTE') DESC"
+                        , AnswerDto.class)
+                .setParameter("id", id).getResultList();
+    }
+
 }

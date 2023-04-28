@@ -1,12 +1,14 @@
 package com.javamentor.qa.platform.service.impl.dto.question;
 
 import com.javamentor.qa.platform.dao.abstracts.dto.PageDtoDao;
+import com.javamentor.qa.platform.dao.abstracts.dto.answer.AnswerDtoDao;
 import com.javamentor.qa.platform.dao.abstracts.dto.question.QuestionDtoDao;
 import com.javamentor.qa.platform.dao.abstracts.dto.question.QuestionDtoSortedByNewestDao;
 import com.javamentor.qa.platform.dao.abstracts.dto.question.QuestionDtoDaoSortedByPopularity;
 import com.javamentor.qa.platform.dao.abstracts.dto.question.QuestionDtoWithoutAnswerPaginationDao;
 import com.javamentor.qa.platform.dao.abstracts.dto.tag.TagDtoDao;
 import com.javamentor.qa.platform.models.dto.PageDto;
+import com.javamentor.qa.platform.models.dto.answer.AnswerDto;
 import com.javamentor.qa.platform.models.dto.question.QuestionDto;
 import com.javamentor.qa.platform.models.dto.tag.TagDto;
 import com.javamentor.qa.platform.service.abstracts.dto.PageDtoService;
@@ -28,6 +30,7 @@ public class QuestionDtoServiceImpl extends PageDtoService<QuestionDto> implemen
 
     private final QuestionDtoDao questionDtoDao;
     private final TagDtoDao tagDtoDao;
+    private final AnswerDtoDao answerDtoDao;
     private final QuestionDtoWithoutAnswerPaginationDao questionDtoWithoutAnswerPaginationDao;
     private final QuestionDtoDaoSortedByPopularity questionDtoDaoSortedByPopularity;
     private final QuestionDtoSortedByNewestDao questionDtoSortedByNewestDao;
@@ -35,6 +38,7 @@ public class QuestionDtoServiceImpl extends PageDtoService<QuestionDto> implemen
     public QuestionDtoServiceImpl(
             QuestionDtoDao questionDtoDao,
             TagDtoDao tagDtoDao,
+            AnswerDtoDao answerDtoDao,
             Map<String, PageDtoDao<QuestionDto>> beansMap,
             QuestionDtoWithoutAnswerPaginationDao questionDtoWithoutAnswerPaginationDao,
             QuestionDtoDaoSortedByPopularity questionDtoDaoSortedByPopularity,
@@ -42,6 +46,7 @@ public class QuestionDtoServiceImpl extends PageDtoService<QuestionDto> implemen
         super(beansMap);
         this.questionDtoDao = questionDtoDao;
         this.tagDtoDao = tagDtoDao;
+        this.answerDtoDao = answerDtoDao;
         this.questionDtoWithoutAnswerPaginationDao = questionDtoWithoutAnswerPaginationDao;
         this.questionDtoDaoSortedByPopularity = questionDtoDaoSortedByPopularity;
         this.questionDtoSortedByNewestDao = questionDtoSortedByNewestDao;
@@ -55,6 +60,8 @@ public class QuestionDtoServiceImpl extends PageDtoService<QuestionDto> implemen
         if (questionDtoOptional.isPresent()) {
             QuestionDto questionDto = questionDtoOptional.get();
             questionDto.setListTagDto(tagDtoDao.getTagDtoById(id));
+            questionDto.setListAnswerDto(answerDtoDao.getAllByQuestionIdSortedByUsefulAndCount(id));
+
             return questionDto;
         }
         throw new NotFoundException("QuestionDto with id = " + id + " not found");
@@ -69,6 +76,9 @@ public class QuestionDtoServiceImpl extends PageDtoService<QuestionDto> implemen
         List<Long> questionId = listQuestionDto.stream().map(QuestionDto::getId).collect(toList());
         Map<Long, List<TagDto>> tagsMap = tagDtoDao.getTagsMapByQuestionId(questionId);
         listQuestionDto.forEach(lQuestionDto -> lQuestionDto.setListTagDto(tagsMap.get(lQuestionDto.getId())));
+        Map<Long, List<AnswerDto>> answersMap = answerDtoDao.getAnswersMapByQuestionId(questionId);
+        listQuestionDto.forEach(lQuestionDto -> lQuestionDto.setListAnswerDto(answersMap.get(lQuestionDto.getId())));
+
 
         return pageDto;
     }
@@ -86,6 +96,8 @@ public class QuestionDtoServiceImpl extends PageDtoService<QuestionDto> implemen
         for (QuestionDto questionDto : questionDtoList) {
             questionDto.setListTagDto(tagsMapByQuestionId.get(questionDto.getId()));
         }
+        Map<Long, List<AnswerDto>> answersMap = answerDtoDao.getAnswersMapByQuestionId(listQuestionId);
+        questionDtoList.forEach(lQuestionDto -> lQuestionDto.setListAnswerDto(answersMap.get(lQuestionDto.getId())));
         return pageDto;
     }
 
@@ -98,6 +110,8 @@ public class QuestionDtoServiceImpl extends PageDtoService<QuestionDto> implemen
         List<Long> questionId = listQuestionDto.stream().map(QuestionDto::getId).collect(toList());
         Map<Long, List<TagDto>> tagsMap = tagDtoDao.getTagsMapByQuestionId(questionId);
         listQuestionDto.forEach(lQuestionDto -> lQuestionDto.setListTagDto(tagsMap.get(lQuestionDto.getId())));
+        Map<Long, List<AnswerDto>> answersMap = answerDtoDao.getAnswersMapByQuestionId(questionId);
+        listQuestionDto.forEach(lQuestionDto -> lQuestionDto.setListAnswerDto(answersMap.get(lQuestionDto.getId())));
 
         return pageDto;
     }
@@ -110,6 +124,8 @@ public class QuestionDtoServiceImpl extends PageDtoService<QuestionDto> implemen
         List<Long> questionId = listQuestionDto.stream().map(QuestionDto::getId).collect(toList());
         Map<Long, List<TagDto>> tagsMap = tagDtoDao.getTagsMapByQuestionId(questionId);
         listQuestionDto.forEach(lQuestionDto -> lQuestionDto.setListTagDto(tagsMap.get(lQuestionDto.getId())));
+        Map<Long, List<AnswerDto>> answersMap = answerDtoDao.getAnswersMapByQuestionId(questionId);
+        listQuestionDto.forEach(lQuestionDto -> lQuestionDto.setListAnswerDto(answersMap.get(lQuestionDto.getId())));
 
         return pageDto;
     }

@@ -1,5 +1,6 @@
 package com.javamentor.qa.platform.models.dto.question;
 
+import com.javamentor.qa.platform.models.dto.answer.AnswerDto;
 import com.javamentor.qa.platform.models.dto.tag.TagDto;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -30,6 +31,8 @@ public class QuestionDto {
     private LocalDateTime lastUpdateDateTime;
 
     private List<TagDto> listTagDto = new ArrayList<>();
+
+    private List<AnswerDto> listAnswerDto = new ArrayList<>();
 
 
     public QuestionDto(Long id, String title, Long authorId, Long authorReputation, String authorName, String authorImage, String description, Long viewCount, Long countAnswer, Long countValuable, LocalDateTime persistDateTime, LocalDateTime lastUpdateDateTime) {
