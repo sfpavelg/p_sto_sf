@@ -15,7 +15,7 @@ import java.util.Optional;
 
 
 @Service
-public class QuestionDtoServiceImpl extends PageDtoService<QuestionDto> implements QuestionDtoService {
+public class QuestionDtoServiceImpl implements QuestionDtoService {
 
     private final QuestionDtoDao questionDtoDao;
     private final TagDtoDao tagDtoDao;
@@ -24,9 +24,7 @@ public class QuestionDtoServiceImpl extends PageDtoService<QuestionDto> implemen
     public QuestionDtoServiceImpl(
             QuestionDtoDao questionDtoDao,
             TagDtoDao tagDtoDao,
-            AnswerDtoDao answerDtoDao,
-            Map<String, PageDtoDao<QuestionDto>> beansMap) {
-        super(beansMap);
+            AnswerDtoDao answerDtoDao) {
         this.questionDtoDao = questionDtoDao;
         this.tagDtoDao = tagDtoDao;
         this.answerDtoDao = answerDtoDao;
