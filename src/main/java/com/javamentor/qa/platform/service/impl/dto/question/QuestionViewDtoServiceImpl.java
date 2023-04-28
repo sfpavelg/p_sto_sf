@@ -2,10 +2,6 @@ package com.javamentor.qa.platform.service.impl.dto.question;
 
 import com.javamentor.qa.platform.dao.abstracts.dto.PageDtoDao;
 import com.javamentor.qa.platform.dao.abstracts.dto.answer.AnswerDtoDao;
-import com.javamentor.qa.platform.dao.abstracts.dto.question.pagination.QuestionDtoDao;
-import com.javamentor.qa.platform.dao.abstracts.dto.question.pagination.QuestionDtoDaoSortedByPopularity;
-import com.javamentor.qa.platform.dao.abstracts.dto.question.pagination.QuestionDtoSortedByNewestDao;
-import com.javamentor.qa.platform.dao.abstracts.dto.question.pagination.QuestionDtoWithoutAnswerPaginationDao;
 import com.javamentor.qa.platform.dao.abstracts.dto.tag.TagDtoDao;
 import com.javamentor.qa.platform.models.dto.PageDto;
 import com.javamentor.qa.platform.models.dto.answer.AnswerDto;
@@ -25,28 +21,16 @@ import static java.util.stream.Collectors.toList;
 @Service
 public class QuestionViewDtoServiceImpl extends PageDtoService<QuestionViewDto> implements QuestionViewDtoService {
 
-    private final QuestionDtoDao questionDtoDao;
     private final TagDtoDao tagDtoDao;
     private final AnswerDtoDao answerDtoDao;
-    private final QuestionDtoWithoutAnswerPaginationDao questionDtoWithoutAnswerPaginationDao;
-    private final QuestionDtoDaoSortedByPopularity questionDtoDaoSortedByPopularity;
-    private final QuestionDtoSortedByNewestDao questionDtoSortedByNewestDao;
 
     public QuestionViewDtoServiceImpl(
-            QuestionDtoDao questionDtoDao,
             TagDtoDao tagDtoDao,
             AnswerDtoDao answerDtoDao,
-            Map<String, PageDtoDao<QuestionViewDto>> beansMap,
-            QuestionDtoWithoutAnswerPaginationDao questionDtoWithoutAnswerPaginationDao,
-            QuestionDtoDaoSortedByPopularity questionDtoDaoSortedByPopularity,
-            QuestionDtoSortedByNewestDao questionDtoSortedByNewestDao) {
+            Map<String, PageDtoDao<QuestionViewDto>> beansMap) {
         super(beansMap);
-        this.questionDtoDao = questionDtoDao;
         this.tagDtoDao = tagDtoDao;
         this.answerDtoDao = answerDtoDao;
-        this.questionDtoWithoutAnswerPaginationDao = questionDtoWithoutAnswerPaginationDao;
-        this.questionDtoDaoSortedByPopularity = questionDtoDaoSortedByPopularity;
-        this.questionDtoSortedByNewestDao = questionDtoSortedByNewestDao;
     }
 
     @Override
