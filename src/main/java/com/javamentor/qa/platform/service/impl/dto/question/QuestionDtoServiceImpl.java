@@ -5,7 +5,6 @@ import com.javamentor.qa.platform.dao.abstracts.dto.answer.AnswerDtoDao;
 import com.javamentor.qa.platform.dao.abstracts.dto.question.pagination.QuestionDtoDao;
 import com.javamentor.qa.platform.dao.abstracts.dto.tag.TagDtoDao;
 import com.javamentor.qa.platform.models.dto.question.QuestionDto;
-import com.javamentor.qa.platform.models.dto.question.QuestionViewDto;
 import com.javamentor.qa.platform.service.abstracts.dto.PageDtoService;
 import com.javamentor.qa.platform.service.abstracts.dto.question.QuestionDtoService;
 import javassist.NotFoundException;
@@ -16,7 +15,7 @@ import java.util.Optional;
 
 
 @Service
-public class QuestionDtoServiceImpl extends PageDtoService<QuestionViewDto> implements QuestionDtoService {
+public class QuestionDtoServiceImpl extends PageDtoService<QuestionDto> implements QuestionDtoService {
 
     private final QuestionDtoDao questionDtoDao;
     private final TagDtoDao tagDtoDao;
@@ -26,7 +25,7 @@ public class QuestionDtoServiceImpl extends PageDtoService<QuestionViewDto> impl
             QuestionDtoDao questionDtoDao,
             TagDtoDao tagDtoDao,
             AnswerDtoDao answerDtoDao,
-            Map<String, PageDtoDao<QuestionViewDto>> beansMap) {
+            Map<String, PageDtoDao<QuestionDto>> beansMap) {
         super(beansMap);
         this.questionDtoDao = questionDtoDao;
         this.tagDtoDao = tagDtoDao;
