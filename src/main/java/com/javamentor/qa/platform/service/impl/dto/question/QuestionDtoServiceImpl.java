@@ -3,15 +3,9 @@ package com.javamentor.qa.platform.service.impl.dto.question;
 import com.javamentor.qa.platform.dao.abstracts.dto.PageDtoDao;
 import com.javamentor.qa.platform.dao.abstracts.dto.answer.AnswerDtoDao;
 import com.javamentor.qa.platform.dao.abstracts.dto.question.pagination.QuestionDtoDao;
-import com.javamentor.qa.platform.dao.abstracts.dto.question.pagination.QuestionDtoSortedByNewestDao;
-import com.javamentor.qa.platform.dao.abstracts.dto.question.pagination.QuestionDtoDaoSortedByPopularity;
-import com.javamentor.qa.platform.dao.abstracts.dto.question.pagination.QuestionDtoWithoutAnswerPaginationDao;
 import com.javamentor.qa.platform.dao.abstracts.dto.tag.TagDtoDao;
-import com.javamentor.qa.platform.models.dto.PageDto;
-import com.javamentor.qa.platform.models.dto.answer.AnswerDto;
 import com.javamentor.qa.platform.models.dto.question.QuestionDto;
 import com.javamentor.qa.platform.models.dto.question.QuestionViewDto;
-import com.javamentor.qa.platform.models.dto.tag.TagDto;
 import com.javamentor.qa.platform.service.abstracts.dto.PageDtoService;
 import com.javamentor.qa.platform.service.abstracts.dto.question.QuestionDtoService;
 import javassist.NotFoundException;
@@ -32,10 +26,7 @@ public class QuestionDtoServiceImpl extends PageDtoService<QuestionViewDto> impl
             QuestionDtoDao questionDtoDao,
             TagDtoDao tagDtoDao,
             AnswerDtoDao answerDtoDao,
-            Map<String, PageDtoDao<QuestionViewDto>> beansMap,
-            QuestionDtoWithoutAnswerPaginationDao questionDtoWithoutAnswerPaginationDao,
-            QuestionDtoDaoSortedByPopularity questionDtoDaoSortedByPopularity,
-            QuestionDtoSortedByNewestDao questionDtoSortedByNewestDao) {
+            Map<String, PageDtoDao<QuestionViewDto>> beansMap) {
         super(beansMap);
         this.questionDtoDao = questionDtoDao;
         this.tagDtoDao = tagDtoDao;
