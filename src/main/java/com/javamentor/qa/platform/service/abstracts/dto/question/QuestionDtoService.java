@@ -1,18 +1,18 @@
 package com.javamentor.qa.platform.service.abstracts.dto.question;
 
 import com.javamentor.qa.platform.models.dto.PageDto;
-import com.javamentor.qa.platform.models.dto.question.QuestionDto;
+import com.javamentor.qa.platform.models.dto.question.QuestionViewDto;
 import javassist.NotFoundException;
 
 import java.util.HashMap;
 
 public interface QuestionDtoService {
-    QuestionDto getQuestionDtoById(Long id) throws NotFoundException;
+    QuestionViewDto getQuestionDtoById(Long id) throws NotFoundException;
 
-    PageDto<QuestionDto> getPageWithListQuestionDtoWithoutAnswer(HashMap<String, Object> param);
+    PageDto<QuestionViewDto> getPageWithListQuestionDtoWithoutAnswer(HashMap<String, Object> param);
 
-    PageDto<QuestionDto> getAllQuestionDto(HashMap<String, Object> param) throws NotFoundException;
+    PageDto<QuestionViewDto> getAllQuestionDto(HashMap<String, Object> param) throws NotFoundException;
 
-    PageDto<QuestionDto> getPageWithListQuestionDtoSortedByNewest(HashMap<String, Object> param);
-    PageDto<QuestionDto> getPageWithListMostPopularQuestionDto(HashMap<String, Object> param)throws NotFoundException;
+    PageDto<QuestionViewDto> getPageWithListQuestionDtoSortedByNewest(HashMap<String, Object> param);
+    PageDto<QuestionViewDto> getPageWithListMostPopularQuestionDto(HashMap<String, Object> param)throws NotFoundException;
 }

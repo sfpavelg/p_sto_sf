@@ -1,7 +1,7 @@
 package com.javamentor.qa.platform.dao.impl.dto.question;
 
 import com.javamentor.qa.platform.dao.abstracts.dto.question.QuestionDtoDaoSortedByPopularity;
-import com.javamentor.qa.platform.models.dto.question.QuestionDto;
+import com.javamentor.qa.platform.models.dto.question.QuestionViewDto;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
@@ -15,12 +15,12 @@ public class QuestionDtoDaoSortedByPopularityImpl implements QuestionDtoDaoSorte
     private EntityManager entityManager;
 
     @Override
-    public List<QuestionDto> getItems(Map<String, Object> param) {
+    public List<QuestionViewDto> getItems(Map<String, Object> param) {
         int itemsOnPageParam = (int) param.get("itemsOnPage");
         int itemsPositionParam = (int) param.get("currentPageNumber") * itemsOnPageParam - itemsOnPageParam;
 
         return entityManager.createQuery(
-                        "SELECT new com.javamentor.qa.platform.models.dto.question.QuestionDto ( " +
+                        "SELECT new com.javamentor.qa.platform.models.dto.question.QuestionViewDto ( " +
                                 "q.id, " +
                                 "q.title , " +
                                 "q.user.id, " +
@@ -41,7 +41,7 @@ public class QuestionDtoDaoSortedByPopularityImpl implements QuestionDtoDaoSorte
                                 "(SELECT COUNT (a.question.id) FROM Answer a WHERE a.question.id = q.id)*2 + " +
                                 "((SELECT COUNT(vq.question.id) FROM VoteQuestion vq WHERE vq.question.id = q.id AND vq.vote = 'up') - " +
                                 "(SELECT COUNT(vq.question.id) FROM VoteQuestion vq WHERE vq.question.id = q.id AND vq.vote = 'down'))*5 DESC",
-                        QuestionDto.class)
+                        QuestionViewDto.class)
 
                 .setParameter("trackedTags", param.get("trackedTags"))
                 .setParameter("ignoredTags", param.get("ignoredTags"))

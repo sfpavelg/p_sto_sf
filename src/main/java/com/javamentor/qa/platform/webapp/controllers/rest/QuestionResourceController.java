@@ -3,7 +3,7 @@ package com.javamentor.qa.platform.webapp.controllers.rest;
 import com.javamentor.qa.platform.models.dto.PageDto;
 import com.javamentor.qa.platform.models.dto.question.QuestionCommentDto;
 import com.javamentor.qa.platform.models.dto.question.QuestionCreateDto;
-import com.javamentor.qa.platform.models.dto.question.QuestionDto;
+import com.javamentor.qa.platform.models.dto.question.QuestionViewDto;
 import com.javamentor.qa.platform.models.entity.BookMarks;
 import com.javamentor.qa.platform.models.entity.question.CommentQuestion;
 import com.javamentor.qa.platform.models.entity.question.Question;
@@ -58,7 +58,7 @@ public class QuestionResourceController {
 
 
     @GetMapping("/{id}")
-    @ApiOperation(value = "Getting the QuestionDto element by id", response = QuestionDto.class)
+    @ApiOperation(value = "Getting the QuestionDto element by id", response = QuestionViewDto.class)
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Success request. QuestionDto object returned in response"),
             @ApiResponse(code = 401, message = "Unauthorized request"),
@@ -69,7 +69,7 @@ public class QuestionResourceController {
     }
 
     @PostMapping
-    @ApiOperation(value = "Adding a question. Waits for a completed QuestionCreateDto object", response = QuestionDto.class, responseContainer = "List")
+    @ApiOperation(value = "Adding a question. Waits for a completed QuestionCreateDto object", response = QuestionViewDto.class, responseContainer = "List")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Success request. Question added to DB and it's QuestionDto object returned in response"),
             @ApiResponse(code = 401, message = "Unauthorized request"),
@@ -92,7 +92,7 @@ public class QuestionResourceController {
      * @param ignoredTag       Optional parameter, contains a list of ID tags of the {@link Tag} entity that should be
      *                         ignored when displaying a list of unanswered questions. If the question contains at least
      *                         one ignored tag, the question is not output.
-     * @return {@link ResponseEntity} with status Ok and {@link PageDto<QuestionDto>} in body.
+     * @return {@link ResponseEntity} with status Ok and {@link PageDto< QuestionViewDto >} in body.
      */
     @GetMapping("/noAnswer")
     @ApiOperation(value = "Get a page with a list of QuestionDto without answers with filtering by " +
@@ -113,7 +113,7 @@ public class QuestionResourceController {
 
     @GetMapping()
     @ApiOperation(value = "Get all questionDto",
-            notes = "currentPageNumber is a number of page with dto's.", response = QuestionDto.class)
+            notes = "currentPageNumber is a number of page with dto's.", response = QuestionViewDto.class)
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Success request. QuestionDto object returned in response"),
             @ApiResponse(code = 403, message = "Forbidden"),
@@ -177,7 +177,7 @@ public class QuestionResourceController {
      *                         The parameter must be greater than zero
      * @param trackedTags      Optional parameter, contains a list of object tags {@link Tag} that defines preferred topics
      * @param ignoredTags      Optional parameter, contains a list of object ID tags {@link Tag} for which questions should be ignored.
-     * @return {@link ResponseEntity} with status Ok and {@link PageDto<QuestionDto>} in body.
+     * @return {@link ResponseEntity} with status Ok and {@link PageDto< QuestionViewDto >} in body.
      */
     @GetMapping("/mostPopular")
     @ApiOperation(value = "Get a page with a list of QuestionDto sorted by popularity", response = PageDto.class)
@@ -210,11 +210,11 @@ public class QuestionResourceController {
      * @param ignoredTag        Optional parameter, contains a list of ID tags of the {@link Tag} entity that should be
      *                          ignored when displaying a list of unanswered questions. If the question contains at least
      *                          one ignored tag, the question is not output.
-     * @return {@link ResponseEntity} with status Ok and {@link PageDto<QuestionDto>} in body.
+     * @return {@link ResponseEntity} with status Ok and {@link PageDto< QuestionViewDto >} in body.
      */
     @GetMapping("/new")
     @ApiOperation(value = "Get all questionsDto sorted by newest",
-            notes = "currentPageNumber is a number of page with dto's.", response = QuestionDto.class)
+            notes = "currentPageNumber is a number of page with dto's.", response = QuestionViewDto.class)
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Success request. QuestionDto objects returned in response."),
             @ApiResponse(code = 401, message = "Unauthorized request"),
