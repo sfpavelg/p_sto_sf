@@ -64,22 +64,5 @@ public class QuestionDtoWithoutAnswerPaginationDaoImpl implements QuestionDtoWit
         return query.getResultList().size();
     }
 
-    @Override
-    public Map<Long, List<TagDto>> getTagsMapByQuestionId(List<Long> listQuestionId) {
-        List<Tuple> tags = entityManager.createQuery(
-                        "select t.id as tag_id, " +
-                                "t.name as tag_name, " +
-                                "t.description as tag_description, " +
-                                "q.id as question_id " +
-                                "from Tag t join t.questions q where q.id in :id", Tuple.class)
-                .setParameter("id", listQuestionId)
-                .getResultList();
-        Map<Long, List<TagDto>> tagsMap = new HashMap<>();
 
-        tags.forEach(tupleList -> tagsMap.computeIfAbsent((Long) tupleList.get("question_id"), key -> new ArrayList<>())
-                .add(new TagDto((Long) tupleList.get("tag_id"),
-                        (String) tupleList.get("tag_name"),
-                        (String) tupleList.get("tag_description"))));
-        return tagsMap;
-    }
 }

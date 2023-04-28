@@ -87,17 +87,14 @@ public class QuestionDtoServiceImpl extends PageDtoService<QuestionViewDto> impl
     public PageDto<QuestionViewDto> getPageWithListQuestionDtoWithoutAnswer(HashMap<String, Object> param) {
         param.put("daoDtoImpl", "questionDtoWithoutAnswerPaginationDaoImpl");
         PageDto<QuestionViewDto> pageDto = pageDto(param);
-        List<QuestionViewDto> questionViewDtoList = pageDto.getItems();
-        List<Long> listQuestionId = new ArrayList<>();
-        for (QuestionViewDto questionViewDto : questionViewDtoList) {
-            listQuestionId.add(questionViewDto.getId());
-        }
-        Map<Long, List<TagDto>> tagsMapByQuestionId = questionDtoWithoutAnswerPaginationDao.getTagsMapByQuestionId(listQuestionId);
-        for (QuestionViewDto questionViewDto : questionViewDtoList) {
-            questionViewDto.setListTagDto(tagsMapByQuestionId.get(questionViewDto.getId()));
-        }
-        Map<Long, List<AnswerDto>> answersMap = answerDtoDao.getAnswersMapByQuestionId(listQuestionId);
-        questionViewDtoList.forEach(lQuestionDto -> lQuestionDto.setListAnswerDto(answersMap.get(lQuestionDto.getId())));
+        List<QuestionViewDto> listQuestionViewDto = pageDto.getItems();
+        List<Long> questionId = listQuestionViewDto.stream().map(QuestionViewDto::getId).collect(toList());
+        Map<Long, List<TagDto>> tagsMap = tagDtoDao.getTagsMapByQuestionId(questionId);
+        listQuestionViewDto.forEach(lQuestionDto -> lQuestionDto.setListTagDto(tagsMap.get(lQuestionDto.getId())));
+        Map<Long, List<AnswerDto>> answersMap = answerDtoDao.getAnswersMapByQuestionId(questionId);
+        listQuestionViewDto.forEach(lQuestionDto -> lQuestionDto.setListAnswerDto(answersMap.get(lQuestionDto.getId())));
+
+
         return pageDto;
     }
 

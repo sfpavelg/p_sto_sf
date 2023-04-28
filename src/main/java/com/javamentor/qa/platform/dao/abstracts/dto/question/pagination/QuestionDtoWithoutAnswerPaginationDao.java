@@ -9,6 +9,5 @@ import java.util.Map;
 
 public interface QuestionDtoWithoutAnswerPaginationDao  extends PageDtoDao<QuestionViewDto> {
 
-    Map<Long, List<TagDto>> getTagsMapByQuestionId(List<Long> qId);
 
 }
