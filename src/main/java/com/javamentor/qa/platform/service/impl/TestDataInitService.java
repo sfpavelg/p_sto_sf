@@ -3,6 +3,7 @@ package com.javamentor.qa.platform.service.impl;
 import com.javamentor.qa.platform.models.entity.BookMarks;
 import com.javamentor.qa.platform.models.entity.Comment;
 import com.javamentor.qa.platform.models.entity.CommentType;
+import com.javamentor.qa.platform.models.entity.chat.*;
 import com.javamentor.qa.platform.models.entity.question.*;
 import com.javamentor.qa.platform.models.entity.question.answer.Answer;
 import com.javamentor.qa.platform.models.entity.question.answer.CommentAnswer;
@@ -16,7 +17,6 @@ import com.javamentor.qa.platform.service.abstracts.model.*;
 import com.javamentor.qa.platform.service.abstracts.model.tag.IgnoredTagService;
 import com.javamentor.qa.platform.service.abstracts.model.tag.TagService;
 import com.javamentor.qa.platform.service.abstracts.model.tag.TrackedTagService;
-import io.swagger.models.auth.In;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -44,7 +44,10 @@ public class TestDataInitService {
     private final CommentQuestionService commentQuestionService;
     private final CommentAnswerService commentAnswerService;
     private final ReputationService reputationService;
-    private final BookMarkService bookMarkService;
+    private final BookmarkService bookMarkService;
+    private final GroupChatService groupChatService;
+    private final SingleChatService singleChatService;
+    private final MessageService messageService;
 
     @Autowired
     public TestDataInitService(RoleService roleService, UserService userService, QuestionService questionService,
@@ -52,7 +55,7 @@ public class TestDataInitService {
                                TrackedTagService trackedTagService, QuestionViewedService questionViewedService,
                                VoteQuestionService voteQuestionService, VoteAnswerService voteAnswerService,
                                CommentQuestionService commentQuestionService, CommentAnswerService commentAnswerService,
-                               ReputationService reputationService, BookMarkService bookMarkService) {
+                               ReputationService reputationService, BookmarkService bookMarkService, GroupChatService groupChatService, SingleChatService singleChatService, MessageService messageService) {
         this.roleService = roleService;
         this.userService = userService;
         this.questionService = questionService;
@@ -67,6 +70,9 @@ public class TestDataInitService {
         this.commentAnswerService = commentAnswerService;
         this.reputationService = reputationService;
         this.bookMarkService = bookMarkService;
+        this.groupChatService = groupChatService;
+        this.singleChatService = singleChatService;
+        this.messageService = messageService;
     }
 
     public void createSuperUser(int count) {
@@ -342,6 +348,71 @@ public class TestDataInitService {
         }
     }
 
+    public void createSingleChat() {
+        List<User> userList = userService.getAll();
+        Chat chat=new Chat(ChatType.SINGLE);
+        chat.setTitle("Spring 3.1.4");
+        SingleChat singleChat = new SingleChat();
+        singleChat.setChat(chat);
+        singleChat.setUserOne(userList.get(1));
+        singleChat.setUseTwo(userList.get(rand(2,13)));
+        singleChatService.persist(singleChat);
+
+        Chat chatCore=new Chat(ChatType.SINGLE);
+        chatCore.setTitle("CORE");
+        SingleChat singleChatSecond = new SingleChat();
+        singleChatSecond.setChat(chatCore);
+        singleChatSecond.setUserOne(userList.get(5));
+        singleChatSecond.setUseTwo(userList.get(rand(5,14)));
+        singleChatService.persist(singleChatSecond);
+
+        Chat chatJDBC=new Chat(ChatType.SINGLE);
+        chatJDBC.setTitle("JDBC");
+        SingleChat singleChatJDBC = new SingleChat();
+        singleChatJDBC.setChat(chatJDBC);
+        singleChatJDBC.setUserOne(userList.get(25));
+        singleChatJDBC.setUseTwo(userList.get(rand(15,25)));
+        singleChatService.persist(singleChatJDBC);
+
+    }
+
+    public void createGroupChat() {
+        List<User> userList = userService.getAll();
+        Set<User> userSetJava = new HashSet<User>(userList.subList(0, 10));
+        Chat chatJava = new Chat(ChatType.GROUP);
+        chatJava.setTitle("Java");
+        GroupChat groupChatJava = new GroupChat();
+        groupChatJava.setChat(chatJava);
+        groupChatJava.setUsers(userSetJava);
+        groupChatService.persist(groupChatJava);
+
+        Set<User> userSetJS = new HashSet<>(userList.subList(10, 20));
+        Chat chatJS = new Chat(ChatType.GROUP);
+        chatJS.setTitle("JavaScript");
+        GroupChat groupChatJS = new GroupChat();
+        groupChatJS.setChat(chatJS);
+        groupChatJS.setUsers(userSetJS);
+        groupChatService.persist(groupChatJS);
+
+
+    }
+    public void createMessage() {
+        List<SingleChat> chatList = singleChatService.getAll();
+
+        Message message = new Message();
+        message.setChat(chatList.get(0).getChat());
+        message.setMessage("Hello");
+        message.setUserSender(chatList.get(0).getUserOne());
+        messageService.persist(message);
+
+        Message message1 = new Message();
+        message1.setChat(chatList.get(0).getChat());
+        message1.setMessage("What about java?");
+        message1.setUserSender(chatList.get(0).getUseTwo());
+        messageService.persist(message1);
+    }
+
+
     public void init() {
         roleService.persist(ROLE_ADMIN);
         roleService.persist(ROLE_USER);
@@ -358,5 +429,8 @@ public class TestDataInitService {
         createCommentAnswer(20);
         createReputation();
         createBookMarks(10);
+        createGroupChat();
+        createSingleChat();
+        createMessage();
     }
 }
