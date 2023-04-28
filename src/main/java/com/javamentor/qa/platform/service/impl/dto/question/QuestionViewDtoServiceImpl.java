@@ -9,7 +9,6 @@ import com.javamentor.qa.platform.models.dto.question.QuestionViewDto;
 import com.javamentor.qa.platform.models.dto.tag.TagDto;
 import com.javamentor.qa.platform.service.abstracts.dto.PageDtoService;
 import com.javamentor.qa.platform.service.abstracts.dto.question.QuestionViewDtoService;
-import javassist.NotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -86,7 +85,7 @@ public class QuestionViewDtoServiceImpl extends PageDtoService<QuestionViewDto> 
     }
 
     @Override
-    public PageDto<QuestionViewDto> getPageWithListMostPopularQuestionForMonthDto(HashMap<String, Object> param) throws NotFoundException {
+    public PageDto<QuestionViewDto> getPageWithListMostPopularQuestionForMonthDto(HashMap<String, Object> param) {
         param.put("daoDtoImpl", "questionDtoDaoSortedByPopularityForMonthImpl");
         param.put("monthAgo", LocalDateTime.now().minusMonths(1));
         PageDto<QuestionViewDto> pageDto = pageDto(param);
