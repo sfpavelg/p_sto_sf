@@ -348,68 +348,48 @@ public class TestDataInitService {
         }
     }
 
-    public void createSingleChat() {
+    public void createSingleChat(int count) {
         List<User> userList = userService.getAll();
-        Chat chat=new Chat(ChatType.SINGLE);
-        chat.setTitle("Spring 3.1.4");
-        SingleChat singleChat = new SingleChat();
-        singleChat.setChat(chat);
-        singleChat.setUserOne(userList.get(1));
-        singleChat.setUseTwo(userList.get(rand(2,13)));
-        singleChatService.persist(singleChat);
-
-        Chat chatCore=new Chat(ChatType.SINGLE);
-        chatCore.setTitle("CORE");
-        SingleChat singleChatSecond = new SingleChat();
-        singleChatSecond.setChat(chatCore);
-        singleChatSecond.setUserOne(userList.get(5));
-        singleChatSecond.setUseTwo(userList.get(rand(5,14)));
-        singleChatService.persist(singleChatSecond);
-
-        Chat chatJDBC=new Chat(ChatType.SINGLE);
-        chatJDBC.setTitle("JDBC");
-        SingleChat singleChatJDBC = new SingleChat();
-        singleChatJDBC.setChat(chatJDBC);
-        singleChatJDBC.setUserOne(userList.get(25));
-        singleChatJDBC.setUseTwo(userList.get(rand(15,25)));
-        singleChatService.persist(singleChatJDBC);
-
+        for (int i = 0; i < count; i++) {
+            Chat chat = new Chat(ChatType.SINGLE);
+            chat.setTitle("SingleChat" + i);
+            SingleChat singleChat = new SingleChat();
+            singleChat.setChat(chat);
+            singleChat.setUserOne(userList.get(i));
+            singleChat.setUseTwo(userList.get(rand(1, userList.size() - 1)));
+            if (singleChat.getUserOne() == singleChat.getUseTwo()) {
+                singleChat.setUseTwo(userList.get(rand(1, userList.size() - 1)));
+            }
+            singleChatService.persist(singleChat);
+        }
     }
 
     public void createGroupChat() {
-        List<User> userList = userService.getAll();
-        Set<User> userSetJava = new HashSet<User>(userList.subList(0, 10));
+        Set<User> userSetJava = new HashSet<User>(userService.getAll());
         Chat chatJava = new Chat(ChatType.GROUP);
         chatJava.setTitle("Java");
         GroupChat groupChatJava = new GroupChat();
         groupChatJava.setChat(chatJava);
         groupChatJava.setUsers(userSetJava);
         groupChatService.persist(groupChatJava);
-
-        Set<User> userSetJS = new HashSet<>(userList.subList(10, 20));
-        Chat chatJS = new Chat(ChatType.GROUP);
-        chatJS.setTitle("JavaScript");
-        GroupChat groupChatJS = new GroupChat();
-        groupChatJS.setChat(chatJS);
-        groupChatJS.setUsers(userSetJS);
-        groupChatService.persist(groupChatJS);
-
-
     }
+
     public void createMessage() {
         List<SingleChat> chatList = singleChatService.getAll();
-
-        Message message = new Message();
-        message.setChat(chatList.get(0).getChat());
-        message.setMessage("Hello");
-        message.setUserSender(chatList.get(0).getUserOne());
-        messageService.persist(message);
-
-        Message message1 = new Message();
-        message1.setChat(chatList.get(0).getChat());
-        message1.setMessage("What about java?");
-        message1.setUserSender(chatList.get(0).getUseTwo());
-        messageService.persist(message1);
+        for (int i = 0; i < 7; i++) {
+            Message message = new Message();
+            message.setChat(chatList.get(rand(0, chatList.size() - 1)).getChat());
+            message.setMessage("Hello " + i);
+            message.setUserSender(chatList.get(i).getUserOne());
+            messageService.persist(message);
+        }
+        for (int i = 0; i < 10; i++) {
+            Message message1 = new Message();
+            message1.setChat(groupChatService.getAll().get(0).getChat());
+            message1.setUserSender(userService.getAll().get(rand(1, userService.getAll().size() - 1)));
+            message1.setMessage("Group Java Hello " + message1.getUserSender().getNickname());
+            messageService.persist(message1);
+        }
     }
 
 
@@ -430,7 +410,7 @@ public class TestDataInitService {
         createReputation();
         createBookMarks(10);
         createGroupChat();
-        createSingleChat();
+        createSingleChat(20);
         createMessage();
     }
 }
