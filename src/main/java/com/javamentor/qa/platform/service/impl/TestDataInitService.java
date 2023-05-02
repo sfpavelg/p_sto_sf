@@ -365,7 +365,7 @@ public class TestDataInitService {
     }
 
     public void createGroupChat() {
-        Set<User> userSetJava = new HashSet<User>(userService.getAll());
+        Set<User> userSetJava = new HashSet<>(userService.getAll());
         Chat chatJava = new Chat(ChatType.GROUP);
         chatJava.setTitle("Java");
         GroupChat groupChatJava = new GroupChat();
