@@ -1,6 +1,6 @@
-package com.javamentor.qa.platform.dao.impl.dto.question;
+package com.javamentor.qa.platform.dao.impl.dto.question.pagination;
 
-import com.javamentor.qa.platform.dao.abstracts.dto.question.QuestionDtoDao;
+import com.javamentor.qa.platform.dao.abstracts.dto.question.pagination.QuestionDtoDao;
 import com.javamentor.qa.platform.dao.util.SingleResultUtil;
 import com.javamentor.qa.platform.models.dto.question.QuestionDto;
 import org.springframework.stereotype.Repository;
@@ -33,7 +33,6 @@ public class QuestionDtoDaoImpl implements QuestionDtoDao {
                                 "(select count(vq.question.id) from VoteQuestion vq where vq.question.id = :id and vq.vote = 'down'), " +
                                 "q.persistDateTime, " +
                                 "q.lastUpdateDateTime) " +
-
                                 "from Question q " +
                                 "LEFT JOIN User u ON u.id = q.user.id " +
                                 "LEFT JOIN Reputation r ON u.id = r.author.id " +

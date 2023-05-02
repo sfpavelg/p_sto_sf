@@ -4,6 +4,7 @@ import com.javamentor.qa.platform.models.dto.PageDto;
 import com.javamentor.qa.platform.models.dto.question.QuestionCommentDto;
 import com.javamentor.qa.platform.models.dto.question.QuestionCreateDto;
 import com.javamentor.qa.platform.models.dto.question.QuestionDto;
+import com.javamentor.qa.platform.models.dto.question.QuestionViewDto;
 import com.javamentor.qa.platform.models.entity.BookMarks;
 import com.javamentor.qa.platform.models.entity.question.CommentQuestion;
 import com.javamentor.qa.platform.models.entity.question.Question;
@@ -12,6 +13,7 @@ import com.javamentor.qa.platform.models.entity.user.User;
 import com.javamentor.qa.platform.service.abstracts.dto.BookmarkDtoService;
 import com.javamentor.qa.platform.service.abstracts.dto.question.CommentDtoService;
 import com.javamentor.qa.platform.service.abstracts.dto.question.QuestionDtoService;
+import com.javamentor.qa.platform.service.abstracts.dto.question.QuestionViewDtoService;
 import com.javamentor.qa.platform.service.abstracts.model.BookmarkService;
 import com.javamentor.qa.platform.service.abstracts.model.CommentQuestionService;
 import com.javamentor.qa.platform.service.abstracts.model.QuestionService;
@@ -48,6 +50,7 @@ import java.util.Optional;
 public class QuestionResourceController {
 
     private final QuestionDtoService questionDtoService;
+    private final QuestionViewDtoService questionViewDtoService;
     private final QuestionConverter questionConverter;
     private final QuestionService questionService;
     private final VoteQuestionService voteQuestionService;
@@ -92,7 +95,7 @@ public class QuestionResourceController {
      * @param ignoredTag       Optional parameter, contains a list of ID tags of the {@link Tag} entity that should be
      *                         ignored when displaying a list of unanswered questions. If the question contains at least
      *                         one ignored tag, the question is not output.
-     * @return {@link ResponseEntity} with status Ok and {@link PageDto<QuestionDto>} in body.
+     * @return {@link ResponseEntity} with status Ok and {@link PageDto<QuestionViewDto>} in body.
      */
     @GetMapping("/noAnswer")
     @ApiOperation(value = "Get a page with a list of QuestionDto without answers with filtering by " +
@@ -108,12 +111,12 @@ public class QuestionResourceController {
         param.put("itemsOnPage", itemsCountOnPage);
         param.put("trackedTag", trackedTag);
         param.put("ignoredTag", ignoredTag);
-        return ResponseEntity.ok(questionDtoService.getPageWithListQuestionDtoWithoutAnswer(param));
+        return ResponseEntity.ok(questionViewDtoService.getPageWithListQuestionDtoWithoutAnswer(param));
     }
 
     @GetMapping()
     @ApiOperation(value = "Get all questionDto",
-            notes = "currentPageNumber is a number of page with dto's.", response = QuestionDto.class)
+            notes = "currentPageNumber is a number of page with dto's.", response = QuestionViewDto.class)
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Success request. QuestionDto object returned in response"),
             @ApiResponse(code = 403, message = "Forbidden"),
@@ -127,7 +130,7 @@ public class QuestionResourceController {
         param.put("itemsOnPage", itemsOnPage);
         param.put("trackedTags", trackedTags);
         param.put("ignoredTags", ignoredTags);
-        return ResponseEntity.ok(questionDtoService.getAllQuestionDto(param));
+        return ResponseEntity.ok(questionViewDtoService.getAllQuestionDto(param));
     }
 
     @PostMapping("/{questionId}/upVote")
@@ -177,7 +180,7 @@ public class QuestionResourceController {
      *                         The parameter must be greater than zero
      * @param trackedTags      Optional parameter, contains a list of object tags {@link Tag} that defines preferred topics
      * @param ignoredTags      Optional parameter, contains a list of object ID tags {@link Tag} for which questions should be ignored.
-     * @return {@link ResponseEntity} with status Ok and {@link PageDto<QuestionDto>} in body.
+     * @return {@link ResponseEntity} with status Ok and {@link PageDto<QuestionViewDto>} in body.
      */
     @GetMapping("/mostPopular")
     @ApiOperation(value = "Get a page with a list of QuestionDto sorted by popularity", response = PageDto.class)
@@ -196,7 +199,7 @@ public class QuestionResourceController {
         param.put("itemsOnPage", itemsCountOnPage);
         param.put("trackedTags", trackedTags);
         param.put("ignoredTags", ignoredTags);
-        return ResponseEntity.ok(questionDtoService.getPageWithListMostPopularQuestionDto(param));
+        return ResponseEntity.ok(questionViewDtoService.getPageWithListMostPopularQuestionDto(param));
     }
 
     /**
@@ -210,13 +213,13 @@ public class QuestionResourceController {
      * @param ignoredTag        Optional parameter, contains a list of ID tags of the {@link Tag} entity that should be
      *                          ignored when displaying a list of unanswered questions. If the question contains at least
      *                          one ignored tag, the question is not output.
-     * @return {@link ResponseEntity} with status Ok and {@link PageDto<QuestionDto>} in body.
+     * @return {@link ResponseEntity} with status Ok and {@link PageDto<QuestionViewDto>} in body.
      */
     @GetMapping("/new")
     @ApiOperation(value = "Get all questionsDto sorted by newest",
-            notes = "currentPageNumber is a number of page with dto's.", response = QuestionDto.class)
+            notes = "currentPageNumber is a number of page with dto's.", response = QuestionViewDto.class)
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Success request. QuestionDto objects returned in response."),
+            @ApiResponse(code = 200, message = "Success request. QuestionViewDto objects returned in response."),
             @ApiResponse(code = 401, message = "Unauthorized request"),
             @ApiResponse(code = 403, message = "Forbidden"),
             @ApiResponse(code = 404, message = "Questions don't exist")})
@@ -231,7 +234,7 @@ public class QuestionResourceController {
         param.put("itemsOnPage", itemsCountOnPage);
         param.put("trackedTag", trackedTag);
         param.put("ignoredTag", ignoredTag);
-        return ResponseEntity.ok(questionDtoService.getPageWithListQuestionDtoSortedByNewest(param));
+        return ResponseEntity.ok(questionViewDtoService.getPageWithListQuestionDtoSortedByNewest(param));
     }
 
     @PostMapping("/{questionId}/comment")
@@ -276,7 +279,7 @@ public class QuestionResourceController {
     @GetMapping("/mostPopularForMonth")
     @ApiOperation(value = "Get a page with a list of QuestionDto sorted by popularity by last month", response = PageDto.class)
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Success request. QuestionDto object returned in response"),
+            @ApiResponse(code = 200, message = "Success request. QuestionViewDto object returned in response"),
             @ApiResponse(code = 403, message = "Forbidden"),
             @ApiResponse(code = 404, message = "Questions don't exist")})
     public ResponseEntity<?> getPageWithListMostPopularQuestionByMonthDto(
@@ -290,7 +293,7 @@ public class QuestionResourceController {
         param.put("itemsOnPage", itemsCountOnPage);
         param.put("trackedTags", trackedTags);
         param.put("ignoredTags", ignoredTags);
-        return ResponseEntity.ok(questionDtoService.getPageWithListMostPopularQuestionForMonthDto(param));
+        return ResponseEntity.ok(questionViewDtoService.getPageWithListMostPopularQuestionForMonthDto(param));
     }
 
 }
