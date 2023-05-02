@@ -10,6 +10,7 @@ import javassist.NotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -50,5 +51,10 @@ public class UserDtoServiceImpl extends PageDtoService<UserDto> implements UserD
         param.put("daoDtoImpl", "paginationUserDtoDaoByRegDateImpl");
 
         return pageDto(param);
+    }
+
+    @Override
+    public List<UserDto> getPageWithListTop10UsersAnswers() {
+        return userDtoDao.getPageWithListTop10UsersAnswers();
     }
 }

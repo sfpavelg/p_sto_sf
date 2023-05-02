@@ -415,5 +415,69 @@ public class TestUserResourceController extends AbstractTestApi {
                 .andExpect(status().is4xxClientError());
     }
 
+    @Test
+    @SqlGroup({
+            @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD,
+                    value = {"/script/TestUserResourceController/testGetPageWithListTop10UsersAnswers/Before.sql"}),
+            @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD,
+                    value = {"/script/TestUserResourceController/testGetPageWithListTop10UsersAnswers/After.sql"})
+    })
+    public void testGetPageWithListTop10UsersAnswer() throws Exception {
+        String token = getToken("0@gmail.com", "0pwd");
+
+
+        //  Top 10 users ordered by count answer, then rating of answer and then ordered by reputation
+        this.mvc.perform(get("/api/user/top10UsersAnswers")
+                        .header("Authorization", "Bearer " + token))
+
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+
+                .andExpect(jsonPath("$.[0].id", Is.is(101)))
+                .andExpect(jsonPath("$.[0].email", Is.is("super1@gmail.com")))
+                .andExpect(jsonPath("$.[0].fullName", Is.is("superfullname1")))
+                .andExpect(jsonPath("$.[0].city", Is.is("city1")))
+                .andExpect(jsonPath("$.[0].imageLink", Is.is("https://img.com/1")))
+                .andExpect(jsonPath("$.[0].reputation", Is.is(1)))
+
+                .andExpect(jsonPath("$.[1].id", Is.is(100)))
+                .andExpect(jsonPath("$.[1].email", Is.is("super0@gmail.com")))
+                .andExpect(jsonPath("$.[1].reputation", Is.is(0)))
+
+                .andExpect(jsonPath("$.[2].id", Is.is(114)))
+                .andExpect(jsonPath("$.[2].email", Is.is("9@gmail.com")))
+                .andExpect(jsonPath("$.[2].reputation", Is.is(14)))
+
+                .andExpect(jsonPath("$.[3].id", Is.is(103)))
+                .andExpect(jsonPath("$.[3].email", Is.is("super3@gmail.com")))
+                .andExpect(jsonPath("$.[3].reputation", Is.is(3)))
+
+                .andExpect(jsonPath("$.[4].id", Is.is(102)))
+                .andExpect(jsonPath("$.[4].email", Is.is("super2@gmail.com")))
+                .andExpect(jsonPath("$.[4].reputation", Is.is(2)))
+
+                .andExpect(jsonPath("$.[5].id", Is.is(112)))
+                .andExpect(jsonPath("$.[5].email", Is.is("7@gmail.com")))
+                .andExpect(jsonPath("$.[5].reputation", Is.is(12)))
+
+                .andExpect(jsonPath("$.[6].id", Is.is(111)))
+                .andExpect(jsonPath("$.[6].email", Is.is("6@gmail.com")))
+                .andExpect(jsonPath("$.[6].reputation", Is.is(11)))
+
+                .andExpect(jsonPath("$.[7].id", Is.is(109)))
+                .andExpect(jsonPath("$.[7].email", Is.is("4@gmail.com")))
+                .andExpect(jsonPath("$.[7].reputation", Is.is(9)))
+
+                .andExpect(jsonPath("$.[8].id", Is.is(108)))
+                .andExpect(jsonPath("$.[8].email", Is.is("3@gmail.com")))
+                .andExpect(jsonPath("$.[8].reputation", Is.is(8)))
+
+                .andExpect(jsonPath("$.[9].id", Is.is(106)))
+                .andExpect(jsonPath("$.[9].email", Is.is("1@gmail.com")))
+                .andExpect(jsonPath("$.[9].reputation", Is.is(6)));
+
+    }
+
 
 }

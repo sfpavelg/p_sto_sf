@@ -15,4 +15,6 @@ public interface UserDtoDao  {
 
     List<UserProfileQuestionDto> getAllUserProfileQuestionDtoByUserId(Long userId);
     List<UserProfileQuestionDto> getAllUserRemovedQuestion(Long id);
+
+    List<UserDto> getPageWithListTop10UsersAnswers();
 }
