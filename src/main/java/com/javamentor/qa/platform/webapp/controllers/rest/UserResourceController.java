@@ -109,5 +109,16 @@ public class UserResourceController {
         return ResponseEntity.ok(userDtoService.getAllUsersByVotes(parameters));
     }
 
+    @GetMapping("/top10UsersAnswers")
+    @ApiOperation(value = "List with top 10 users who gave the most answers to the question during the last week", response = PageDto.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Success request"),
+            @ApiResponse(code = 400, message = "Invalid password"),
+            @ApiResponse(code = 403, message = "Forbidden")})
+
+    public ResponseEntity<?> getPageWithListTop10UsersAnswers() {
+        return ResponseEntity.ok(userDtoService.getPageWithListTop10UsersAnswers());
+    }
+
 }
 

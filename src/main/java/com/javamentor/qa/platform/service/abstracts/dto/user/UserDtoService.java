@@ -5,6 +5,7 @@ import com.javamentor.qa.platform.models.dto.user.UserDto;
 import javassist.NotFoundException;
 
 import java.util.HashMap;
+import java.util.List;
 
 public interface UserDtoService {
     UserDto getById(Long id) throws NotFoundException;
@@ -13,4 +14,6 @@ public interface UserDtoService {
 
     PageDto<UserDto> getUsersByPersistDateTime(HashMap<String, Object> param) throws NotFoundException;
     PageDto<UserDto> getAllUsersByVotes(HashMap<String, Object> param) throws NotFoundException;
+
+    List<UserDto> getPageWithListTop10UsersAnswers();
 }
