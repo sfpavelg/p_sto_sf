@@ -4,6 +4,7 @@ import com.javamentor.qa.platform.models.entity.BookMarks;
 import com.javamentor.qa.platform.models.entity.Comment;
 import com.javamentor.qa.platform.models.entity.CommentType;
 import com.javamentor.qa.platform.models.entity.chat.*;
+import com.javamentor.qa.platform.models.entity.GroupBookmark;
 import com.javamentor.qa.platform.models.entity.question.*;
 import com.javamentor.qa.platform.models.entity.question.answer.Answer;
 import com.javamentor.qa.platform.models.entity.question.answer.CommentAnswer;
@@ -17,6 +18,7 @@ import com.javamentor.qa.platform.service.abstracts.model.*;
 import com.javamentor.qa.platform.service.abstracts.model.tag.IgnoredTagService;
 import com.javamentor.qa.platform.service.abstracts.model.tag.TagService;
 import com.javamentor.qa.platform.service.abstracts.model.tag.TrackedTagService;
+import io.swagger.models.auth.In;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -44,10 +46,11 @@ public class TestDataInitService {
     private final CommentQuestionService commentQuestionService;
     private final CommentAnswerService commentAnswerService;
     private final ReputationService reputationService;
-    private final BookmarkService bookMarkService;
     private final GroupChatService groupChatService;
     private final SingleChatService singleChatService;
     private final MessageService messageService;
+    private final BookmarkService bookMarkService;
+    private final GroupBookmarkService groupBookmarkService;
 
     @Autowired
     public TestDataInitService(RoleService roleService, UserService userService, QuestionService questionService,
@@ -55,7 +58,7 @@ public class TestDataInitService {
                                TrackedTagService trackedTagService, QuestionViewedService questionViewedService,
                                VoteQuestionService voteQuestionService, VoteAnswerService voteAnswerService,
                                CommentQuestionService commentQuestionService, CommentAnswerService commentAnswerService,
-                               ReputationService reputationService, BookmarkService bookMarkService, GroupChatService groupChatService, SingleChatService singleChatService, MessageService messageService) {
+                               ReputationService reputationService, BookmarkService bookMarkService, GroupChatService groupChatService, SingleChatService singleChatService, MessageService messageService,GroupBookmarkService groupBookmarkService) {
         this.roleService = roleService;
         this.userService = userService;
         this.questionService = questionService;
@@ -70,6 +73,7 @@ public class TestDataInitService {
         this.commentAnswerService = commentAnswerService;
         this.reputationService = reputationService;
         this.bookMarkService = bookMarkService;
+        this.groupBookmarkService = groupBookmarkService;
         this.groupChatService = groupChatService;
         this.singleChatService = singleChatService;
         this.messageService = messageService;
@@ -348,6 +352,17 @@ public class TestDataInitService {
         }
     }
 
+    public void createGroupBookmarks(int count){
+        List<User> userList = userService.getAll();
+        for (int i = 0; i < count; i++) {
+            GroupBookmark groupBookmark = new GroupBookmark();
+            groupBookmark.setTitle("title number " + i);
+            groupBookmark.setUser(userList.get(i));
+            groupBookmark.setBookMarks(null);
+            groupBookmarkService.persist(groupBookmark);
+        }
+    }
+
     public void createSingleChat(int count) {
         List<User> userList = userService.getAll();
         for (int i = 0; i < count; i++) {
@@ -409,6 +424,7 @@ public class TestDataInitService {
         createCommentAnswer(20);
         createReputation();
         createBookMarks(10);
+        createGroupBookmarks(5);
         createGroupChat();
         createSingleChat(20);
         createMessage();

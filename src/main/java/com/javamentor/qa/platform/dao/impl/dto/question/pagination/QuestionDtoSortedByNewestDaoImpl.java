@@ -1,7 +1,7 @@
-package com.javamentor.qa.platform.dao.impl.dto.question;
+package com.javamentor.qa.platform.dao.impl.dto.question.pagination;
 
-import com.javamentor.qa.platform.dao.abstracts.dto.question.QuestionDtoSortedByNewestDao;
-import com.javamentor.qa.platform.models.dto.question.QuestionDto;
+import com.javamentor.qa.platform.dao.abstracts.dto.question.pagination.QuestionDtoSortedByNewestDao;
+import com.javamentor.qa.platform.models.dto.question.QuestionViewDto;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
@@ -15,11 +15,11 @@ public class QuestionDtoSortedByNewestDaoImpl implements QuestionDtoSortedByNewe
     private EntityManager entityManager;
 
     @Override
-    public List<QuestionDto> getItems(Map<String, Object> param) {
+    public List<QuestionViewDto> getItems(Map<String, Object> param) {
         int itemsOnPageParam = (int) param.get("itemsOnPage");
         int itemsPositionParam = (int) param.get("currentPageNumber") * itemsOnPageParam - itemsOnPageParam;
         return entityManager.createQuery(
-                        "SELECT new com.javamentor.qa.platform.models.dto.question.QuestionDto( " +
+                        "SELECT new com.javamentor.qa.platform.models.dto.question.QuestionViewDto( " +
                                 "q.id, q.title , q.user.id, " +
                                 "(SELECT coalesce(sum(rep.count),0) FROM Reputation rep WHERE rep.author.id = q.user.id), " +
                                 "q.user.fullName, q.user.imageLink, q.description , " +
@@ -32,7 +32,7 @@ public class QuestionDtoSortedByNewestDaoImpl implements QuestionDtoSortedByNewe
                                 "WHERE  q.id in (select q.id from Question q join q.tags as tags where :trackedTag is null or tags.id in :trackedTag) " +
                                 "and q.id not in (select q.id from Question q join q.tags as tags where tags.id in :ignoredTag) " +
                                 "ORDER BY q.persistDateTime DESC",
-                        QuestionDto.class)
+                        QuestionViewDto.class)
                 .setParameter("trackedTag", param.get("trackedTag"))
                 .setParameter("ignoredTag", param.get("ignoredTag"))
                 .setMaxResults(itemsOnPageParam)

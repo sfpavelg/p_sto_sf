@@ -954,4 +954,144 @@ class TestQuestionResourceController extends AbstractTestApi {
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$", Is.is("Question already exist")));
     }
+
+    @Test
+    @Sql(value = {"/script/TestQuestionResourceController/testGetPageWithListMostPopularQuestionForMonthDto/Before.sql"}, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+    @Sql(value = {"/script/TestQuestionResourceController/testGetPageWithListMostPopularQuestionForMonthDto/After.sql"}, executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
+    public void getPageWithListMostPopularQuestionForMonthDtoTest() throws Exception {
+        String token = getToken("0@gmail.com", "0pwd");
+
+        //Test 1. Positive.  Most popular questions without tags in the query (page number and number of items per page by default)
+        this.mvc.perform(get("/api/user/question/mostPopularForMonth")
+                        .header("Authorization", "Bearer " + token))
+                .andDo(print())
+                .andExpect(jsonPath("$.currentPageNumber", Is.is(1)))
+                .andExpect(jsonPath("$.totalPageCount", Is.is(2)))
+                .andExpect(jsonPath("$.totalResultCount", Is.is(15)))
+                .andExpect(jsonPath("$.itemsOnPage", Is.is(10)))
+
+                .andExpect(jsonPath("$.items[0].id", Is.is(102)))
+                .andExpect(jsonPath("$.items[0].title", Is.is("title3")))
+                .andExpect(jsonPath("$.items[0].authorId", Is.is(102)))
+                .andExpect(jsonPath("$.items[0].authorReputation", Is.is(45)))
+                .andExpect(jsonPath("$.items[0].authorName", Is.is("name3")))
+                .andExpect(jsonPath("$.items[0].authorImage", Is.is("http://imagelink3.com")))
+                .andExpect(jsonPath("$.items[0].description", Is.is("description3")))
+                .andExpect(jsonPath("$.items[0].viewCount", Is.is(3)))
+                .andExpect(jsonPath("$.items[0].countAnswer", Is.is(7)))
+                .andExpect(jsonPath("$.items[0].countValuable", Is.is(1)))
+                //Total weight = 22; view = 3; answer = 7; votes = 2. (3+ 7*2 + 1*5 = 22)
+                .andExpect(jsonPath("$.items[0].persistDateTime", Is.is("2023-01-27T13:01:11.245128")))
+                .andExpect(jsonPath("$.items[0].lastUpdateDateTime", Is.is("2023-01-27T13:01:11.245128")))
+                .andExpect(jsonPath("$.items[0].listTagDto[0].id", Is.is(102)))
+                .andExpect(jsonPath("$.items[0].listTagDto[1].id", Is.is(105)))
+
+                .andExpect(jsonPath("$.items[1].id", Is.is(103)))
+                .andExpect(jsonPath("$.items[1].viewCount", Is.is(3)))
+                .andExpect(jsonPath("$.items[1].countAnswer", Is.is(6)))
+                .andExpect(jsonPath("$.items[1].countValuable", Is.is(1)))
+                //Total weight = 22; view = 3; answer = 6; votes = 1. (3 + 6*2 + 1*5 = 20)
+
+                .andExpect(jsonPath("$.items[2].id", Is.is(100)))
+                .andExpect(jsonPath("$.items[2].viewCount", Is.is(0)))
+                .andExpect(jsonPath("$.items[2].countAnswer", Is.is(1)))
+                .andExpect(jsonPath("$.items[2].countValuable", Is.is(1)))
+                //Total weight = 4; view = 0; answer = 1; votes = 1. (0 + 1*2 + 1*5 = 7)
+
+                .andExpect(jsonPath("$.items[3].id", Is.is(101)))
+                .andExpect(jsonPath("$.items[3].viewCount", Is.is(0)))
+                .andExpect(jsonPath("$.items[3].countAnswer", Is.is(0)))
+                .andExpect(jsonPath("$.items[3].countValuable", Is.is(1)))
+                //Total weight = 5; view = 0; answer = 0; votes = 0. (0 + 0*2 + 1*5 = 5)
+
+                .andExpect(jsonPath("$.items[4].id", Is.is(105)))
+                .andExpect(jsonPath("$.items[4].viewCount", Is.is(0)))
+                .andExpect(jsonPath("$.items[4].countAnswer", Is.is(2)))
+                .andExpect(jsonPath("$.items[4].countValuable", Is.is(0)))
+                //Total weight = 4; view = 0; answer = 0; votes = 0. (0 + 2*2 + 0*5 = 4)
+
+                .andExpect(jsonPath("$.items[5].id", Is.is(106)))
+                .andExpect(jsonPath("$.items[5].viewCount", Is.is(3)))
+                .andExpect(jsonPath("$.items[5].countAnswer", Is.is(0)))
+                .andExpect(jsonPath("$.items[5].countValuable", Is.is(0)))
+                //Total weight = 3; view = 0; answer = 0; votes = 0. (3 + 0*2 + 0*5 = 3)
+
+                .andExpect(jsonPath("$.items[6].id", Is.is(107)))
+                .andExpect(jsonPath("$.items[6].viewCount", Is.is(0)))
+                .andExpect(jsonPath("$.items[6].countAnswer", Is.is(1)))
+                .andExpect(jsonPath("$.items[6].countValuable", Is.is(0)))
+                //Total weight = 2; view = 0; answer = 0; votes = 0. (0 + 1*2 + 0*5 = 2)
+
+                .andExpect(jsonPath("$.items.size()", Is.is(10)))
+                .andExpect(status().isOk());
+
+        //Test 2. Positive. Top questions with ignored tags in a query
+        //(page number and number of elements per page are passed in parameters)
+        this.mvc.perform(get("/api/user/question/mostPopularForMonth")
+                        .header("Authorization", "Bearer " + token)
+                        .param("page", "1")
+                        .param("items", "5")
+                        .param("ignoredTags", "100, 108"))
+
+                .andDo(print())
+                .andExpect(jsonPath("$.currentPageNumber", Is.is(1)))
+                .andExpect(jsonPath("$.totalPageCount", Is.is(3)))
+                .andExpect(jsonPath("$.totalResultCount", Is.is(12)))
+                .andExpect(jsonPath("$.itemsOnPage", Is.is(5)))
+
+                .andExpect(jsonPath("$.items[0].authorId", Is.is(102)))
+                .andExpect(jsonPath("$.items[0].authorReputation", Is.is(45)))
+                .andExpect(jsonPath("$.items[0].authorName", Is.is("name3")))
+                .andExpect(jsonPath("$.items[0].authorImage", Is.is("http://imagelink3.com")))
+                .andExpect(jsonPath("$.items[0].description", Is.is("description3")))
+                .andExpect(jsonPath("$.items[0].viewCount", Is.is(3)))
+                .andExpect(jsonPath("$.items[0].countAnswer", Is.is(7)))
+                .andExpect(jsonPath("$.items[0].countValuable", Is.is(1)))
+
+                .andExpect(jsonPath("$.items[0].persistDateTime", Is.is("2023-01-27T13:01:11.245128")))
+                .andExpect(jsonPath("$.items[0].lastUpdateDateTime", Is.is("2023-01-27T13:01:11.245128")))
+                .andExpect(jsonPath("$.items[0].listTagDto[0].id", Is.is(102)))
+                .andExpect(jsonPath("$.items[0].listTagDto[1].id", Is.is(105)))
+
+
+                .andExpect(jsonPath("$.items[1].id", Is.is(103)))
+                .andExpect(jsonPath("$.items[1].viewCount", Is.is(3)))
+                .andExpect(jsonPath("$.items[1].countAnswer", Is.is(6)))
+                .andExpect(jsonPath("$.items[1].countValuable", Is.is(1)))
+                //Total weight = 22; view = 3; answer = 6; votes = 1. (3 + 6*2 + 1*5 = 20)
+
+                .andExpect(jsonPath("$.items[2].id", Is.is(101)))
+                .andExpect(jsonPath("$.items[2].viewCount", Is.is(0)))
+                .andExpect(jsonPath("$.items[2].countAnswer", Is.is(0)))
+                .andExpect(jsonPath("$.items[2].countValuable", Is.is(1)))
+
+                .andExpect(jsonPath("$.items[3].id", Is.is(105)))
+                .andExpect(jsonPath("$.items[3].viewCount", Is.is(0)))
+                .andExpect(jsonPath("$.items[3].countAnswer", Is.is(2)))
+                .andExpect(jsonPath("$.items[3].countValuable", Is.is(0)))
+
+                .andExpect(jsonPath("$.items[4].id", Is.is(107)))
+                .andExpect(jsonPath("$.items[4].viewCount", Is.is(0)))
+                .andExpect(jsonPath("$.items[4].countAnswer", Is.is(1)))
+                .andExpect(jsonPath("$.items[4].countValuable", Is.is(0)))
+
+                .andExpect(jsonPath("$.items.size()", Is.is(5)))
+                .andExpect(status().isOk());
+
+        //Test 3. Positive.  Successful test on not existing page
+        this.mvc.perform(get("/api/user/question/mostPopularForMonth")
+                        .header("Authorization", "Bearer " + token)
+                        .param("page", "5"))
+                .andDo(print())
+                .andExpect(jsonPath("$.items").isEmpty())
+                .andExpect(status().isOk());
+
+        //Test 4. Negative test.  Page with negative number can not be found
+        this.mvc.perform(get("/api/user/question/mostPopularForMonth")
+                        .header("Authorization", "Bearer " + token)
+                        .param("page", "-1"))
+                .andDo(print())
+                .andExpect(status().isBadRequest());
+    }
+
 }

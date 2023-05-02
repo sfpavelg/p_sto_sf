@@ -9,7 +9,6 @@ import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.jdbc.SqlGroup;
 
 import static org.hamcrest.Matchers.containsString;
-import static org.hamcrest.Matchers.hasSize;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -86,7 +85,6 @@ public class TestUserResourceController extends AbstractTestApi {
 
     }
 
-
     @Test
     @SqlGroup({
             @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD,
@@ -157,7 +155,6 @@ public class TestUserResourceController extends AbstractTestApi {
                 .andDo(print())
                 .andExpect(status().isBadRequest());
     }
-
 
     @Test
     @SqlGroup({
@@ -420,144 +417,67 @@ public class TestUserResourceController extends AbstractTestApi {
 
     @Test
     @SqlGroup({
-            @Sql(value = {"/script/TestUserResourceController/testGetAllUserAuthorizedQuestions/Before.sql"}, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD),
-            @Sql(value = {"/script/TestUserResourceController/testGetAllUserAuthorizedQuestions/After.sql"}, executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
-    })
-    public void testGetAllUserAuthorizedQuestions() throws Exception {
-        String jwt = getToken("0@gmail.com", "0pwd");
-
-        // Check successful execution of request all UserProfileQuestionDto from authorized User
-        this.mvc.perform(get("/api/user/profile/questions")
-                        .header("Authorization", "Bearer " + jwt)
-                        .contentType(MediaType.APPLICATION_JSON))
-
-                .andDo(print())
-                .andExpect(status().isOk())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$", hasSize(3)))
-
-                .andExpect(jsonPath("$[0].questionId", Is.is(100)))
-                .andExpect(jsonPath("$[0].title", Is.is("title1")))
-                .andExpect(jsonPath("$[0].tags", hasSize(2)))
-                .andExpect(jsonPath("$[0].tags[0].name", Is.is("name1")))
-                .andExpect(jsonPath("$[0].tags[1].name", Is.is("name4")))
-                .andExpect(jsonPath("$[0].countAnswer", Is.is(3)))
-
-                .andExpect(jsonPath("$[1].questionId", Is.is(105)))
-                .andExpect(jsonPath("$[1].title", Is.is("title6")))
-                .andExpect(jsonPath("$[1].tags", hasSize(2)))
-                .andExpect(jsonPath("$[1].tags[0].name", Is.is("name6")))
-                .andExpect(jsonPath("$[1].tags[1].name", Is.is("name2")))
-                .andExpect(jsonPath("$[1].countAnswer", Is.is(1)))
-
-                .andExpect(jsonPath("$[2].questionId", Is.is(107)))
-                .andExpect(jsonPath("$[2].title", Is.is("title8")))
-                .andExpect(jsonPath("$[2].tags", hasSize(2)))
-                .andExpect(jsonPath("$[2].tags[0].name", Is.is("name1")))
-                .andExpect(jsonPath("$[2].tags[1].name", Is.is("name4")))
-                .andExpect(jsonPath("$[2].countAnswer", Is.is(0)));
-
-        // Check successful execution of request with questions that have no tags and no answers
-        String emptyTagsQuestionUser = getToken("3@gmail.com", "3pwd");
-        this.mvc.perform(get("/api/user/profile/questions")
-                        .header("Authorization", "Bearer " + emptyTagsQuestionUser)
-                        .contentType(MediaType.APPLICATION_JSON))
-
-                .andDo(print())
-                .andExpect(status().isOk())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$", hasSize(4)))
-
-                .andExpect(jsonPath("$[3].questionId", Is.is(112)))
-                .andExpect(jsonPath("$[3].title", Is.is("title13")))
-                .andExpect(jsonPath("$[3].tags", hasSize(0)))
-                .andExpect(jsonPath("$[3].countAnswer", Is.is(0)));
-
-        // Check successful execution of request with authenticated user who has no questions
-        String emptyQuestionsUserJWT = getToken("4@gmail.com", "4pwd");
-        this.mvc.perform(get("/api/user/profile/questions")
-                        .header("Authorization", "Bearer " + emptyQuestionsUserJWT)
-                        .contentType(MediaType.APPLICATION_JSON))
-
-                .andDo(print())
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$", hasSize(0)));
-    }
-
-    @Test
-    @SqlGroup({
             @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD,
-                    value = {"/script/TestUserResourceController/testGetUserRemovedQuestion/Before.sql"}),
+                    value = {"/script/TestUserResourceController/testGetPageWithListTop10UsersAnswers/Before.sql"}),
             @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD,
-                    value = {"/script/TestUserResourceController/testGetUserRemovedQuestion/After.sql"})
+                    value = {"/script/TestUserResourceController/testGetPageWithListTop10UsersAnswers/After.sql"})
     })
-    public void testGetUserRemovedQuestion() throws Exception {
-        // Check successful execution of request with authenticated user without delete questions
-        String JWT = getToken("4@gmail.com", "4pwd");
-        this.mvc.perform(get("/api/user/profile/delete/questions")
-                        .header("Authorization", "Bearer " + JWT)
-                        .contentType(MediaType.APPLICATION_JSON))
-
-                .andDo(print())
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$", hasSize(0)));
+    public void testGetPageWithListTop10UsersAnswer() throws Exception {
+        String token = getToken("0@gmail.com", "0pwd");
 
 
-        // Check successful execution of request user with removed questions
-        String jwt1 = getToken("0@gmail.com", "0pwd");
-        this.mvc.perform(get("/api/user/profile/delete/questions")
-                        .header("Authorization", "Bearer " + jwt1)
-                        .contentType(MediaType.APPLICATION_JSON))
+        //  Top 10 users ordered by count answer, then rating of answer and then ordered by reputation
+        this.mvc.perform(get("/api/user/top10UsersAnswers")
+                        .header("Authorization", "Bearer " + token))
 
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$", hasSize(3)))
 
-                .andExpect(jsonPath("$[0].questionId", Is.is(100)))
-                .andExpect(jsonPath("$[0].title", Is.is("title1")))
-                .andExpect(jsonPath("$[0].tags", hasSize(2)))
-                .andExpect(jsonPath("$[0].tags[0].name", Is.is("name1")))
-                .andExpect(jsonPath("$[0].tags[1].name", Is.is("name4")))
-                .andExpect(jsonPath("$[0].countAnswer", Is.is(3)))
+                .andExpect(jsonPath("$.[0].id", Is.is(101)))
+                .andExpect(jsonPath("$.[0].email", Is.is("super1@gmail.com")))
+                .andExpect(jsonPath("$.[0].fullName", Is.is("superfullname1")))
+                .andExpect(jsonPath("$.[0].city", Is.is("city1")))
+                .andExpect(jsonPath("$.[0].imageLink", Is.is("https://img.com/1")))
+                .andExpect(jsonPath("$.[0].reputation", Is.is(1)))
 
-                .andExpect(jsonPath("$[1].questionId", Is.is(105)))
-                .andExpect(jsonPath("$[1].title", Is.is("title6")))
-                .andExpect(jsonPath("$[1].tags", hasSize(2)))
-                .andExpect(jsonPath("$[1].tags[0].name", Is.is("name6")))
-                .andExpect(jsonPath("$[1].tags[1].name", Is.is("name2")))
-                .andExpect(jsonPath("$[1].countAnswer", Is.is(1)))
+                .andExpect(jsonPath("$.[1].id", Is.is(100)))
+                .andExpect(jsonPath("$.[1].email", Is.is("super0@gmail.com")))
+                .andExpect(jsonPath("$.[1].reputation", Is.is(0)))
 
-                .andExpect(jsonPath("$[2].questionId", Is.is(107)))
-                .andExpect(jsonPath("$[2].title", Is.is("title8")))
-                .andExpect(jsonPath("$[2].tags", hasSize(2)))
-                .andExpect(jsonPath("$[2].tags[0].name", Is.is("name1")))
-                .andExpect(jsonPath("$[2].tags[1].name", Is.is("name4")))
-                .andExpect(jsonPath("$[2].countAnswer", Is.is(0)));
+                .andExpect(jsonPath("$.[2].id", Is.is(114)))
+                .andExpect(jsonPath("$.[2].email", Is.is("9@gmail.com")))
+                .andExpect(jsonPath("$.[2].reputation", Is.is(14)))
+
+                .andExpect(jsonPath("$.[3].id", Is.is(103)))
+                .andExpect(jsonPath("$.[3].email", Is.is("super3@gmail.com")))
+                .andExpect(jsonPath("$.[3].reputation", Is.is(3)))
+
+                .andExpect(jsonPath("$.[4].id", Is.is(102)))
+                .andExpect(jsonPath("$.[4].email", Is.is("super2@gmail.com")))
+                .andExpect(jsonPath("$.[4].reputation", Is.is(2)))
+
+                .andExpect(jsonPath("$.[5].id", Is.is(112)))
+                .andExpect(jsonPath("$.[5].email", Is.is("7@gmail.com")))
+                .andExpect(jsonPath("$.[5].reputation", Is.is(12)))
+
+                .andExpect(jsonPath("$.[6].id", Is.is(111)))
+                .andExpect(jsonPath("$.[6].email", Is.is("6@gmail.com")))
+                .andExpect(jsonPath("$.[6].reputation", Is.is(11)))
+
+                .andExpect(jsonPath("$.[7].id", Is.is(109)))
+                .andExpect(jsonPath("$.[7].email", Is.is("4@gmail.com")))
+                .andExpect(jsonPath("$.[7].reputation", Is.is(9)))
+
+                .andExpect(jsonPath("$.[8].id", Is.is(108)))
+                .andExpect(jsonPath("$.[8].email", Is.is("3@gmail.com")))
+                .andExpect(jsonPath("$.[8].reputation", Is.is(8)))
+
+                .andExpect(jsonPath("$.[9].id", Is.is(106)))
+                .andExpect(jsonPath("$.[9].email", Is.is("1@gmail.com")))
+                .andExpect(jsonPath("$.[9].reputation", Is.is(6)));
 
     }
 
-    @Test
-    @SqlGroup({
-            @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD,
-                    value = {"/script/TestUserResourceController/testGetAllAuthorizedUserAnswersPerWeek/Before.sql"}),
-            @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD,
-                    value = {"/script/TestUserResourceController/testGetAllAuthorizedUserAnswersPerWeek/After.sql"})
-    })
-    public void testGetAllAuthorizedUserAnswersPerWeek() throws Exception {
-        String jwt = getToken("0@gmail.com", "0pwd");
 
-        // Check successful execution of request to get the count of answers from users per week
-        this.mvc.perform(get("/api/user/profile/question/week")
-                        .header("Authorization", "Bearer " + jwt))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$", Is.is(5)));
-
-        // Check successful execution of request to get the count of answers from users who haven't answered per week
-        String emptyAnswersUserToken = getToken("4@gmail.com", "4pwd");
-        this.mvc.perform(get("/api/user/profile/question/week")
-                        .header("Authorization", "Bearer " + emptyAnswersUserToken))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$", Is.is(0)));
-    }
 }

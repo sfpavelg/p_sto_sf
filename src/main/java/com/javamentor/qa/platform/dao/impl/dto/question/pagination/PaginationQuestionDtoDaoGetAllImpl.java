@@ -1,7 +1,7 @@
 package com.javamentor.qa.platform.dao.impl.dto.question.pagination;
 
 import com.javamentor.qa.platform.dao.abstracts.dto.question.pagination.PaginationQuestionDtoDaoGetAll;
-import com.javamentor.qa.platform.models.dto.question.QuestionDto;
+import com.javamentor.qa.platform.models.dto.question.QuestionViewDto;
 import org.springframework.stereotype.Repository;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -15,12 +15,12 @@ public class PaginationQuestionDtoDaoGetAllImpl implements PaginationQuestionDto
     private EntityManager entityManager;
 
     @Override
-    public List<QuestionDto> getItems(Map<String, Object> param) {
+    public List<QuestionViewDto> getItems(Map<String, Object> param) {
         int itemsOnPageParam = (int) param.get("itemsOnPage");
         int itemsPositionParam = (int) param.get("currentPageNumber") * itemsOnPageParam - itemsOnPageParam;
 
         return entityManager.createQuery(
-                        "select new com.javamentor.qa.platform.models.dto.question.QuestionDto ( q.id, " +
+                        "select new com.javamentor.qa.platform.models.dto.question.QuestionViewDto ( q.id, " +
                                 "q.title , " +
                                 "q.user.id, " +
                                 "(select coalesce(sum(r.count),0) from Reputation r where r.author.id = q.user.id), " +
@@ -37,7 +37,7 @@ public class PaginationQuestionDtoDaoGetAllImpl implements PaginationQuestionDto
                                 "from Question q " +
                                 "where q.id in (select q.id from Question q join q.tags as tags where :trackedTags is null or tags.id in :trackedTags ) " +
                                 "and q.id not in (select q.id from Question q join q.tags as tags where tags.id in :ignoredTags) " +
-                                "order by q.id", QuestionDto.class)
+                                "order by q.id", QuestionViewDto.class)
                 .setParameter("trackedTags", param.get("trackedTags"))
                 .setParameter("ignoredTags", param.get("ignoredTags"))
                 .setMaxResults(itemsOnPageParam)
