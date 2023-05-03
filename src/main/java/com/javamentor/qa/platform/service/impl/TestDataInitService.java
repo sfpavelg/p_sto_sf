@@ -3,6 +3,7 @@ package com.javamentor.qa.platform.service.impl;
 import com.javamentor.qa.platform.models.entity.BookMarks;
 import com.javamentor.qa.platform.models.entity.Comment;
 import com.javamentor.qa.platform.models.entity.CommentType;
+import com.javamentor.qa.platform.models.entity.chat.*;
 import com.javamentor.qa.platform.models.entity.GroupBookmark;
 import com.javamentor.qa.platform.models.entity.question.*;
 import com.javamentor.qa.platform.models.entity.question.answer.Answer;
@@ -45,6 +46,9 @@ public class TestDataInitService {
     private final CommentQuestionService commentQuestionService;
     private final CommentAnswerService commentAnswerService;
     private final ReputationService reputationService;
+    private final GroupChatService groupChatService;
+    private final SingleChatService singleChatService;
+    private final MessageService messageService;
     private final BookmarkService bookMarkService;
     private final GroupBookmarkService groupBookmarkService;
 
@@ -54,8 +58,7 @@ public class TestDataInitService {
                                TrackedTagService trackedTagService, QuestionViewedService questionViewedService,
                                VoteQuestionService voteQuestionService, VoteAnswerService voteAnswerService,
                                CommentQuestionService commentQuestionService, CommentAnswerService commentAnswerService,
-                               ReputationService reputationService, BookmarkService bookMarkService,
-                               GroupBookmarkService groupBookmarkService) {
+                               ReputationService reputationService, BookmarkService bookMarkService, GroupChatService groupChatService, SingleChatService singleChatService, MessageService messageService,GroupBookmarkService groupBookmarkService) {
         this.roleService = roleService;
         this.userService = userService;
         this.questionService = questionService;
@@ -71,6 +74,9 @@ public class TestDataInitService {
         this.reputationService = reputationService;
         this.bookMarkService = bookMarkService;
         this.groupBookmarkService = groupBookmarkService;
+        this.groupChatService = groupChatService;
+        this.singleChatService = singleChatService;
+        this.messageService = messageService;
     }
 
     public void createSuperUser(int count) {
@@ -357,6 +363,51 @@ public class TestDataInitService {
         }
     }
 
+    public void createSingleChat(int count) {
+        List<User> userList = userService.getAll();
+        for (int i = 0; i < count; i++) {
+            Chat chat = new Chat(ChatType.SINGLE);
+            chat.setTitle("SingleChat" + i);
+            SingleChat singleChat = new SingleChat();
+            singleChat.setChat(chat);
+            singleChat.setUserOne(userList.get(i));
+            singleChat.setUseTwo(userList.get(rand(1, userList.size() - 1)));
+            if (singleChat.getUserOne() == singleChat.getUseTwo()) {
+                singleChat.setUseTwo(userList.get(rand(1, userList.size() - 1)));
+            }
+            singleChatService.persist(singleChat);
+        }
+    }
+
+    public void createGroupChat() {
+        Set<User> userSetJava = new HashSet<>(userService.getAll());
+        Chat chatJava = new Chat(ChatType.GROUP);
+        chatJava.setTitle("Java");
+        GroupChat groupChatJava = new GroupChat();
+        groupChatJava.setChat(chatJava);
+        groupChatJava.setUsers(userSetJava);
+        groupChatService.persist(groupChatJava);
+    }
+
+    public void createMessage() {
+        List<SingleChat> chatList = singleChatService.getAll();
+        for (int i = 0; i < 7; i++) {
+            Message message = new Message();
+            message.setChat(chatList.get(rand(0, chatList.size() - 1)).getChat());
+            message.setMessage("Hello " + i);
+            message.setUserSender(chatList.get(i).getUserOne());
+            messageService.persist(message);
+        }
+        for (int i = 0; i < 10; i++) {
+            Message message1 = new Message();
+            message1.setChat(groupChatService.getAll().get(0).getChat());
+            message1.setUserSender(userService.getAll().get(rand(1, userService.getAll().size() - 1)));
+            message1.setMessage("Group Java Hello " + message1.getUserSender().getNickname());
+            messageService.persist(message1);
+        }
+    }
+
+
     public void init() {
         roleService.persist(ROLE_ADMIN);
         roleService.persist(ROLE_USER);
@@ -374,5 +425,8 @@ public class TestDataInitService {
         createReputation();
         createBookMarks(10);
         createGroupBookmarks(5);
+        createGroupChat();
+        createSingleChat(20);
+        createMessage();
     }
 }
