@@ -1,7 +1,9 @@
 package com.javamentor.qa.platform.webapp.controllers.rest;
 
+import com.javamentor.qa.platform.models.dto.GroupBookmarkDto;
 import com.javamentor.qa.platform.models.dto.user.UserProfileQuestionDto;
 import com.javamentor.qa.platform.models.entity.user.User;
+import com.javamentor.qa.platform.service.abstracts.dto.GroupBookmarkDtoService;
 import com.javamentor.qa.platform.service.abstracts.dto.answer.AnswerDtoService;
 import com.javamentor.qa.platform.service.abstracts.dto.user.UserProfileQuestionDtoService;
 import io.swagger.annotations.Api;
@@ -23,6 +25,7 @@ public class ProfileUserResourceController {
 
     private final AnswerDtoService answerDtoService;
     private final UserProfileQuestionDtoService userProfileQuestionDtoService;
+    private final GroupBookmarkDtoService groupBookmarkDtoService;
 
     @GetMapping("/questions")
     @ApiOperation(
@@ -62,6 +65,22 @@ public class ProfileUserResourceController {
             @ApiResponse(code = 403, message = "Forbidden")})
     public ResponseEntity<?> getAllAuthorizedUserAnswersPerWeek(@AuthenticationPrincipal User user) {
         return ResponseEntity.ok(answerDtoService.getCountAllAnswersPerWeekByUserId(user.getId()));
+    }
+
+    /**
+     * Method return JSON with list of user group names
+     * @return {@link ResponseEntity} with status Ok and {@link List <GroupBookmarkDto>} in body
+     */
+    @GetMapping("/bookmark/group")
+    @ApiOperation(
+            value = "Getting list of user group names",
+            response = GroupBookmarkDto.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Success request. UserProfileQuestionDto has been successfully returned"),
+            @ApiResponse(code = 400, message = "Invalid password"),
+            @ApiResponse(code = 403, message = "Forbidden")})
+    public ResponseEntity <?> getGroupBookmark (@AuthenticationPrincipal User user) {
+        return ResponseEntity.ok(groupBookmarkDtoService.getGroupBookmark(user.getId()));
     }
 
 }
