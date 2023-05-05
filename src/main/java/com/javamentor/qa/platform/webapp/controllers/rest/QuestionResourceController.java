@@ -68,8 +68,7 @@ public class QuestionResourceController {
             @ApiResponse(code = 401, message = "Unauthorized request"),
             @ApiResponse(code = 403, message = "Forbidden"),
             @ApiResponse(code = 404, message = "Question with such id doesn't exist")})
-    public ResponseEntity<?> getQuestionDtoById(@PathVariable Long id) throws NotFoundException {
-        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+    public ResponseEntity<?> getQuestionDtoById(@PathVariable Long id, @AuthenticationPrincipal User user) throws NotFoundException {
         return ResponseEntity.ok(questionDtoService.getQuestionDtoById(id, user.getId()));
     }
 
@@ -84,8 +83,9 @@ public class QuestionResourceController {
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         Question question = questionConverter.questionCreateDtoToQuestion(questionCreateDto, new User());
         questionService.persist(question);
-        return ResponseEntity.ok(questionDtoService.getQuestionDtoById(question.getId(), user.getId()));
-    }
+        return ResponseEntity.ok(questionDtoService.getQuestionDtoById(question.getId(), user.getId()));    }
+
+
 
     /**
      * The method returns JSON with a page-by-page list of QuestionDTO objects for which no answer was given.
