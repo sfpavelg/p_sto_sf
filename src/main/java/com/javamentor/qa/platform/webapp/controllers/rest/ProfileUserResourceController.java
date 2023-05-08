@@ -30,7 +30,6 @@ public class ProfileUserResourceController {
     private final UserProfileQuestionDtoService userProfileQuestionDtoService;
     private final GroupBookmarkDtoService groupBookmarkDtoService;
     private final GroupBookmarkService groupBookmarkService;
-    private final GroupBookmarkDtoService groupBookmarkDtoService;
 
     @GetMapping("/questions")
     @ApiOperation(
@@ -71,6 +70,8 @@ public class ProfileUserResourceController {
     public ResponseEntity<?> getAllAuthorizedUserAnswersPerWeek(@AuthenticationPrincipal User user) {
         return ResponseEntity.ok(answerDtoService.getCountAllAnswersPerWeekByUserId(user.getId()));
     }
+
+
     @PostMapping("/bookmark/group")
     @ApiOperation(
             value = "Add group for bookmarks in profile")

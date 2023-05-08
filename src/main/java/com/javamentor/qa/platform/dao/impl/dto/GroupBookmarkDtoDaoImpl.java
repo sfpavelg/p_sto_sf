@@ -15,6 +15,7 @@ import java.util.List;
 public class GroupBookmarkDtoDaoImpl implements GroupBookmarkDtoDao {
     @PersistenceContext
     private EntityManager entityManager;
+
     @Override
     public Optional<GroupBookmarkDto> getGroupBookmarkById(Long id) {
         Query query = entityManager.createQuery("select new" +
@@ -29,12 +30,14 @@ public class GroupBookmarkDtoDaoImpl implements GroupBookmarkDtoDao {
 
     @Override
     public List<GroupBookmarkDto> getGroupBookmark(Long userId) {
-        Query query = entityManager.createQuery("select new com.javamentor.qa.platform.models.dto.GroupBookmarkDto (" +
-                        "gb.id, " +
-                        "gb.title) " +
-                        "from GroupBookmark gb " +
-                        "where gb.user.id = :userId "
-                , GroupBookmarkDto.class)
+        Query query = entityManager.createQuery(
+                "select new com.javamentor.qa.platform.models.dto.GroupBookmarkDto (" +
+                                "gb.id, " +
+                                "gb.title, " +
+                                "gb.user.id) " +
+                                "from GroupBookmark gb " +
+                                "where gb.user.id = :userId "
+                        , GroupBookmarkDto.class)
                 .setParameter("userId", userId);
 
         return (List<GroupBookmarkDto>) query.getResultList();
