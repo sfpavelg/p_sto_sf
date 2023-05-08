@@ -1,13 +1,18 @@
 package com.javamentor.qa.platform.webapp.controllers.rest;
 
+import com.javamentor.qa.platform.models.dto.GroupBookmarkDto;
 import com.javamentor.qa.platform.models.dto.user.UserProfileQuestionDto;
+import com.javamentor.qa.platform.models.entity.GroupBookmark;
 import com.javamentor.qa.platform.models.entity.user.User;
+import com.javamentor.qa.platform.service.abstracts.dto.GroupBookmarkDtoService;
 import com.javamentor.qa.platform.service.abstracts.dto.answer.AnswerDtoService;
 import com.javamentor.qa.platform.service.abstracts.dto.user.UserProfileQuestionDtoService;
+import com.javamentor.qa.platform.service.abstracts.model.GroupBookmarkService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
+import javassist.NotFoundException;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -23,6 +28,8 @@ public class ProfileUserResourceController {
 
     private final AnswerDtoService answerDtoService;
     private final UserProfileQuestionDtoService userProfileQuestionDtoService;
+    private final GroupBookmarkDtoService groupBookmarkDtoService;
+    private final GroupBookmarkService groupBookmarkService;
 
     @GetMapping("/questions")
     @ApiOperation(
@@ -62,6 +69,36 @@ public class ProfileUserResourceController {
             @ApiResponse(code = 403, message = "Forbidden")})
     public ResponseEntity<?> getAllAuthorizedUserAnswersPerWeek(@AuthenticationPrincipal User user) {
         return ResponseEntity.ok(answerDtoService.getCountAllAnswersPerWeekByUserId(user.getId()));
+    }
+
+
+    @PostMapping("/bookmark/group")
+    @ApiOperation(
+            value = "Add group for bookmarks in profile")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Group bookmark was successfully added"),
+            @ApiResponse(code = 400, message = "Bad request"),
+            @ApiResponse(code = 403, message = "Forbidden")})
+    public ResponseEntity<?> addGroupOfBookmarks(@AuthenticationPrincipal User user,
+                                                 @RequestBody String groupName) throws NotFoundException {
+        GroupBookmark groupBookmark = groupBookmarkService.groupBookmarkPersist(user, groupName);
+        return ResponseEntity.ok(groupBookmarkDtoService.getGroupBookmarkById(groupBookmark.getId()));
+    }
+
+    /**
+     * Method return JSON with list of user group names
+     * @return {@link ResponseEntity} with status Ok and {@link List <GroupBookmarkDto>} in body
+     */
+    @GetMapping("/bookmark/group")
+    @ApiOperation(
+            value = "Getting list of user group names",
+            response = GroupBookmarkDto.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Success request. UserProfileQuestionDto has been successfully returned"),
+            @ApiResponse(code = 400, message = "Invalid password"),
+            @ApiResponse(code = 403, message = "Forbidden")})
+    public ResponseEntity <?> getGroupBookmark (@AuthenticationPrincipal User user) {
+        return ResponseEntity.ok(groupBookmarkDtoService.getGroupBookmark(user.getId()));
     }
 
 }
