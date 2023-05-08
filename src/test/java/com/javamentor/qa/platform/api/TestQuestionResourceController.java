@@ -28,8 +28,7 @@ class TestQuestionResourceController extends AbstractTestApi {
         String token = getToken("0@gmail.com", "0pwd");
 
         //success
-        this.mvc.perform(get("/api/user/question/{id}", 100)
-                        .header("Authorization", "Bearer " + token))
+        this.mvc.perform(get("/api/user/question/{id}", 100).header("Authorization", "Bearer " + token))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
@@ -43,10 +42,10 @@ class TestQuestionResourceController extends AbstractTestApi {
                 .andExpect(jsonPath("$.title", Is.is("title1")))
                 .andExpect(jsonPath("$.viewCount", Is.is(2)))
                 .andExpect(jsonPath("$.countAnswer", Is.is(3)))
-                .andExpect(jsonPath("$.countValuable", Is.is(2)))
+                .andExpect(jsonPath("$.countValuable", Is.is(0)))
                 .andExpect(jsonPath("$.persistDateTime", Is.is("2023-01-27T13:01:11.245126")))
                 .andExpect(jsonPath("$.lastUpdateDateTime", Is.is("2023-01-27T13:01:11.245126")))
-                .andExpect(jsonPath("$.isUserVote", IsNull.nullValue()))
+                .andExpect(jsonPath("$.isUserVote", Is.is("UP_VOTE")))
                 .andExpect(jsonPath("$.listTagDto[0].id", Is.is(100)))
                 .andExpect(jsonPath("$.listTagDto[0].name", Is.is("name1")))
                 .andExpect(jsonPath("$.listTagDto[0].description", Is.is("description1")))
@@ -78,8 +77,16 @@ class TestQuestionResourceController extends AbstractTestApi {
                 .andExpect(jsonPath("$.countValuable", Is.is(0)))
                 .andExpect(jsonPath("$.persistDateTime", Is.is("2023-01-27T13:01:11.245126")))
                 .andExpect(jsonPath("$.lastUpdateDateTime", Is.is("2023-01-27T13:01:11.245126")))
-                .andExpect(jsonPath("$.isUserVote", IsNull.nullValue()));
+                .andExpect(jsonPath("$.isUserVote", Is.is("DOWN_VOTE")));
 
+        //success
+        this.mvc.perform(get("/api/user/question/{id}", 103).header("Authorization", "Bearer " + token))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.id", Is.is(103)))
+                .andExpect(jsonPath("$.authorId", Is.is(103)))
+                .andExpect(jsonPath("$.isUserVote", IsNull.nullValue()));
     }
 
 

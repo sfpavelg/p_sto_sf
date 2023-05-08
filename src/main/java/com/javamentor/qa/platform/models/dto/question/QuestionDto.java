@@ -31,13 +31,14 @@ public class QuestionDto {
     private LocalDateTime persistDateTime;
     private LocalDateTime lastUpdateDateTime;
     private VoteType isUserVote;
-
     private List<TagDto> listTagDto = new ArrayList<>();
 
     private List<AnswerDto> listAnswerDto = new ArrayList<>();
 
-
-    public QuestionDto(Long id, String title, Long authorId, Long authorReputation, String authorName, String authorImage, String description, Long viewCount, Long countAnswer, Long countValuable, LocalDateTime persistDateTime, LocalDateTime lastUpdateDateTime, VoteType isUserVote) {
+    public QuestionDto(Long id, String title, Long authorId, Long authorReputation, String authorName,
+                       String authorImage, String description, Long viewCount, Long countAnswer,
+                       Long countValuable, LocalDateTime persistDateTime,
+                       LocalDateTime lastUpdateDateTime, VoteType isUserVote) {
         this.id = id;
         this.title = title;
         this.authorId = authorId;
@@ -52,4 +53,5 @@ public class QuestionDto {
         this.lastUpdateDateTime = lastUpdateDateTime;
         this.isUserVote = isUserVote;
     }
+
 }
