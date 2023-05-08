@@ -9,6 +9,7 @@ import org.springframework.test.context.jdbc.SqlGroup;
 
 import static org.hamcrest.Matchers.hasSize;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -156,5 +157,26 @@ public class TestProfileUserResourceController extends AbstractTestApi {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", Is.is(0)));
     }
-
+    @Test
+    @Sql(value = {"/script/TestProfileUserResourceController/testAddGroupOfBookmarks/Before.sql"}, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+    @Sql(value = {"/script/TestProfileUserResourceController/testAddGroupOfBookmarks/After.sql"}, executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
+    public void testAddGroupOfBookmarks() throws Exception {
+        String token = getToken("0@gmail.com", "0pwd");
+        //тест на добавление группы закладок
+        this.mvc.perform(post("/api/user/profile/bookmark/group")
+                        .header("Authorization", "Bearer " + token)
+                        .content("BookmarkTitle"))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id", Is.is(1)))
+                .andExpect(jsonPath("$.userId", Is.is(100)))
+                .andExpect(jsonPath("$.title", Is.is("BookmarkTitle")));
+        //тест на добавление группы закладок с повторяющимся заголовком
+        this.mvc.perform(post("/api/user/profile/bookmark/group")
+                        .header("Authorization", "Bearer " + token)
+                        .content("BookmarkTitle"))
+                .andDo(print())
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$", Is.is("Title already exist")));
+    }
 }
