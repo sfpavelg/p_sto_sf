@@ -162,7 +162,7 @@ public class TestProfileUserResourceController extends AbstractTestApi {
     @Sql(value = {"/script/TestProfileUserResourceController/testAddGroupOfBookmarks/After.sql"}, executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
     public void testAddGroupOfBookmarks() throws Exception {
         String token = getToken("0@gmail.com", "0pwd");
-        //тест на добавление группы закладок
+        //пїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
         this.mvc.perform(post("/api/user/profile/bookmark/group")
                         .header("Authorization", "Bearer " + token)
                         .content("BookmarkTitle"))
@@ -171,7 +171,7 @@ public class TestProfileUserResourceController extends AbstractTestApi {
                 .andExpect(jsonPath("$.id", Is.is(1)))
                 .andExpect(jsonPath("$.userId", Is.is(100)))
                 .andExpect(jsonPath("$.title", Is.is("BookmarkTitle")));
-        //тест на добавление группы закладок с повторяющимся заголовком
+        //пїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
         this.mvc.perform(post("/api/user/profile/bookmark/group")
                         .header("Authorization", "Bearer " + token)
                         .content("BookmarkTitle"))
@@ -179,4 +179,53 @@ public class TestProfileUserResourceController extends AbstractTestApi {
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$", Is.is("Title already exist")));
     }
+
+
+    @Test
+    @SqlGroup({
+            @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD,
+                    value = {"/script/TestProfileUserResourceController/testGetGroupBookmark/Before.sql"}),
+            @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD,
+                    value = {"/script/TestProfileUserResourceController/testGetGroupBookmark/After.sql"})
+    })
+    public void testGetGroupBookmark() throws Exception {
+
+        // successfully getting the bookmark group of the authenticated user
+        String JWT = getToken("0@gmail.com", "0pwd");
+
+        this.mvc.perform(get("/api/user/profile/bookmark/group")
+                        .header("Authorization", "Bearer " + JWT)
+                        .contentType(MediaType.APPLICATION_JSON))
+
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+
+                .andExpect(jsonPath("$[0].id", Is.is(100)))
+                .andExpect(jsonPath("$[0].title", Is.is("title_100")))
+
+                .andExpect(jsonPath("$[1].id", Is.is(101)))
+                .andExpect(jsonPath("$[1].title", Is.is("title_101")));
+
+        //checking for the absence of an authenticated user's bookmark group
+        String JWT2 = getToken("2@gmail.com", "2pwd");
+
+        this.mvc.perform(get("/api/user/profile/bookmark/group")
+                        .header("Authorization", "Bearer " + JWT2)
+                        .contentType(MediaType.APPLICATION_JSON))
+
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+
+                .andExpect(jsonPath("$", hasSize(0)));
+
+        //user not authenticated
+        this.mvc.perform(post("/api/user/profile/bookmark/group"))
+
+                .andDo(print())
+                .andExpect(status().is4xxClientError());
+    }
+
+
 }

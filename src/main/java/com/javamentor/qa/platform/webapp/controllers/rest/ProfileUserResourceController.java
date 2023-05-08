@@ -1,5 +1,6 @@
 package com.javamentor.qa.platform.webapp.controllers.rest;
 
+import com.javamentor.qa.platform.models.dto.GroupBookmarkDto;
 import com.javamentor.qa.platform.models.dto.user.UserProfileQuestionDto;
 import com.javamentor.qa.platform.models.entity.GroupBookmark;
 import com.javamentor.qa.platform.models.entity.user.User;
@@ -27,8 +28,8 @@ public class ProfileUserResourceController {
 
     private final AnswerDtoService answerDtoService;
     private final UserProfileQuestionDtoService userProfileQuestionDtoService;
-    private final GroupBookmarkService groupBookmarkService;
     private final GroupBookmarkDtoService groupBookmarkDtoService;
+    private final GroupBookmarkService groupBookmarkService;
 
     @GetMapping("/questions")
     @ApiOperation(
@@ -69,6 +70,8 @@ public class ProfileUserResourceController {
     public ResponseEntity<?> getAllAuthorizedUserAnswersPerWeek(@AuthenticationPrincipal User user) {
         return ResponseEntity.ok(answerDtoService.getCountAllAnswersPerWeekByUserId(user.getId()));
     }
+
+
     @PostMapping("/bookmark/group")
     @ApiOperation(
             value = "Add group for bookmarks in profile")
@@ -81,4 +84,21 @@ public class ProfileUserResourceController {
         GroupBookmark groupBookmark = groupBookmarkService.groupBookmarkPersist(user, groupName);
         return ResponseEntity.ok(groupBookmarkDtoService.getGroupBookmarkById(groupBookmark.getId()));
     }
+
+    /**
+     * Method return JSON with list of user group names
+     * @return {@link ResponseEntity} with status Ok and {@link List <GroupBookmarkDto>} in body
+     */
+    @GetMapping("/bookmark/group")
+    @ApiOperation(
+            value = "Getting list of user group names",
+            response = GroupBookmarkDto.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Success request. UserProfileQuestionDto has been successfully returned"),
+            @ApiResponse(code = 400, message = "Invalid password"),
+            @ApiResponse(code = 403, message = "Forbidden")})
+    public ResponseEntity <?> getGroupBookmark (@AuthenticationPrincipal User user) {
+        return ResponseEntity.ok(groupBookmarkDtoService.getGroupBookmark(user.getId()));
+    }
+
 }
