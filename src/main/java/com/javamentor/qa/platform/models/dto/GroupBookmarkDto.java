@@ -12,4 +12,5 @@ import lombok.Setter;
 public class GroupBookmarkDto {
     private Long id;
     private String title;
+    private Long userId;
 }

@@ -1,10 +1,7 @@
 package com.javamentor.qa.platform.service.impl.dto;
 
-import com.javamentor.qa.platform.dao.abstracts.dto.BookmarkDtoDao;
 import com.javamentor.qa.platform.dao.abstracts.dto.GroupBookmarkDtoDao;
-import com.javamentor.qa.platform.models.dto.BookmarkDto;
 import com.javamentor.qa.platform.models.dto.GroupBookmarkDto;
-import com.javamentor.qa.platform.service.abstracts.dto.BookmarkDtoService;
 import com.javamentor.qa.platform.service.abstracts.dto.GroupBookmarkDtoService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -22,4 +19,7 @@ public class GroupBookmarkDtoServiceImpl implements GroupBookmarkDtoService {
         return groupBookmarkDtoDao.getGroupBookmark(userId);
     }
 
+    public Optional<GroupBookmarkDto> getGroupBookmarkById(Long id) {
+        return groupBookmarkDtoDao.getGroupBookmarkById(id);
+    }
 }
