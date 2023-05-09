@@ -18,9 +18,10 @@ public class QuestionDtoDaoImpl implements QuestionDtoDao {
 
 
     @Override
-    public Optional<QuestionDto> getQuestionDtoById(Long id) {
+    public Optional<QuestionDto> getQuestionDtoById(Long id, Long userId) {
         Query query = entityManager.createQuery(
-                        "select new com.javamentor.qa.platform.models.dto.question.QuestionDto ( q.id, " +
+                        "select new com.javamentor.qa.platform.models.dto.question.QuestionDto ( " +
+                                "q.id, " +
                                 "q.title , " +
                                 "u.id, " +
                                 "coalesce(sum(r.count),0), " +
@@ -32,13 +33,17 @@ public class QuestionDtoDaoImpl implements QuestionDtoDao {
                                 "(select count(vq.question.id) from VoteQuestion vq where vq.question.id = :id and vq.vote = 'up') - " +
                                 "(select count(vq.question.id) from VoteQuestion vq where vq.question.id = :id and vq.vote = 'down'), " +
                                 "q.persistDateTime, " +
-                                "q.lastUpdateDateTime) " +
+                                "q.lastUpdateDateTime, " +
+                                "(select vq.vote from VoteQuestion vq where vq.user.id = :userId and vq.question.id = q.id)) " +
+
                                 "from Question q " +
                                 "LEFT JOIN User u ON u.id = q.user.id " +
                                 "LEFT JOIN Reputation r ON u.id = r.author.id " +
 
-                                "where q.id = :id group by q.id, u.id", QuestionDto.class)
-                .setParameter("id", id);
+                                "where q.id = :id " +
+                                " group by q.id, u.id", QuestionDto.class)
+                .setParameter("id", id)
+                .setParameter("userId", userId);
 
         return SingleResultUtil.getSingleResultOrNull(query);
     }

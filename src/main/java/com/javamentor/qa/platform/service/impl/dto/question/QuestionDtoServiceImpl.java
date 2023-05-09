@@ -29,8 +29,8 @@ public class QuestionDtoServiceImpl implements QuestionDtoService {
 
 
     @Override
-    public QuestionDto getQuestionDtoById(Long id) throws NotFoundException {
-        Optional<QuestionDto> questionDtoOptional = questionDtoDao.getQuestionDtoById(id);
+    public QuestionDto getQuestionDtoById(Long id, Long userId) throws NotFoundException {
+        Optional<QuestionDto> questionDtoOptional = questionDtoDao.getQuestionDtoById(id, userId);
 
         if (questionDtoOptional.isPresent()) {
             QuestionDto questionDto = questionDtoOptional.get();
