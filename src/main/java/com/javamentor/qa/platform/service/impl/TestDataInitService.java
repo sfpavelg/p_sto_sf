@@ -16,6 +16,7 @@ import com.javamentor.qa.platform.models.entity.user.reputation.Reputation;
 import com.javamentor.qa.platform.models.entity.user.reputation.ReputationType;
 import com.javamentor.qa.platform.service.abstracts.model.*;
 import com.javamentor.qa.platform.service.abstracts.model.tag.IgnoredTagService;
+import com.javamentor.qa.platform.service.abstracts.model.tag.RelatedTagService;
 import com.javamentor.qa.platform.service.abstracts.model.tag.TagService;
 import com.javamentor.qa.platform.service.abstracts.model.tag.TrackedTagService;
 import io.swagger.models.auth.In;
@@ -38,6 +39,7 @@ public class TestDataInitService {
     private final QuestionService questionService;
     private final AnswerService answerService;
     private final TagService tagService;
+    private final RelatedTagService relatedTagService;
     private final IgnoredTagService ignoredTagService;
     private final TrackedTagService trackedTagService;
     private final QuestionViewedService questionViewedService;
@@ -54,16 +56,17 @@ public class TestDataInitService {
 
     @Autowired
     public TestDataInitService(RoleService roleService, UserService userService, QuestionService questionService,
-                               AnswerService answerService, TagService tagService, IgnoredTagService ignoredTagService,
+                               AnswerService answerService, TagService tagService, RelatedTagService relatedTagService, IgnoredTagService ignoredTagService,
                                TrackedTagService trackedTagService, QuestionViewedService questionViewedService,
                                VoteQuestionService voteQuestionService, VoteAnswerService voteAnswerService,
                                CommentQuestionService commentQuestionService, CommentAnswerService commentAnswerService,
-                               ReputationService reputationService, BookmarkService bookMarkService, GroupChatService groupChatService, SingleChatService singleChatService, MessageService messageService,GroupBookmarkService groupBookmarkService) {
+                               ReputationService reputationService, BookmarkService bookMarkService, GroupChatService groupChatService, SingleChatService singleChatService, MessageService messageService, GroupBookmarkService groupBookmarkService) {
         this.roleService = roleService;
         this.userService = userService;
         this.questionService = questionService;
         this.answerService = answerService;
         this.tagService = tagService;
+        this.relatedTagService = relatedTagService;
         this.ignoredTagService = ignoredTagService;
         this.trackedTagService = trackedTagService;
         this.questionViewedService = questionViewedService;
@@ -164,6 +167,33 @@ public class TestDataInitService {
         htmlTag.setName("HTML");
         htmlTag.setDescription("HTML — стандартизированный язык гипертекстовой разметки документов для просмотра веб-страниц в браузере");
         tagService.persist(htmlTag);
+        for (int i = 0; i < 30; i++) {
+            Tag tag = new Tag();
+            tag.setName("tag" + i);
+            tag.setDescription("Tag" + i + " - is a test tag for dev stage of our application and must be removed on prod stage");
+            tagService.persist(tag);
+        }
+    }
+
+    public void createTagRelations() {
+        Long id = 0L;
+        for (int i = 5; i < 35; i++) {
+            id = (long) i;
+            RelatedTag relatedTag = new RelatedTag();
+            relatedTag.setChildTag(tagService.getById(id).orElse(new Tag()));
+            if (i <= 10) {
+                id = 1L;
+            } else if (i > 10 && i <= 20) {
+                id = 2L;
+            } else if (i > 20 && i <= 25) {
+                id = 3L;
+            }
+            else {
+                id = 4L;
+            }
+            relatedTag.setMainTag(tagService.getById(id).orElse(new Tag()));
+            relatedTagService.persist(relatedTag);
+        }
     }
 
     public void createIgnoredAndTrackedTags(int ignoredUser) {
@@ -174,14 +204,19 @@ public class TestDataInitService {
             if (user.getId() == ignoredUser) {
                 continue;
             }
-
             Set<Integer> uniqueIgnoredTags = IntStream
                     .range(0, tagList.size()).boxed()
-                    .sorted((o1, o2) -> o1.equals(o2) ? 0 : (ThreadLocalRandom.current().nextBoolean() ? -1 : 1))
+                    .sorted((o1, o2) -> Integer.compare(o1, o2))
                     .limit(rand(0, 4)).collect(Collectors.toSet());
+
+//            Set<Integer> uniqueIgnoredTags = IntStream
+//                    .range(0, tagList.size()).boxed()
+//                    .sorted((o1, o2) -> o1.equals(o2) ? 0 : (ThreadLocalRandom.current().nextBoolean() ? -1 : 1))
+//                    .limit(rand(0, 4)).collect(Collectors.toSet());
             Set<Integer> uniqueTrackedTags = IntStream
                     .range(0, tagList.size()).boxed()
-                    .sorted((o1, o2) -> o1.equals(o2) ? 0 : (ThreadLocalRandom.current().nextBoolean() ? -1 : 1))
+                    .sorted((o1, o2) -> Integer.compare(o1, o2))
+//                    .sorted((o1, o2) -> o1.equals(o2) ? 0 : (ThreadLocalRandom.current().nextBoolean() ? -1 : 1))
                     .limit(rand(0, 4)).collect(Collectors.toSet());
             uniqueIgnoredTags.removeAll(uniqueTrackedTags);
             uniqueTrackedTags.removeAll(uniqueIgnoredTags);
@@ -352,7 +387,7 @@ public class TestDataInitService {
         }
     }
 
-    public void createGroupBookmarks(int count){
+    public void createGroupBookmarks(int count) {
         List<User> userList = userService.getAll();
         for (int i = 0; i < count; i++) {
             GroupBookmark groupBookmark = new GroupBookmark();
@@ -414,6 +449,7 @@ public class TestDataInitService {
         createSuperUser(5);
         createUser(45);
         createTags();
+        createTagRelations();
         createQuestion(10);
         createAnswer(50);
         createIgnoredAndTrackedTags(1);
