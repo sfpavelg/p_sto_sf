@@ -209,14 +209,9 @@ public class TestDataInitService {
                     .sorted((o1, o2) -> Integer.compare(o1, o2))
                     .limit(rand(0, 4)).collect(Collectors.toSet());
 
-//            Set<Integer> uniqueIgnoredTags = IntStream
-//                    .range(0, tagList.size()).boxed()
-//                    .sorted((o1, o2) -> o1.equals(o2) ? 0 : (ThreadLocalRandom.current().nextBoolean() ? -1 : 1))
-//                    .limit(rand(0, 4)).collect(Collectors.toSet());
             Set<Integer> uniqueTrackedTags = IntStream
                     .range(0, tagList.size()).boxed()
                     .sorted((o1, o2) -> Integer.compare(o1, o2))
-//                    .sorted((o1, o2) -> o1.equals(o2) ? 0 : (ThreadLocalRandom.current().nextBoolean() ? -1 : 1))
                     .limit(rand(0, 4)).collect(Collectors.toSet());
             uniqueIgnoredTags.removeAll(uniqueTrackedTags);
             uniqueTrackedTags.removeAll(uniqueIgnoredTags);
