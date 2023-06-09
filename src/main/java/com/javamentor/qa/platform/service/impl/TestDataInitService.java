@@ -409,7 +409,7 @@ public class TestDataInitService {
         }
     }
 
-    public void createGroupChat() {
+    public void createGroupChats() {
         Set<User> userSetJava = new HashSet<>(userService.getAll());
         Chat chatJava = new Chat(ChatType.GROUP);
         chatJava.setTitle("Java");
@@ -417,6 +417,15 @@ public class TestDataInitService {
         groupChatJava.setChat(chatJava);
         groupChatJava.setUsers(userSetJava);
         groupChatService.persist(groupChatJava);
+
+
+        Chat chatGlobal = new Chat(ChatType.GROUP);
+        chatGlobal.setTitle("Global chat");
+        GroupChat groupGlobalChat = new GroupChat();
+        groupGlobalChat.setChat(chatGlobal);
+        groupGlobalChat.setUsers(userSetJava);
+        groupGlobalChat.setGlobal(true);
+        groupChatService.persist(groupGlobalChat);
     }
 
     public void createMessage() {
@@ -456,7 +465,7 @@ public class TestDataInitService {
         createReputation();
         createBookMarks(10);
         createGroupBookmarks(5);
-        createGroupChat();
+        createGroupChats();
         createSingleChat(20);
         createMessage();
     }

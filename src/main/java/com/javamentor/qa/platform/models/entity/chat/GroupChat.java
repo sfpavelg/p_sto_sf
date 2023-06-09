@@ -32,6 +32,9 @@ public class GroupChat{
             inverseJoinColumns = @JoinColumn(name = "user_id"))
     private Set<User> users;
 
+    @Column(name = "is_global")
+    private boolean isGlobal = false;
+
     @PrePersist
     private void prePersistFunction() {
         checkConstraints();
