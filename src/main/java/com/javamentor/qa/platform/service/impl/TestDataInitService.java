@@ -151,22 +151,6 @@ public class TestDataInitService {
     }
 
     public void createTags() {
-        Tag javaTag = new Tag();
-        javaTag.setName("Java");
-        javaTag.setDescription("Java — строго типизированный объектно-ориентированный язык программирования общего назначения");
-        tagService.persist(javaTag);
-        Tag jsTag = new Tag();
-        jsTag.setName("JavaScript");
-        jsTag.setDescription("JavaScript — мультипарадигменный язык программирования. Поддерживает объектно-ориентированный, императивный и функциональный стили");
-        tagService.persist(jsTag);
-        Tag csharpTag = new Tag();
-        csharpTag.setName("C#");
-        csharpTag.setDescription("C# — объектно-ориентированный язык программирования общего назначения");
-        tagService.persist(csharpTag);
-        Tag htmlTag = new Tag();
-        htmlTag.setName("HTML");
-        htmlTag.setDescription("HTML — стандартизированный язык гипертекстовой разметки документов для просмотра веб-страниц в браузере");
-        tagService.persist(htmlTag);
         for (int i = 0; i < 30; i++) {
             Tag tag = new Tag();
             tag.setName("tag" + i);
@@ -176,22 +160,12 @@ public class TestDataInitService {
     }
 
     public void createTagRelations() {
-        Long id = 0L;
-        for (int i = 5; i < 35; i++) {
-            id = (long) i;
+        List<Tag> tagList = tagService.getAll();
+        for (int i = tagList.size() - 1; i > 4; i--) {
             RelatedTag relatedTag = new RelatedTag();
-            relatedTag.setChildTag(tagService.getById(id).orElse(new Tag()));
-            if (i <= 10) {
-                id = 1L;
-            } else if (i > 10 && i <= 20) {
-                id = 2L;
-            } else if (i > 20 && i <= 25) {
-                id = 3L;
-            }
-            else {
-                id = 4L;
-            }
-            relatedTag.setMainTag(tagService.getById(id).orElse(new Tag()));
+            relatedTag.setChildTag(tagList.get(i));
+            relatedTag.setMainTag(tagList.get(((i % 2) == 0) ? ((i > (tagList.size() / 2)) ? 0 : 1)
+                    : ((i > (tagList.size() / 2)) ? 2 : 3)));
             relatedTagService.persist(relatedTag);
         }
     }
