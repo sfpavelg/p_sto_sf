@@ -58,7 +58,7 @@ public class TestDataInitService {
                                TrackedTagService trackedTagService, QuestionViewedService questionViewedService,
                                VoteQuestionService voteQuestionService, VoteAnswerService voteAnswerService,
                                CommentQuestionService commentQuestionService, CommentAnswerService commentAnswerService,
-                               ReputationService reputationService, BookmarkService bookMarkService, GroupChatService groupChatService, SingleChatService singleChatService, MessageService messageService,GroupBookmarkService groupBookmarkService) {
+                               ReputationService reputationService, BookmarkService bookMarkService, GroupChatService groupChatService, SingleChatService singleChatService, MessageService messageService, GroupBookmarkService groupBookmarkService) {
         this.roleService = roleService;
         this.userService = userService;
         this.questionService = questionService;
@@ -352,7 +352,7 @@ public class TestDataInitService {
         }
     }
 
-    public void createGroupBookmarks(int count){
+    public void createGroupBookmarks(int count) {
         List<User> userList = userService.getAll();
         for (int i = 0; i < count; i++) {
             GroupBookmark groupBookmark = new GroupBookmark();
@@ -379,7 +379,7 @@ public class TestDataInitService {
         }
     }
 
-    public void createGroupChat() {
+    public void createGroupChats() {
         Set<User> userSetJava = new HashSet<>(userService.getAll());
         Chat chatJava = new Chat(ChatType.GROUP);
         chatJava.setTitle("Java");
@@ -387,6 +387,15 @@ public class TestDataInitService {
         groupChatJava.setChat(chatJava);
         groupChatJava.setUsers(userSetJava);
         groupChatService.persist(groupChatJava);
+
+
+        Chat chatGlobal = new Chat(ChatType.GROUP);
+        chatGlobal.setTitle("Global chat");
+        GroupChat groupGlobalChat = new GroupChat();
+        groupGlobalChat.setChat(chatGlobal);
+        groupGlobalChat.setUsers(userSetJava);
+        groupGlobalChat.setGlobal(true);
+        groupChatService.persist(groupGlobalChat);
     }
 
     public void createMessage() {
@@ -425,7 +434,7 @@ public class TestDataInitService {
         createReputation();
         createBookMarks(10);
         createGroupBookmarks(5);
-        createGroupChat();
+        createGroupChats();
         createSingleChat(20);
         createMessage();
     }
