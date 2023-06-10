@@ -14,10 +14,7 @@ import com.javamentor.qa.platform.service.abstracts.dto.BookmarkDtoService;
 import com.javamentor.qa.platform.service.abstracts.dto.question.CommentDtoService;
 import com.javamentor.qa.platform.service.abstracts.dto.question.QuestionDtoService;
 import com.javamentor.qa.platform.service.abstracts.dto.question.QuestionViewDtoService;
-import com.javamentor.qa.platform.service.abstracts.model.BookmarkService;
-import com.javamentor.qa.platform.service.abstracts.model.CommentQuestionService;
-import com.javamentor.qa.platform.service.abstracts.model.QuestionService;
-import com.javamentor.qa.platform.service.abstracts.model.VoteQuestionService;
+import com.javamentor.qa.platform.service.abstracts.model.*;
 import com.javamentor.qa.platform.webapp.converters.QuestionConverter;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -59,6 +56,7 @@ public class QuestionResourceController {
     private final CommentQuestionService commentQuestionService;
     private final BookmarkService bookmarkService;
     private final BookmarkDtoService bookmarkDtoService;
+    private final QuestionViewedService questionViewedService;
 
 
     @GetMapping("/{id}")
@@ -298,5 +296,17 @@ public class QuestionResourceController {
         param.put("ignoredTags", ignoredTags);
         return ResponseEntity.ok(questionViewDtoService.getPageWithListMostPopularQuestionForMonthDto(param));
     }
-
+    @PostMapping("/{questionId}/view")
+    @ApiOperation(value = "View question. Returns the total number of times the question has been viewed.", response = Long.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Success request. The sum of views of questions is returned. Prompt counter question updated in DB"),
+            @ApiResponse(code = 401, message = "Unauthorized request"),
+            @ApiResponse(code = 403, message = "Forbidden"),
+            @ApiResponse(code = 400, message = "Invalid password"),
+            @ApiResponse(code = 404, message = "Incorrect id Question. Question with id not found")})
+    public ResponseEntity<HttpStatus> addViewForQuestion(@PathVariable Long questionId, @AuthenticationPrincipal User user) throws NotFoundException {
+        Optional<Question> question = questionService.getById(questionId);
+        questionViewedService.persistViewQuestionByUser(user, question.get());
+        return ResponseEntity.ok(HttpStatus.OK);
+    }
 }
