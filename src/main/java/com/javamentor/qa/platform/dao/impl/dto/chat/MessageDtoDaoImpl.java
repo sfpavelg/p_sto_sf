@@ -29,6 +29,7 @@ public class MessageDtoDaoImpl implements MessageDtoDao {
                 "FROM Message m " +
                 "WHERE m.userSender.id = :userId", MessageDto.class).setParameter("userId", userId);
         return (List<MessageDto>) query.getResultList();
+        // кастинг взял из другого метода работает и без него, убрать?
     }
 
     @Override
