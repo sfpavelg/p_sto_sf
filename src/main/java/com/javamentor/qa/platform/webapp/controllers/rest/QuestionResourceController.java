@@ -301,13 +301,12 @@ public class QuestionResourceController {
         return ResponseEntity.ok(questionViewDtoService.getPageWithListMostPopularQuestionForMonthDto(param));
     }
     @PostMapping("/{questionId}/view")
-    @ApiOperation(value = "View question. Returns the total number of times the question has been viewed.", response = Long.class)
+    @ApiOperation(value = "Adding a user view", response = Long.class)
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Success request. The sum of views of questions is returned. Prompt counter question updated in DB"),
+            @ApiResponse(code = 200, message = "Success request. Added viewing in DB"),
             @ApiResponse(code = 401, message = "Unauthorized request"),
             @ApiResponse(code = 403, message = "Forbidden"),
-            @ApiResponse(code = 400, message = "Invalid password"),
-            @ApiResponse(code = 404, message = "Incorrect id Question. Question with id not found")})
+            @ApiResponse(code = 400, message = "Invalid password")})
     public ResponseEntity<HttpStatus> addViewForQuestion(@PathVariable Long questionId, @AuthenticationPrincipal User user) throws NotFoundException {
         Optional<Question> question = questionService.getById(questionId);
         questionViewedService.persistViewQuestionByUser(user, question.get());
