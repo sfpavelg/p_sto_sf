@@ -17,7 +17,6 @@ import org.springframework.context.annotation.Lazy;
 public class QuestionViewedServiceImpl extends ReadWriteServiceImpl<QuestionViewed, Long> implements QuestionViewedService {
 
     private final QuestionViewedDao questionViewedDao;
-    private QuestionViewed questionViewed;
 
     public QuestionViewedServiceImpl(QuestionViewedDao questionViewedDao) {
         super(questionViewedDao);
