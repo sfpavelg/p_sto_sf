@@ -24,4 +24,6 @@ public interface MessageDtoDao {
      * @return MessageDto
      */
     Optional<Object> getMessageDtoById(Long messageId);
+
+
 }

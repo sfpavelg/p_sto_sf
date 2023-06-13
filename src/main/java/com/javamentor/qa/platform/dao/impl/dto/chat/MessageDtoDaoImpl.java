@@ -2,7 +2,6 @@ package com.javamentor.qa.platform.dao.impl.dto.chat;
 
 import com.javamentor.qa.platform.dao.abstracts.dto.chat.MessageDtoDao;
 import com.javamentor.qa.platform.dao.util.SingleResultUtil;
-import com.javamentor.qa.platform.models.dto.BookmarkDto;
 import com.javamentor.qa.platform.models.dto.chat.MessageDto;
 import org.springframework.stereotype.Repository;
 
@@ -20,14 +19,15 @@ public class MessageDtoDaoImpl implements MessageDtoDao {
     @Override
     public List<MessageDto> getAllUserMessages(Long userId) {
         Query query = entityManager.createQuery("SELECT new com.javamentor.qa.platform.models.dto.chat.MessageDto(" +
-                "m.id," +
-                "m.message," +
-                "m.userSender.nickname," +
-                "m.userSender.id," +
-                "m.userSender.imageLink," +
-                "m.persistDate)" +
-                "FROM Message m " +
-                "WHERE m.userSender.id = :userId", MessageDto.class).setParameter("userId", userId);
+                        "m.id," +
+                        "m.message," +
+                        "m.userSender.nickname," +
+                        "m.userSender.id," +
+                        "m.userSender.imageLink," +
+                        "m.persistDate)" +
+                        "FROM Message m " +
+                        "WHERE m.userSender.id = :userId", MessageDto.class)
+                .setParameter("userId", userId);
         return (List<MessageDto>) query.getResultList();
         // кастинг взял из другого метода работает и без него, убрать?
     }
@@ -35,14 +35,16 @@ public class MessageDtoDaoImpl implements MessageDtoDao {
     @Override
     public Optional<Object> getMessageDtoById(Long messageId) {
         Query query = entityManager.createQuery("SELECT new com.javamentor.qa.platform.models.dto.chat.MessageDto(" +
-                "m.id," +
-                "m.message," +
-                "m.userSender.nickname," +
-                "m.userSender.id," +
-                "m.userSender.imageLink," +
-                "m.persistDate)" +
-                "FROM Message m " +
-                "WHERE m.id = :messageId", MessageDto.class).setParameter("messageId", messageId);
+                        "m.id," +
+                        "m.message," +
+                        "m.userSender.nickname," +
+                        "m.userSender.id," +
+                        "m.userSender.imageLink," +
+                        "m.persistDate)" +
+                        "FROM Message m " +
+                        "WHERE m.id = :messageId", MessageDto.class)
+                .setParameter("messageId", messageId);
         return SingleResultUtil.getSingleResultOrNull(query);
     }
+
 }
