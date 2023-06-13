@@ -16,7 +16,7 @@ public class QuestionViewedDaoImpl extends ReadWriteDaoImpl<QuestionViewed, Long
     @PersistenceContext
     private EntityManager entityManager;
 
-    public Optional<QuestionViewed> getQuestionViewByUser(QuestionViewed questionViewed) {
+    public Optional<QuestionViewed> checkQuestionViewed(QuestionViewed questionViewed) {
         return SingleResultUtil.getSingleResultOrNull(entityManager.createQuery("" +
                         "SELECT qw FROM QuestionViewed qw " +
                         "WHERE qw.question.id = :questionId AND qw.user.id = :userId", QuestionViewed.class)

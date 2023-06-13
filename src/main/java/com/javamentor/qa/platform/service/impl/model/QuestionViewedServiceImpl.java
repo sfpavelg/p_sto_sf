@@ -24,20 +24,18 @@ public class QuestionViewedServiceImpl extends ReadWriteServiceImpl<QuestionView
         this.questionViewedDao = questionViewedDao;
     }
 
+
     @Override
     @Transactional
-    public void persistViewQuestionByUser(User user, Question question) throws NotFoundException {
-        if (!isViewedQuestionUser(user, question)){
-            persist(questionViewed);
+    public void persist(QuestionViewed questionViewed) {
+        if (!isViewedQuestionUser(questionViewed)) {
+            super.persist(questionViewed);
         }
     }
 
     @Override
-    @Cacheable(value="questionViewed")
-    public boolean isViewedQuestionUser(User user, Question question) throws NotFoundException {
-        questionViewed = new QuestionViewed();
-        questionViewed.setQuestion(question);
-        questionViewed.setUser(user);
-        return questionViewedDao.getQuestionViewByUser(questionViewed).isPresent();
+    @Cacheable(value="questionViewed", key="#questionViewed.user.id + '-' + #questionViewed.question.id")
+    public boolean isViewedQuestionUser(QuestionViewed questionViewed) {
+        return questionViewedDao.checkQuestionViewed(questionViewed).isPresent();
     }
 }

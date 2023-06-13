@@ -8,6 +8,7 @@ import com.javamentor.qa.platform.models.dto.question.QuestionViewDto;
 import com.javamentor.qa.platform.models.entity.BookMarks;
 import com.javamentor.qa.platform.models.entity.question.CommentQuestion;
 import com.javamentor.qa.platform.models.entity.question.Question;
+import com.javamentor.qa.platform.models.entity.question.QuestionViewed;
 import com.javamentor.qa.platform.models.entity.question.Tag;
 import com.javamentor.qa.platform.models.entity.user.User;
 import com.javamentor.qa.platform.service.abstracts.dto.BookmarkDtoService;
@@ -309,7 +310,10 @@ public class QuestionResourceController {
             @ApiResponse(code = 400, message = "Invalid password")})
     public ResponseEntity<HttpStatus> addViewForQuestion(@PathVariable Long questionId, @AuthenticationPrincipal User user) throws NotFoundException {
         Optional<Question> question = questionService.getById(questionId);
-        questionViewedService.persistViewQuestionByUser(user, question.get());
+        QuestionViewed questionViewed = new QuestionViewed();
+        questionViewed.setUser(user);
+        questionViewed.setQuestion(question.get());
+        questionViewedService.persist(questionViewed);
         return ResponseEntity.ok(HttpStatus.OK);
     }
 }

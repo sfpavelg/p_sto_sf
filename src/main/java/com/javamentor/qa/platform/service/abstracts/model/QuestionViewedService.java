@@ -7,6 +7,6 @@ import javassist.NotFoundException;
 
 public interface QuestionViewedService extends ReadWriteService<QuestionViewed, Long> {
 
-    void  persistViewQuestionByUser (User user, Question question) throws NotFoundException;
-    boolean isViewedQuestionUser (User user, Question question) throws NotFoundException;
+
+    boolean isViewedQuestionUser (QuestionViewed questionViewed) throws NotFoundException;
 }
