@@ -13,6 +13,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import java.util.List;
+import java.util.stream.IntStream;
 
 public class TestAdminResourceController extends AbstractTestApi {
 
@@ -35,17 +36,7 @@ public class TestAdminResourceController extends AbstractTestApi {
         List<Answer> answerList = em.createQuery("select a from Answer a where a.user.id = 1002 and a.isDeleted = true")
                 .getResultList();
 
-        StringBuilder a = new StringBuilder();
-        for (Answer answer : answerList) {
-            a.append(answer.getId());
-        }
-        StringBuilder b = new StringBuilder();
-        for (Answer answer : answerList) {
-            b.append(answer.getId());
-        }
-        boolean areIdsEqual = a.toString().contentEquals(b);
-
-        Assertions.assertTrue(areIdsEqual);
+        Assertions.assertTrue(IntStream.range(0, Math.min(answerDtoList.size(), answerList.size()))
+                .allMatch(i -> answerDtoList.get(i).getId().equals(answerList.get(i).getId())));
     }
-
 }
