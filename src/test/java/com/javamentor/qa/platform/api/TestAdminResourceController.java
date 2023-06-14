@@ -32,11 +32,19 @@ public class TestAdminResourceController extends AbstractTestApi {
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andReturn().getResponse().getContentAsString();
         List<AnswerDto> answerDtoList = objectMapper.readValue(jsonResponse, new TypeReference<List<AnswerDto>>() {});
-
         List<Answer> answerList = em.createQuery("select a from Answer a where a.user.id = 1002 and a.isDeleted = true")
                 .getResultList();
-
         Assertions.assertTrue(IntStream.range(0, Math.min(answerDtoList.size(), answerList.size()))
                 .allMatch(i -> answerDtoList.get(i).getId().equals(answerList.get(i).getId())));
+
+
+        String jsonResponse1 = mvc.perform(MockMvcRequestBuilders.get("/api/admin/answer/delete").param("userId", "1004"))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andReturn().getResponse().getContentAsString();
+        List<AnswerDto> answerDtoList1 = objectMapper.readValue(jsonResponse1, new TypeReference<List<AnswerDto>>() {});
+        List<Answer> answerList1 = em.createQuery("select a from Answer a where a.user.id = 1004 and a.isDeleted = true")
+                .getResultList();
+        Assertions.assertTrue(IntStream.range(0, Math.min(answerDtoList1.size(), answerList1.size()))
+                .allMatch(i -> answerDtoList1.get(i).getId().equals(answerList1.get(i).getId())));
     }
 }
