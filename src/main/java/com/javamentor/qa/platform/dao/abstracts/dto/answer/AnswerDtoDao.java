@@ -14,4 +14,6 @@ public interface AnswerDtoDao {
     Map<Long, List<AnswerDto>> getAnswersMapByQuestionId(List<Long> qId);
 
     List<AnswerDto> getAllByQuestionIdSortedByUsefulAndCount(Long id);
+
+    List<AnswerDto> getAllDeletedAnswersByUserId(Long userId);
 }
