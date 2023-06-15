@@ -9,4 +9,6 @@ public interface UserService extends ReadWriteService<User, Long> {
     Optional<User> getByEmail(String email);
 
     void changeUserPassword(String userPassword, User user);
+
+
 }

@@ -48,5 +48,8 @@ public class UserServiceImpl extends ReadWriteServiceImpl<User, Long> implements
         userDao.changeUserPassword(user);
     }
 
-
+    @Override
+    public boolean existsById(Long id) {
+        return super.existsById(id);
+    }
 }
