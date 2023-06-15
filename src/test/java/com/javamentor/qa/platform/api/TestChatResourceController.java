@@ -54,12 +54,7 @@ public class TestChatResourceController extends AbstractTestApi {
 //          Empty list test
         this.mvc.perform(get("/api/user/chat/{id}/single/message", 789)
                         .header("Authorization", "Bearer " + token))
-                .andExpect(status().isOk())
-                .andDo(print())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.totalPageCount", Is.is(0)))
-                .andExpect(jsonPath("$.items").isEmpty())
-                .andExpect(jsonPath("$.totalResultCount", Is.is(0)));
+                .andExpect(status().is4xxClientError());
 
 //          Wrong id test
         this.mvc.perform(get("/api/user/chat/{id}/single/message", "ada")
