@@ -8,7 +8,8 @@ import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import java.util.Optional;
+import java.time.LocalDateTime;
+import java.util.*;
 
 @Repository
 public class VoteQuestionDaoImpl extends ReadWriteDaoImpl<VoteQuestion, Long> implements VoteQuestionDao {
@@ -26,6 +27,20 @@ public class VoteQuestionDaoImpl extends ReadWriteDaoImpl<VoteQuestion, Long> im
     }
 
     @Override
+    public List<VoteQuestion> getAllVotesUpOrDownByUserId(Long userId, VoteType vote) {
+        if (userId != null) {
+            return entityManager.createQuery("" +
+                            "SELECT vq FROM VoteQuestion vq " +
+                            "WHERE vq.user.id = :userId AND vq.vote = :vote", VoteQuestion.class)
+                    .setParameter("userId", userId).setParameter("vote", vote)
+                    .getResultList();
+        } else {
+            return new ArrayList<>();
+        }
+    }
+
+
+    @Override
     public Long getSumUpDownVotes(Long questionId) {
         return entityManager.createQuery("" +
                         "SELECT (coalesce(count(vqUp),0) - coalesce((" +
@@ -39,4 +54,21 @@ public class VoteQuestionDaoImpl extends ReadWriteDaoImpl<VoteQuestion, Long> im
                 .getSingleResult();
     }
 
+    @Override
+    public Long getAllVotesLastMonth(Long userId) {
+        LocalDateTime currentDateTime = LocalDateTime.now();
+        LocalDateTime startDate = currentDateTime.minusMonths(1);
+        LocalDateTime endDate = currentDateTime;
+        if (userId != null) {
+            return (long) entityManager.createQuery("SELECT vq FROM VoteQuestion vq " +
+                            "WHERE vq.user.id = :userId AND vq.localDateTime >= :startDate AND vq.localDateTime <= :endDate", VoteQuestion.class)
+                    .setParameter("userId", userId).setParameter("startDate", startDate)
+                    .setParameter("endDate", currentDateTime)
+                    .getResultList().size();
+        } else {
+            return 0L;
+        }
+
+
+    }
 }

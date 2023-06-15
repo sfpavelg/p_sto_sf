@@ -157,6 +157,7 @@ public class TestProfileUserResourceController extends AbstractTestApi {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", Is.is(0)));
     }
+
     @Test
     @Sql(value = {"/script/TestProfileUserResourceController/testAddGroupOfBookmarks/Before.sql"}, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
     @Sql(value = {"/script/TestProfileUserResourceController/testAddGroupOfBookmarks/After.sql"}, executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
@@ -227,5 +228,22 @@ public class TestProfileUserResourceController extends AbstractTestApi {
                 .andExpect(status().is4xxClientError());
     }
 
+    @Test
+    @Sql(value = {"/script/TestProfileUserResourceController/testGetUserProfileVotesInfo/Before.sql"}, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+    @Sql(value = {"/script/TestProfileUserResourceController/testGetUserProfileVotesInfo/After.sql"}, executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
+    public void testGetUserProfileVotesInfo() throws Exception {
+        String token = getToken("1000@gmail.com", "44pwd");
+
+        //success adding ignored tag and returning TagDto
+        this.mvc.perform(get("/api/user/profile/vote").header("Authorization", "Bearer " + token))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.countVoteUp", Is.is(2)))
+                .andExpect(jsonPath("$.countVoteDown", Is.is(0)))
+                .andExpect(jsonPath("$.countVoteQuestion", Is.is(1)))
+                .andExpect(jsonPath("$.countVoteAnswer", Is.is(1)))
+                .andExpect(jsonPath("$.countVoteMonth", Is.is(0)));
+    }
 
 }

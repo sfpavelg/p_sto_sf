@@ -8,7 +8,9 @@ import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import java.util.Optional;
+import java.time.LocalDateTime;
+import java.util.*;
+
 @Repository
 public class VoteAnswerDaoImpl extends ReadWriteDaoImpl<VoteAnswer, Long> implements VoteAnswerDao {
 
@@ -17,17 +19,44 @@ public class VoteAnswerDaoImpl extends ReadWriteDaoImpl<VoteAnswer, Long> implem
 
     @Override
     public Optional<VoteAnswer> getByUserId(Long answerId, Long userId) {
-        return SingleResultUtil.getSingleResultOrNull(entityManager.createQuery("" +
-                        "SELECT va FROM VoteAnswer va " +
+        return SingleResultUtil.getSingleResultOrNull(entityManager.createQuery("SELECT va FROM VoteAnswer va " +
                         "WHERE va.user.id = :userId AND va.answer.id = :answerId", VoteAnswer.class)
                 .setParameter("userId", userId)
                 .setParameter("answerId", answerId));
     }
 
     @Override
+    public List<VoteAnswer> getAllVotesUpOrDownByUserId(Long userId, VoteType vote) {
+        if (userId != null) {
+            return entityManager.createQuery("SELECT va FROM VoteAnswer va " +
+                            "WHERE va.user.id = :userId AND va.vote = :vote", VoteAnswer.class)
+                    .setParameter("userId", userId).setParameter("vote", vote)
+                    .getResultList();
+        } else {
+            return new ArrayList<>();
+        }
+    }
+
+    @Override
+    public Long getCountVotesLastMonth(Long userId) {
+        LocalDateTime currentDateTime = LocalDateTime.now();
+        LocalDateTime startDate = currentDateTime.minusMonths(1);
+        LocalDateTime endDate = currentDateTime;
+        if (userId != null) {
+            return (long) entityManager.createQuery("SELECT va FROM VoteAnswer va " +
+                            "WHERE va.user.id = :userId AND va.persistDateTime >= :startDate AND va.persistDateTime <= :endDate", VoteAnswer.class)
+                    .setParameter("userId", userId).setParameter("startDate", startDate)
+                    .setParameter("endDate", currentDateTime)
+                    .getResultList().size();
+        } else {
+            return 0L;
+        }
+    }
+
+
+    @Override
     public Long getSumUpDownVotes(Long answerId) {
-        return entityManager.createQuery("" +
-                        "SELECT (coalesce(count(vaUp),0) - coalesce((" +
+        return entityManager.createQuery("SELECT (coalesce(count(vaUp),0) - coalesce((" +
                         "       SELECT count(vaDown) FROM VoteAnswer vaDown " +
                         "       WHERE vaDown.answer.id = :answerId  AND vaDown.vote = :voteDown),0)) " +
                         "FROM VoteAnswer vaUp " +

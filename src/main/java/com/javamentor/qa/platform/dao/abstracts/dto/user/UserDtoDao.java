@@ -2,6 +2,7 @@ package com.javamentor.qa.platform.dao.abstracts.dto.user;
 
 import com.javamentor.qa.platform.models.dto.user.UserDto;
 import com.javamentor.qa.platform.models.dto.user.UserProfileQuestionDto;
+import com.javamentor.qa.platform.models.dto.user.UserProfileVoteDto;
 import com.javamentor.qa.platform.models.entity.user.User;
 
 import java.util.List;
@@ -17,4 +18,5 @@ public interface UserDtoDao  {
     List<UserProfileQuestionDto> getAllUserRemovedQuestion(Long id);
 
     List<UserDto> getPageWithListTop10UsersAnswers();
+
 }

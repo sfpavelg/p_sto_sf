@@ -4,6 +4,7 @@ import com.javamentor.qa.platform.dao.abstracts.dto.user.UserDtoDao;
 import com.javamentor.qa.platform.dao.util.SingleResultUtil;
 import com.javamentor.qa.platform.models.dto.user.UserDto;
 import com.javamentor.qa.platform.models.dto.user.UserProfileQuestionDto;
+import com.javamentor.qa.platform.models.dto.user.UserProfileVoteDto;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
@@ -77,3 +78,4 @@ public class UserDtoDaoImpl implements UserDtoDao {
                 .setMaxResults(10).getResultList();
     }
 }
+

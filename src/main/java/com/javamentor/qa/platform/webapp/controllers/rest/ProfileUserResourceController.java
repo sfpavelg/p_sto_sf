@@ -2,12 +2,15 @@ package com.javamentor.qa.platform.webapp.controllers.rest;
 
 import com.javamentor.qa.platform.models.dto.GroupBookmarkDto;
 import com.javamentor.qa.platform.models.dto.user.UserProfileQuestionDto;
+import com.javamentor.qa.platform.models.dto.user.UserProfileVoteDto;
 import com.javamentor.qa.platform.models.entity.GroupBookmark;
 import com.javamentor.qa.platform.models.entity.user.User;
 import com.javamentor.qa.platform.service.abstracts.dto.GroupBookmarkDtoService;
 import com.javamentor.qa.platform.service.abstracts.dto.answer.AnswerDtoService;
 import com.javamentor.qa.platform.service.abstracts.dto.user.UserProfileQuestionDtoService;
+import com.javamentor.qa.platform.service.abstracts.dto.user.UserProfileVoteDtoService;
 import com.javamentor.qa.platform.service.abstracts.model.GroupBookmarkService;
+import com.javamentor.qa.platform.service.abstracts.model.UserService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
@@ -18,7 +21,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @AllArgsConstructor
@@ -30,6 +35,10 @@ public class ProfileUserResourceController {
     private final UserProfileQuestionDtoService userProfileQuestionDtoService;
     private final GroupBookmarkDtoService groupBookmarkDtoService;
     private final GroupBookmarkService groupBookmarkService;
+    private final UserProfileVoteDtoService userProfileVoteDtoService;
+    private final UserService userService;
+
+
 
     @GetMapping("/questions")
     @ApiOperation(
@@ -99,6 +108,17 @@ public class ProfileUserResourceController {
             @ApiResponse(code = 403, message = "Forbidden")})
     public ResponseEntity <?> getGroupBookmark (@AuthenticationPrincipal User user) {
         return ResponseEntity.ok(groupBookmarkDtoService.getGroupBookmark(user.getId()));
+    }
+
+    @GetMapping("/vote")
+    @ApiOperation(value = "Getting user profile votes info", response = UserProfileVoteDto.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Success request"),
+            @ApiResponse(code = 401, message = "Unauthorized request"),
+            @ApiResponse(code = 403, message = "Forbidden"),})
+    public ResponseEntity<?> getUserProfileVoteDto(Principal principal) {
+        Optional<User> user = userService.getByEmail(principal.getName());
+        return ResponseEntity.ok(userProfileVoteDtoService.getUserProfileVoteDtoByUserId(user.get().getId()));
     }
 
 }
