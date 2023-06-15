@@ -17,7 +17,6 @@ import org.springframework.context.annotation.Lazy;
 public class QuestionViewedServiceImpl extends ReadWriteServiceImpl<QuestionViewed, Long> implements QuestionViewedService {
 
     private final QuestionViewedDao questionViewedDao;
-    private QuestionViewed questionViewed;
 
     public QuestionViewedServiceImpl(QuestionViewedDao questionViewedDao) {
         super(questionViewedDao);
@@ -28,14 +27,14 @@ public class QuestionViewedServiceImpl extends ReadWriteServiceImpl<QuestionView
     @Override
     @Transactional
     public void persist(QuestionViewed questionViewed) {
-        if (!isViewedQuestionUser(questionViewed)) {
+        if (!isEmptyIsExistQuestionViewByUserIdAndQuestion(questionViewed.getUser().getId(), questionViewed.getQuestion())) {
             super.persist(questionViewed);
         }
     }
 
     @Override
-    @Cacheable(value="questionViewed", key="#questionViewed.user.id + '-' + #questionViewed.question.id")
-    public boolean isViewedQuestionUser(QuestionViewed questionViewed) {
-        return questionViewedDao.checkQuestionViewed(questionViewed).isPresent();
+    @Cacheable(value="questionViewed", key="#userId + '-' + #question")
+    public boolean isEmptyIsExistQuestionViewByUserIdAndQuestion(Long userId, Question question) {
+        return questionViewedDao.isExistQuestionViewByUserIdAndQuestion(userId, question).isPresent();
     }
 }

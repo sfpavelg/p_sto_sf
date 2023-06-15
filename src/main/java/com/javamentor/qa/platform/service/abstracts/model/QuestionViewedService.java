@@ -8,5 +8,5 @@ import javassist.NotFoundException;
 public interface QuestionViewedService extends ReadWriteService<QuestionViewed, Long> {
 
 
-    boolean isViewedQuestionUser (QuestionViewed questionViewed) throws NotFoundException;
+    boolean isEmptyIsExistQuestionViewByUserIdAndQuestion (Long userId, Question question) throws NotFoundException;
 }
