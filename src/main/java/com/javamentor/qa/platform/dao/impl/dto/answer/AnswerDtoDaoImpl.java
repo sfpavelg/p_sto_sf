@@ -116,4 +116,21 @@ public class AnswerDtoDaoImpl implements AnswerDtoDao {
                 .setParameter("id", id).getResultList();
     }
 
+    @Override
+    public List<AnswerDto> getAllDeletedAnswersByUserId(Long userId) {
+        return entityManager.createQuery("select new com.javamentor.qa.platform.models.dto.answer.AnswerDto(" +
+                        "a.id, " +
+                        "a.user.id, " +
+                        "(select coalesce(sum(rep.count), 0) from Reputation as rep where rep.author.id = a.user.id), " +
+                        "a.question.id, " +
+                        "a.htmlBody, " +
+                        "a.persistDateTime, " +
+                        "a.isHelpful, " +
+                        "a.dateAcceptTime, " +
+                        "(select coalesce(sum(case when (va.vote = 'UP') then 1 else -1 end), 0) from VoteAnswer as va where va.answer.id = a.id), " +
+                        "a.user.imageLink, " +
+                        "a.user.nickname) " +
+                        "from Answer a where a.user.id = :userId and a.isDeleted = true", AnswerDto.class)
+                .setParameter("userId", userId).getResultList();
+    }
 }
