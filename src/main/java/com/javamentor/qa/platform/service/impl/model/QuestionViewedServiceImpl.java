@@ -1,7 +1,6 @@
 package com.javamentor.qa.platform.service.impl.model;
 
 import com.javamentor.qa.platform.dao.abstracts.model.QuestionViewedDao;
-import com.javamentor.qa.platform.models.entity.question.Question;
 import com.javamentor.qa.platform.models.entity.question.QuestionViewed;
 import com.javamentor.qa.platform.service.abstracts.model.QuestionViewedService;
 import org.springframework.cache.annotation.Cacheable;
@@ -22,15 +21,11 @@ public class QuestionViewedServiceImpl extends ReadWriteServiceImpl<QuestionView
 
     @Override
     @Transactional
+    @Cacheable(value="questionViewed", key="#questionViewed.user.id + '-' + #questionViewed.question.id")
     public void persist(QuestionViewed questionViewed) {
-        if (!isEmptyIsExistQuestionViewByUserIdAndQuestion(questionViewed.getUser().getId(), questionViewed.getQuestion())) {
+        if (questionViewedDao.isEmptyIsExistQuestionViewByUserIdAndQuestionId(questionViewed.getUser().getId(),
+                questionViewed.getQuestion().getId())) {
             super.persist(questionViewed);
         }
-    }
-
-    @Override
-    @Cacheable(value="questionViewed", key="#userId + '-' + #question")
-    public boolean isEmptyIsExistQuestionViewByUserIdAndQuestion(Long userId, Question question) {
-        return questionViewedDao.isExistQuestionViewByUserIdAndQuestion(userId, question).isPresent();
     }
 }

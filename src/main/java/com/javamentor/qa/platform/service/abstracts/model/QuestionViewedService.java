@@ -1,11 +1,7 @@
 package com.javamentor.qa.platform.service.abstracts.model;
 
-import com.javamentor.qa.platform.models.entity.question.Question;
 import com.javamentor.qa.platform.models.entity.question.QuestionViewed;
-import javassist.NotFoundException;
 
 public interface QuestionViewedService extends ReadWriteService<QuestionViewed, Long> {
 
-
-    boolean isEmptyIsExistQuestionViewByUserIdAndQuestion (Long userId, Question question) throws NotFoundException;
 }

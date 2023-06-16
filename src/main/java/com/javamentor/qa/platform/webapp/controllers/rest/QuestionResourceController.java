@@ -312,7 +312,10 @@ public class QuestionResourceController {
         Optional<Question> question = questionService.getById(questionId);
         QuestionViewed questionViewed = new QuestionViewed();
         questionViewed.setUser(user);
-        questionViewed.setQuestion(question.get());
+        questionViewed.setQuestion(question.orElse(null));
+        if (questionViewed.getQuestion() == null) {
+            return ResponseEntity.ok(HttpStatus.NOT_FOUND);
+        }
         questionViewedService.persist(questionViewed);
         return ResponseEntity.ok(HttpStatus.OK);
     }
