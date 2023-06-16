@@ -28,7 +28,7 @@ public class PaginationMessageDtoDaoBySingleChatImpl implements PaginationMessag
                         "m.userSender.imageLink, " +
                         "m.persistDate) " +
                         "FROM Message m " +
-                        "WHERE m.chat.id = (SELECT s.chat.id FROM SingleChat s WHERE s.chat.id = :chatId) " +
+                        "WHERE m.chat.id = :chatId " +
                         "ORDER BY m.persistDate DESC ", MessageDto.class)
                 .setParameter("chatId", param.get("chatId"))
                 .setMaxResults(itemsOnPageParam)

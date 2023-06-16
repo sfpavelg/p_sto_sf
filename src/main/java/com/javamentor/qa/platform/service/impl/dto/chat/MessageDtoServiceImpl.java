@@ -19,7 +19,7 @@ public class MessageDtoServiceImpl extends PageDtoService<MessageDto> implements
     }
 
     @Override
-    public PageDto<MessageDto> getAllSingleChatMessagesSortedByPersistDate(HashMap<String, Object> param) {
+    public PageDto<MessageDto> getMessagesBySingleChatIdOrderNew(HashMap<String, Object> param) {
         param.put("daoDtoImpl", "paginationMessageDtoDaoBySingleChatImpl");
         return pageDto(param);
     }

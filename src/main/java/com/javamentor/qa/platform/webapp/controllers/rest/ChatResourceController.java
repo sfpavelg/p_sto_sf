@@ -48,6 +48,6 @@ public class ChatResourceController {
         param.put("currentPageNumber", pageNumber);
         param.put("itemsOnPage", itemsCountOnPage);
         param.put("chatId", chatId);
-        return ResponseEntity.ok(messageDtoService.getAllSingleChatMessagesSortedByPersistDate(param));
+        return ResponseEntity.ok(messageDtoService.getMessagesBySingleChatIdOrderNew(param));
     }
 }
