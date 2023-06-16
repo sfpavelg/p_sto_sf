@@ -12,12 +12,12 @@ public class QuestionViewedDaoImpl extends ReadWriteDaoImpl<QuestionViewed, Long
     @PersistenceContext
     private EntityManager entityManager;
 
-    public boolean isEmptyIsExistQuestionViewByUserIdAndQuestionId(Long userId, Long questionId) {
+    public boolean IsExistQuestionViewByUserIdAndQuestionId(Long userId, Long questionId) {
         return SingleResultUtil.getSingleResultOrNull(entityManager.createQuery("" +
                         "SELECT qw FROM QuestionViewed qw " +
                         "WHERE qw.question.id = :questionId AND qw.user.id = :userId", QuestionViewed.class)
                 .setParameter("questionId", questionId)
                 .setParameter("userId", userId))
-                .isEmpty();
+                .isPresent();
     }
 }

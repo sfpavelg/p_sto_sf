@@ -23,7 +23,7 @@ public class QuestionViewedServiceImpl extends ReadWriteServiceImpl<QuestionView
     @Transactional
     @Cacheable(value="questionViewed", key="#questionViewed.user.id + '-' + #questionViewed.question.id")
     public void persist(QuestionViewed questionViewed) {
-        if (questionViewedDao.isEmptyIsExistQuestionViewByUserIdAndQuestionId(questionViewed.getUser().getId(),
+        if (!questionViewedDao.IsExistQuestionViewByUserIdAndQuestionId(questionViewed.getUser().getId(),
                 questionViewed.getQuestion().getId())) {
             super.persist(questionViewed);
         }

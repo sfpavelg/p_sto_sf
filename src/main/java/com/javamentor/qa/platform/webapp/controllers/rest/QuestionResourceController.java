@@ -310,12 +310,12 @@ public class QuestionResourceController {
             @ApiResponse(code = 400, message = "Invalid password")})
     public ResponseEntity<HttpStatus> addViewForQuestion(@PathVariable Long questionId, @AuthenticationPrincipal User user) throws NotFoundException {
         Optional<Question> question = questionService.getById(questionId);
+        if (question.orElse(null) == null) {
+            return ResponseEntity.ok(HttpStatus.NOT_FOUND);
+        }
         QuestionViewed questionViewed = new QuestionViewed();
         questionViewed.setUser(user);
         questionViewed.setQuestion(question.orElse(null));
-        if (questionViewed.getQuestion() == null) {
-            return ResponseEntity.ok(HttpStatus.NOT_FOUND);
-        }
         questionViewedService.persist(questionViewed);
         return ResponseEntity.ok(HttpStatus.OK);
     }
