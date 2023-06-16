@@ -18,11 +18,14 @@ import com.javamentor.qa.platform.service.abstracts.model.*;
 import com.javamentor.qa.platform.service.abstracts.model.tag.IgnoredTagService;
 import com.javamentor.qa.platform.service.abstracts.model.tag.TagService;
 import com.javamentor.qa.platform.service.abstracts.model.tag.TrackedTagService;
-import io.swagger.models.auth.In;
+import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+
+import javax.transaction.Transactional;
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Collectors;
@@ -51,6 +54,7 @@ public class TestDataInitService {
     private final MessageService messageService;
     private final BookmarkService bookMarkService;
     private final GroupBookmarkService groupBookmarkService;
+    private final UserChatPinService userChatPinService;
 
     @Autowired
     public TestDataInitService(RoleService roleService, UserService userService, QuestionService questionService,
@@ -58,7 +62,8 @@ public class TestDataInitService {
                                TrackedTagService trackedTagService, QuestionViewedService questionViewedService,
                                VoteQuestionService voteQuestionService, VoteAnswerService voteAnswerService,
                                CommentQuestionService commentQuestionService, CommentAnswerService commentAnswerService,
-                               ReputationService reputationService, BookmarkService bookMarkService, GroupChatService groupChatService, SingleChatService singleChatService, MessageService messageService,GroupBookmarkService groupBookmarkService) {
+                               ReputationService reputationService, BookmarkService bookMarkService, GroupChatService groupChatService,
+                               SingleChatService singleChatService, MessageService messageService,GroupBookmarkService groupBookmarkService, UserChatPinService userChatPinService) {
         this.roleService = roleService;
         this.userService = userService;
         this.questionService = questionService;
@@ -77,6 +82,7 @@ public class TestDataInitService {
         this.groupChatService = groupChatService;
         this.singleChatService = singleChatService;
         this.messageService = messageService;
+        this.userChatPinService = userChatPinService;
     }
 
     public void createSuperUser(int count) {
@@ -407,6 +413,38 @@ public class TestDataInitService {
         }
     }
 
+    public void createUserChatPin(Long id) {
+        Optional<User> user = userService.getById(id);
+
+        List<SingleChat> allSingleChats = singleChatService.getAll();
+        for (int i = 0; i < allSingleChats.size(); i++) {
+            SingleChat singleChat = allSingleChats.get(i);
+            User user2 = singleChat.getUserOne();
+            User user3 = singleChat.getUseTwo();
+            if (user2.getId() == id || user3.getId() == id) {
+                UserChatPin userChatPin = new UserChatPin();
+                userChatPin.setChat(singleChat.getChat());
+                userChatPin.setUser(user.get());
+                userChatPin.setPersistDate(LocalDateTime.now());
+                userChatPinService.persist(userChatPin);
+            }
+        }
+
+        List<GroupChat> allGroupChats = groupChatService.getAll();
+        for (GroupChat groupChat : allGroupChats) {
+            for (User user2 : groupChatService.getUsers(groupChat)) {
+                if (user2.getId() == id) {
+                    Chat chat = groupChat.getChat();
+                    UserChatPin userChatPin = new UserChatPin();
+                    userChatPin.setChat(chat);
+                    userChatPin.setUser(user.get());
+                    userChatPinService.persist(userChatPin);
+                }
+            }
+        }
+    }
+
+
 
     public void init() {
         roleService.persist(ROLE_ADMIN);
@@ -428,5 +466,7 @@ public class TestDataInitService {
         createGroupChat();
         createSingleChat(20);
         createMessage();
+        createUserChatPin(3L);
     }
+
 }

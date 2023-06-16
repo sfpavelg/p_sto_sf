@@ -39,6 +39,7 @@ create table if not exists "chat"
     primary key (id)
 );
 
+
 create table if not exists "comment"
 (
     id                  serial8      not null,
@@ -236,6 +237,25 @@ create table if not exists "votes_on_questions"
     user_id      int8,
     primary key (id)
 );
+
+create table if not exists "user_chat_pin"
+(
+    id serial8 not null,
+    user_id int8 not null,
+    chat_id int8 not null,
+    persist_date timestamp,
+    primary key (id)
+);
+
+-- alter table user_chat_pin
+--     add constraint user_chat_pin_user_entity_fk
+--         foreign key (user_id)
+--             references user_entity;
+--
+-- alter table user_chat_pin
+--     add constraint user_chat_pin_chat_fk
+--         foreign key (chat_id)
+--             references chat;
 
 alter table answer
     add constraint answer_question_fk
