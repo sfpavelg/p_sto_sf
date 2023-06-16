@@ -19,4 +19,5 @@ public interface UserDtoDao  {
 
     List<UserDto> getPageWithListTop10UsersAnswers();
 
+    UserProfileVoteDto getUserProfileVoteDtoByUserId(Long userId);
 }

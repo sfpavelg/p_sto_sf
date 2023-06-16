@@ -10,7 +10,6 @@ import java.util.Optional;
 public interface VoteQuestionDao extends ReadWriteDao<VoteQuestion, Long> {
     Optional<VoteQuestion> getByUserId(Long questionId, Long userId);
 
-    List<VoteQuestion> getAllVotesUpOrDownByUserId(Long userId, VoteType vote);
 
     /**
      * Method that find all VotesQuestion and return sum of it.
@@ -19,5 +18,4 @@ public interface VoteQuestionDao extends ReadWriteDao<VoteQuestion, Long> {
      */
     Long getSumUpDownVotes(Long questionId);
 
-    Long getAllVotesLastMonth(Long userId);
 }

@@ -120,5 +120,4 @@ public class ProfileUserResourceController {
         Optional<User> user = userService.getByEmail(principal.getName());
         return ResponseEntity.ok(userProfileVoteDtoService.getUserProfileVoteDtoByUserId(user.get().getId()));
     }
-
 }

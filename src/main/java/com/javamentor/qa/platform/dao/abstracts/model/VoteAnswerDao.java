@@ -9,9 +9,7 @@ import java.util.Optional;
 public interface VoteAnswerDao extends ReadWriteDao<VoteAnswer, Long> {
     Optional<VoteAnswer> getByUserId(Long answerId, Long userId);
 
-    Long getCountVotesLastMonth(Long userId);
 
     Long getSumUpDownVotes(Long answerId);
 
-    List<VoteAnswer> getAllVotesUpOrDownByUserId(Long userId, VoteType vote);
 }

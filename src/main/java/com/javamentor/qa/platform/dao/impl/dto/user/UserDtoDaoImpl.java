@@ -77,5 +77,26 @@ public class UserDtoDaoImpl implements UserDtoDao {
                 .setParameter("now", now)
                 .setMaxResults(10).getResultList();
     }
+
+    @Override
+    public UserProfileVoteDto getUserProfileVoteDtoByUserId(Long userId) {
+        LocalDateTime currentDateTime = LocalDateTime.now();
+        LocalDateTime startDate = currentDateTime.minusMonths(1);
+        LocalDateTime endDate = currentDateTime;
+
+        return entityManager.createQuery("SELECT new com.javamentor.qa.platform.models.dto.user.UserProfileVoteDto(" +
+                        "cast(((select count(vq.vote) from VoteQuestion vq where vq.user.id = :userId and vq.vote = 'UP_VOTE')+" +
+                        "(select count(va.vote) from VoteAnswer va where va.user.id = :userId and va.vote = 'UP_VOTE')) as long), " +
+                        "cast(((select count(vq.vote) from VoteQuestion vq where vq.user.id = :userId and vq.vote = 'DOWN_VOTE')+" +
+                        "(select count(va.vote) from VoteAnswer va where va.user.id = :userId and va.vote = 'DOWN_VOTE')) as long), " +
+                        "cast((select count(vq.vote) from VoteQuestion vq where vq.user.id = :userId) as long), " +
+                        "cast((select count(va.vote) from VoteAnswer va where va.user.id = :userId) as long), " +
+                        "cast(((select count(vq.vote) from VoteQuestion vq where vq.user.id = :userId and vq.localDateTime >= :startDate and vq.localDateTime <= :endDate)+" +
+                        "(select count(va.vote) from VoteAnswer va where va.user.id = :userId and va.persistDateTime >= :startDate and va.persistDateTime <= :endDate)) as long)) " +
+                        "from User u where u.id = :userId", UserProfileVoteDto.class)
+                .setParameter("userId", userId).setParameter("startDate", startDate)
+                .setParameter("endDate", currentDateTime)
+                .getSingleResult();
+    }
 }
 
