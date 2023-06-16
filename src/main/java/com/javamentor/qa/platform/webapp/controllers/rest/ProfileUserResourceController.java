@@ -1,5 +1,6 @@
 package com.javamentor.qa.platform.webapp.controllers.rest;
 
+import com.javamentor.qa.platform.dao.impl.dto.user.UserProfileTagDtoDaoImpl;
 import com.javamentor.qa.platform.models.dto.GroupBookmarkDto;
 import com.javamentor.qa.platform.models.dto.user.UserProfileQuestionDto;
 import com.javamentor.qa.platform.models.entity.GroupBookmark;
@@ -30,6 +31,7 @@ public class ProfileUserResourceController {
     private final UserProfileQuestionDtoService userProfileQuestionDtoService;
     private final GroupBookmarkDtoService groupBookmarkDtoService;
     private final GroupBookmarkService groupBookmarkService;
+    private final UserProfileTagDtoDaoImpl userProfileTagDtoDao;
 
     @GetMapping("/questions")
     @ApiOperation(
@@ -100,5 +102,12 @@ public class ProfileUserResourceController {
     public ResponseEntity <?> getGroupBookmark (@AuthenticationPrincipal User user) {
         return ResponseEntity.ok(groupBookmarkDtoService.getGroupBookmark(user.getId()));
     }
+
+
+    @GetMapping ("/tag/{id}")
+    public ResponseEntity <?> getUserProfileTagDtoByUserId( @PathVariable("id")Long id){
+        return ResponseEntity.ok(userProfileTagDtoDao.getUserProfileTagDtoByUserId(id));
+    }
+
 
 }

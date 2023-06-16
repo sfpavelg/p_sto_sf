@@ -16,4 +16,9 @@ public class UserProfileTagDto {
     public UserProfileTagDto(String tagName) {
         this.tagName = tagName;
     }
+
+    public UserProfileTagDto(String tagName, Long countVoteTag) {
+        this.tagName = tagName;
+        this.countVoteTag = countVoteTag;
+    }
 }
