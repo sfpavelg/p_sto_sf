@@ -106,7 +106,8 @@ public class ProfileUserResourceController {
 
     @GetMapping ("/tag/{id}")
     public ResponseEntity <?> getUserProfileTagDtoByUserId( @PathVariable("id")Long id){
-        return ResponseEntity.ok(userProfileTagDtoDao.getUserProfileTagDtoByUserId(id));
+//        return ResponseEntity.ok(userProfileTagDtoDao.getUserProfileTagDtoByUserId(id));
+        return ResponseEntity.ok(userProfileTagDtoDao.countTagVotes(id));
     }
 
 

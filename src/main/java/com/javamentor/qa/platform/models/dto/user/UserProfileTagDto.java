@@ -17,4 +17,8 @@ public class UserProfileTagDto {
         this.tagName = tagName;
         this.countAnswerQuestion = countAnswerQuestion;
     }
+
+    public UserProfileTagDto(Long countVoteTag) {
+        this.countVoteTag = countVoteTag;
+    }
 }
