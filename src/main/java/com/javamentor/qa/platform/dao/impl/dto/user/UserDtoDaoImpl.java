@@ -82,7 +82,6 @@ public class UserDtoDaoImpl implements UserDtoDao {
     public UserProfileVoteDto getUserProfileVoteDtoByUserId(Long userId) {
         LocalDateTime currentDateTime = LocalDateTime.now();
         LocalDateTime startDate = currentDateTime.minusMonths(1);
-        LocalDateTime endDate = currentDateTime;
 
         return entityManager.createQuery("SELECT new com.javamentor.qa.platform.models.dto.user.UserProfileVoteDto(" +
                         "cast(((select count(vq.vote) from VoteQuestion vq where vq.user.id = :userId and vq.vote = 'UP_VOTE')+" +
@@ -99,4 +98,3 @@ public class UserDtoDaoImpl implements UserDtoDao {
                 .getSingleResult();
     }
 }
-
