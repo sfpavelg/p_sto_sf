@@ -13,12 +13,8 @@ public class UserProfileTagDto {
 
     private Long countAnswerQuestion;
 
-    public UserProfileTagDto(String tagName) {
+    public UserProfileTagDto(String tagName, Long countAnswerQuestion) {
         this.tagName = tagName;
-    }
-
-    public UserProfileTagDto(String tagName, Long countVoteTag) {
-        this.tagName = tagName;
-        this.countVoteTag = countVoteTag;
+        this.countAnswerQuestion = countAnswerQuestion;
     }
 }
