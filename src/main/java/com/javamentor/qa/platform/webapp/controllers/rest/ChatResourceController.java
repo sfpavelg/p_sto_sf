@@ -41,9 +41,9 @@ public class ChatResourceController {
             @ApiResponse(code = 401, message = "Unauthorized request"),
             @ApiResponse(code = 403, message = "Forbidden"),
             @ApiResponse(code = 404, message = "No chat with such id")})
-    public ResponseEntity<?> getAllSingleChatMessagesSortedByPersistDate(@RequestParam(value = "page", required = false, defaultValue = "1") Integer pageNumber,
-                                                                         @RequestParam(value = "items", required = false, defaultValue = "10") Integer itemsCountOnPage,
-                                                                         @PathVariable("id") Long chatId) {
+    public ResponseEntity<?> getMessagesBySingleChatIdOrderNew(@RequestParam(value = "page", required = false, defaultValue = "1") Integer pageNumber,
+                                                               @RequestParam(value = "items", required = false, defaultValue = "10") Integer itemsCountOnPage,
+                                                               @PathVariable("id") Long chatId) {
         if(!singleChatService.existsById(chatId)) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }

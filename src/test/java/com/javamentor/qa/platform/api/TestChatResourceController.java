@@ -2,12 +2,9 @@ package com.javamentor.qa.platform.api;
 
 import com.javamentor.qa.platform.AbstractTestApi;
 import org.hamcrest.core.Is;
-import org.junit.Assert;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.jdbc.Sql;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -16,9 +13,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public class TestChatResourceController extends AbstractTestApi {
 
     @Test
-    @Sql(value = {"/script/TestChatResourceController/testGetAllSingleChatMessagesSortedByPersistDate/Before.sql"}, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
-    @Sql(value = {"/script/TestChatResourceController/testGetAllSingleChatMessagesSortedByPersistDate/After.sql"}, executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
-    public void TestGetAllSingleChatMessagesSortedByPersistDate() throws Exception {
+    @Sql(value = {"/script/TestChatResourceController/testGetMessagesBySingleChatIdOrderNew/Before.sql"}, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+    @Sql(value = {"/script/TestChatResourceController/testGetMessagesBySingleChatIdOrderNew/After.sql"}, executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
+    public void TestGetMessagesBySingleChatIdOrderNew() throws Exception {
         String token = getToken("email5@domain.com", "password");
 
 //        Successfully test's
