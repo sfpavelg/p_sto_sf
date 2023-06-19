@@ -25,7 +25,4 @@ public class GroupChatDaoImpl extends ReadWriteDaoImpl<GroupChat, Long> implemen
                 .setParameter("searchValue", "%" + value + "%");
         return (List<GroupChat>) query.getResultList();
     }
-    public List<ChatDto> getGroupChatByUserId2(Long id, String value) {
-        return null;
-    }
 }
