@@ -9,6 +9,8 @@ import org.springframework.stereotype.Repository;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.util.Optional;
+
+
 @Repository
 public class VoteAnswerDaoImpl extends ReadWriteDaoImpl<VoteAnswer, Long> implements VoteAnswerDao {
 
@@ -17,8 +19,7 @@ public class VoteAnswerDaoImpl extends ReadWriteDaoImpl<VoteAnswer, Long> implem
 
     @Override
     public Optional<VoteAnswer> getByUserId(Long answerId, Long userId) {
-        return SingleResultUtil.getSingleResultOrNull(entityManager.createQuery("" +
-                        "SELECT va FROM VoteAnswer va " +
+        return SingleResultUtil.getSingleResultOrNull(entityManager.createQuery("SELECT va FROM VoteAnswer va " +
                         "WHERE va.user.id = :userId AND va.answer.id = :answerId", VoteAnswer.class)
                 .setParameter("userId", userId)
                 .setParameter("answerId", answerId));
@@ -26,8 +27,7 @@ public class VoteAnswerDaoImpl extends ReadWriteDaoImpl<VoteAnswer, Long> implem
 
     @Override
     public Long getSumUpDownVotes(Long answerId) {
-        return entityManager.createQuery("" +
-                        "SELECT (coalesce(count(vaUp),0) - coalesce((" +
+        return entityManager.createQuery("SELECT (coalesce(count(vaUp),0) - coalesce((" +
                         "       SELECT count(vaDown) FROM VoteAnswer vaDown " +
                         "       WHERE vaDown.answer.id = :answerId  AND vaDown.vote = :voteDown),0)) " +
                         "FROM VoteAnswer vaUp " +
