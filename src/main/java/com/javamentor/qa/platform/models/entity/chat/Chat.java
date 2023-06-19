@@ -35,7 +35,6 @@ public class Chat {
     @Column(columnDefinition = "int2")
     private ChatType chatType;
 
-
     public Chat(ChatType chatType) {
         this.chatType = chatType;
     }
