@@ -36,7 +36,6 @@ public class ProfileUserResourceController {
     private final GroupBookmarkDtoService groupBookmarkDtoService;
     private final GroupBookmarkService groupBookmarkService;
     private final UserProfileVoteDtoService userProfileVoteDtoService;
-    private final UserService userService;
 
 
 
