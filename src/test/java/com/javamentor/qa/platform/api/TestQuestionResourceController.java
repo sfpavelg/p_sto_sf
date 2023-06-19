@@ -8,10 +8,12 @@ import org.hamcrest.core.IsNull;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.jdbc.Sql;
+import org.springframework.test.context.jdbc.SqlGroup;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.hamcrest.Matchers.hasSize;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -1102,6 +1104,60 @@ class TestQuestionResourceController extends AbstractTestApi {
                         .param("page", "-1"))
                 .andDo(print())
                 .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    @SqlGroup({
+            @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD,
+                    value = {"/script/TestQuestionResourceController/testAddViewForQuestion/Before.sql"}),
+            @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD,
+                    value = {"/script/TestQuestionResourceController/testAddViewForQuestion/After.sql"})
+    })
+    public void testAddViewForQuestion() throws Exception {
+        String token1 = getToken("0@gmail.com", "0pwd");
+
+        // Тест - юзер заходит на разные вопросы, происходит проверка на то, осуществлена ли запись данных о просмотре вопроса
+        this.mvc.perform(post("/api/user/question/{questionId}/view", 100).header("Authorization", "Bearer " + token1))
+                .andDo(print())
+                .andExpect(status().isOk());
+        assertThat(em.createQuery("select a from QuestionViewed a where a.question.id = 100 and a.user.id = 100")
+                .getResultList()
+                .size())
+                .isEqualTo(1);
+
+        this.mvc.perform(post("/api/user/question/{questionId}/view", 101).header("Authorization", "Bearer " + token1))
+                .andDo(print())
+                .andExpect(status().isOk());
+        assertThat(em.createQuery("select a from QuestionViewed a where a.question.id = 101 and a.user.id = 100")
+                .getResultList()
+                .size())
+                .isEqualTo(1);
+
+
+        // Тест на проверку, не осуществляется ли повторная запись просмотра вопроса пользователем
+        this.mvc.perform(post("/api/user/question/{questionId}/view", 102).header("Authorization", "Bearer " + token1))
+                .andDo(print())
+                .andExpect(status().isOk());
+        assertThat(em.createQuery("select a from QuestionViewed a where a.question.id = 102 and a.user.id = 100")
+                .getResultList()
+                .size())
+                .isEqualTo(1);
+        this.mvc.perform(post("/api/user/question/{questionId}/view", 102).header("Authorization", "Bearer " + token1))
+                .andDo(print())
+                .andExpect(status().isOk());
+        assertThat(em.createQuery("select a from QuestionViewed a where a.question.id = 102 and a.user.id = 100")
+                .getResultList()
+                .size())
+                .isEqualTo(1);
+        // Тест на проверку записи просмотра на несуществующий вопрос
+        this.mvc.perform(post("/api/user/question/{questionId}/view", 100000).header("Authorization", "Bearer " + token1))
+                .andDo(print())
+                .andExpect(status().isOk());
+        assertThat(em.createQuery("select a from QuestionViewed a where a.question.id = 100000 and a.user.id = 100")
+                .getResultList()
+                .size())
+                .isEqualTo(0);
+
     }
 
 }
