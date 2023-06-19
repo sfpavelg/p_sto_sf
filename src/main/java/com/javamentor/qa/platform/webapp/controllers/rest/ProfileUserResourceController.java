@@ -116,8 +116,7 @@ public class ProfileUserResourceController {
             @ApiResponse(code = 200, message = "Success request"),
             @ApiResponse(code = 401, message = "Unauthorized request"),
             @ApiResponse(code = 403, message = "Forbidden"),})
-    public ResponseEntity<?> getUserProfileVoteDto(Principal principal) {
-        Optional<User> user = userService.getByEmail(principal.getName());
-        return ResponseEntity.ok(userProfileVoteDtoService.getUserProfileVoteDtoByUserId(user.get().getId()));
+    public ResponseEntity<?> getUserProfileVoteDto(@AuthenticationPrincipal User user) {
+        return ResponseEntity.ok(userProfileVoteDtoService.getUserProfileVoteDtoByUserId(user.getId()));
     }
 }
