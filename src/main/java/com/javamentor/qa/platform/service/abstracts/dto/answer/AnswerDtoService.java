@@ -9,4 +9,6 @@ public interface AnswerDtoService {
     List<AnswerDto> getAllByQuestionId(Long id) throws NotFoundException;
 
     Long getCountAllAnswersPerWeekByUserId(Long userId);
+
+    List<AnswerDto> getAllDeletedAnswersByUserId(Long userId);
 }

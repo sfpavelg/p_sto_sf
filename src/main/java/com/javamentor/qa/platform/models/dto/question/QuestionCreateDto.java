@@ -22,6 +22,4 @@ public class QuestionCreateDto {
     private String description;
     @NotEmpty (message = "One tag at least must be chosen")
     private List<TagDto> tags = new ArrayList<>();
-
-
 }
