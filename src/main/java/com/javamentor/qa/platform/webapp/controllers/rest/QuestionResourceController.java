@@ -8,7 +8,6 @@ import com.javamentor.qa.platform.models.dto.question.QuestionViewDto;
 import com.javamentor.qa.platform.models.entity.BookMarks;
 import com.javamentor.qa.platform.models.entity.question.CommentQuestion;
 import com.javamentor.qa.platform.models.entity.question.Question;
-import com.javamentor.qa.platform.models.entity.question.QuestionViewed;
 import com.javamentor.qa.platform.models.entity.question.Tag;
 import com.javamentor.qa.platform.models.entity.user.User;
 import com.javamentor.qa.platform.service.abstracts.dto.BookmarkDtoService;
@@ -19,7 +18,6 @@ import com.javamentor.qa.platform.service.abstracts.model.BookmarkService;
 import com.javamentor.qa.platform.service.abstracts.model.CommentQuestionService;
 import com.javamentor.qa.platform.service.abstracts.model.QuestionService;
 import com.javamentor.qa.platform.service.abstracts.model.VoteQuestionService;
-import com.javamentor.qa.platform.service.abstracts.model.QuestionViewedService;
 import com.javamentor.qa.platform.webapp.converters.QuestionConverter;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -61,7 +59,6 @@ public class QuestionResourceController {
     private final CommentQuestionService commentQuestionService;
     private final BookmarkService bookmarkService;
     private final BookmarkDtoService bookmarkDtoService;
-    private final QuestionViewedService questionViewedService;
 
 
     @GetMapping("/{id}")
@@ -301,19 +298,5 @@ public class QuestionResourceController {
         param.put("ignoredTags", ignoredTags);
         return ResponseEntity.ok(questionViewDtoService.getPageWithListMostPopularQuestionForMonthDto(param));
     }
-    @PostMapping("/{questionId}/view")
-    @ApiOperation(value = "Adding a user view", response = Long.class)
-    @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Success request. Added viewing in DB"),
-            @ApiResponse(code = 401, message = "Unauthorized request"),
-            @ApiResponse(code = 403, message = "Forbidden"),
-            @ApiResponse(code = 400, message = "Invalid password")})
-    public ResponseEntity<HttpStatus> addViewForQuestion(@PathVariable Long questionId, @AuthenticationPrincipal User user) throws NotFoundException {
-        Optional<Question> question = questionService.getById(questionId);
-        QuestionViewed questionViewed = new QuestionViewed();
-        questionViewed.setUser(user);
-        questionViewed.setQuestion(question.get());
-        questionViewedService.persist(questionViewed);
-        return ResponseEntity.ok(HttpStatus.OK);
-    }
+
 }
