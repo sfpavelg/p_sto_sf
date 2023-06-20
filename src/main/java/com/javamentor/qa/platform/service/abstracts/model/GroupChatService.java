@@ -7,5 +7,6 @@ import java.util.Set;
 
 public interface GroupChatService extends ReadWriteService<GroupChat, Long> {
 
-    Set<User> getUsers (GroupChat groupChat);
+    Set<User> getUsersFromGroupChatById(Long id);
+
 }

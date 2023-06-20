@@ -432,7 +432,7 @@ public class TestDataInitService {
 
         List<GroupChat> allGroupChats = groupChatService.getAll();
         for (GroupChat groupChat : allGroupChats) {
-            for (User user2 : groupChatService.getUsers(groupChat)) {
+            for (User user2 : groupChatService.getUsersFromGroupChatById(groupChat.getId())) {
                 if (user2.getId() == id) {
                     Chat chat = groupChat.getChat();
                     UserChatPin userChatPin = new UserChatPin();
@@ -443,8 +443,6 @@ public class TestDataInitService {
             }
         }
     }
-
-
 
     public void init() {
         roleService.persist(ROLE_ADMIN);
