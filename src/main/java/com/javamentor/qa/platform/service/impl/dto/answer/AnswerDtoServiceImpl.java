@@ -25,4 +25,9 @@ public class AnswerDtoServiceImpl implements AnswerDtoService {
     public Long getCountAllAnswersPerWeekByUserId(Long userId) {
         return answerDtoDao.getCountPerWeekByUserId(userId);
     }
+
+    @Override
+    public List<AnswerDto> getAllDeletedAnswersByUserId(Long userId) {
+        return answerDtoDao.getAllDeletedAnswersByUserId(userId);
+    }
 }
