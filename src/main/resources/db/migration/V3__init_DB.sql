@@ -8,4 +8,4 @@ create table if not exists "user_chat_pin"
 );
 
 alter table group_chat
-    add "is_global" bool;
+    add "is_global" bool;git
