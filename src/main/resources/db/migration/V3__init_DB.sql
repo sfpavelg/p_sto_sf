@@ -6,3 +6,6 @@ create table if not exists "user_chat_pin"
     persist_date timestamp,
     primary key (id)
 );
+
+alter table group_chat
+    add "is_global" bool;
