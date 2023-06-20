@@ -16,13 +16,17 @@ import com.javamentor.qa.platform.models.entity.user.reputation.Reputation;
 import com.javamentor.qa.platform.models.entity.user.reputation.ReputationType;
 import com.javamentor.qa.platform.service.abstracts.model.*;
 import com.javamentor.qa.platform.service.abstracts.model.tag.IgnoredTagService;
+import com.javamentor.qa.platform.service.abstracts.model.tag.RelatedTagService;
 import com.javamentor.qa.platform.service.abstracts.model.tag.TagService;
 import com.javamentor.qa.platform.service.abstracts.model.tag.TrackedTagService;
-import io.swagger.models.auth.In;
+import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+
+import javax.transaction.Transactional;
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Collectors;
@@ -38,6 +42,7 @@ public class TestDataInitService {
     private final QuestionService questionService;
     private final AnswerService answerService;
     private final TagService tagService;
+    private final RelatedTagService relatedTagService;
     private final IgnoredTagService ignoredTagService;
     private final TrackedTagService trackedTagService;
     private final QuestionViewedService questionViewedService;
@@ -51,19 +56,22 @@ public class TestDataInitService {
     private final MessageService messageService;
     private final BookmarkService bookMarkService;
     private final GroupBookmarkService groupBookmarkService;
+    private final UserChatPinService userChatPinService;
 
     @Autowired
     public TestDataInitService(RoleService roleService, UserService userService, QuestionService questionService,
-                               AnswerService answerService, TagService tagService, IgnoredTagService ignoredTagService,
+                               AnswerService answerService, TagService tagService, RelatedTagService relatedTagService, IgnoredTagService ignoredTagService,
                                TrackedTagService trackedTagService, QuestionViewedService questionViewedService,
                                VoteQuestionService voteQuestionService, VoteAnswerService voteAnswerService,
                                CommentQuestionService commentQuestionService, CommentAnswerService commentAnswerService,
-                               ReputationService reputationService, BookmarkService bookMarkService, GroupChatService groupChatService, SingleChatService singleChatService, MessageService messageService,GroupBookmarkService groupBookmarkService) {
+                               ReputationService reputationService, BookmarkService bookMarkService, GroupChatService groupChatService,
+                               SingleChatService singleChatService, MessageService messageService,GroupBookmarkService groupBookmarkService, UserChatPinService userChatPinService) {
         this.roleService = roleService;
         this.userService = userService;
         this.questionService = questionService;
         this.answerService = answerService;
         this.tagService = tagService;
+        this.relatedTagService = relatedTagService;
         this.ignoredTagService = ignoredTagService;
         this.trackedTagService = trackedTagService;
         this.questionViewedService = questionViewedService;
@@ -77,6 +85,7 @@ public class TestDataInitService {
         this.groupChatService = groupChatService;
         this.singleChatService = singleChatService;
         this.messageService = messageService;
+        this.userChatPinService = userChatPinService;
     }
 
     public void createSuperUser(int count) {
@@ -148,22 +157,23 @@ public class TestDataInitService {
     }
 
     public void createTags() {
-        Tag javaTag = new Tag();
-        javaTag.setName("Java");
-        javaTag.setDescription("Java — строго типизированный объектно-ориентированный язык программирования общего назначения");
-        tagService.persist(javaTag);
-        Tag jsTag = new Tag();
-        jsTag.setName("JavaScript");
-        jsTag.setDescription("JavaScript — мультипарадигменный язык программирования. Поддерживает объектно-ориентированный, императивный и функциональный стили");
-        tagService.persist(jsTag);
-        Tag csharpTag = new Tag();
-        csharpTag.setName("C#");
-        csharpTag.setDescription("C# — объектно-ориентированный язык программирования общего назначения");
-        tagService.persist(csharpTag);
-        Tag htmlTag = new Tag();
-        htmlTag.setName("HTML");
-        htmlTag.setDescription("HTML — стандартизированный язык гипертекстовой разметки документов для просмотра веб-страниц в браузере");
-        tagService.persist(htmlTag);
+        for (int i = 0; i < 30; i++) {
+            Tag tag = new Tag();
+            tag.setName("tag" + i);
+            tag.setDescription("Tag" + i + " - is a test tag for dev stage of our application and must be removed on prod stage");
+            tagService.persist(tag);
+        }
+    }
+
+    public void createTagRelations() {
+        List<Tag> tagList = tagService.getAll();
+        for (int i = tagList.size() - 1; i > 4; i--) {
+            RelatedTag relatedTag = new RelatedTag();
+            relatedTag.setChildTag(tagList.get(i));
+            relatedTag.setMainTag(tagList.get(((i % 2) == 0) ? ((i > (tagList.size() / 2)) ? 0 : 1)
+                    : ((i > (tagList.size() / 2)) ? 2 : 3)));
+            relatedTagService.persist(relatedTag);
+        }
     }
 
     public void createIgnoredAndTrackedTags(int ignoredUser) {
@@ -174,14 +184,14 @@ public class TestDataInitService {
             if (user.getId() == ignoredUser) {
                 continue;
             }
-
             Set<Integer> uniqueIgnoredTags = IntStream
                     .range(0, tagList.size()).boxed()
-                    .sorted((o1, o2) -> o1.equals(o2) ? 0 : (ThreadLocalRandom.current().nextBoolean() ? -1 : 1))
+                    .sorted((o1, o2) -> Integer.compare(o1, o2))
                     .limit(rand(0, 4)).collect(Collectors.toSet());
+
             Set<Integer> uniqueTrackedTags = IntStream
                     .range(0, tagList.size()).boxed()
-                    .sorted((o1, o2) -> o1.equals(o2) ? 0 : (ThreadLocalRandom.current().nextBoolean() ? -1 : 1))
+                    .sorted((o1, o2) -> Integer.compare(o1, o2))
                     .limit(rand(0, 4)).collect(Collectors.toSet());
             uniqueIgnoredTags.removeAll(uniqueTrackedTags);
             uniqueTrackedTags.removeAll(uniqueIgnoredTags);
@@ -352,7 +362,7 @@ public class TestDataInitService {
         }
     }
 
-    public void createGroupBookmarks(int count){
+    public void createGroupBookmarks(int count) {
         List<User> userList = userService.getAll();
         for (int i = 0; i < count; i++) {
             GroupBookmark groupBookmark = new GroupBookmark();
@@ -379,7 +389,7 @@ public class TestDataInitService {
         }
     }
 
-    public void createGroupChat() {
+    public void createGroupChats() {
         Set<User> userSetJava = new HashSet<>(userService.getAll());
         Chat chatJava = new Chat(ChatType.GROUP);
         chatJava.setTitle("Java");
@@ -387,6 +397,15 @@ public class TestDataInitService {
         groupChatJava.setChat(chatJava);
         groupChatJava.setUsers(userSetJava);
         groupChatService.persist(groupChatJava);
+
+
+        Chat chatGlobal = new Chat(ChatType.GROUP);
+        chatGlobal.setTitle("Global chat");
+        GroupChat groupGlobalChat = new GroupChat();
+        groupGlobalChat.setChat(chatGlobal);
+        groupGlobalChat.setUsers(userSetJava);
+        groupGlobalChat.setGlobal(true);
+        groupChatService.persist(groupGlobalChat);
     }
 
     public void createMessage() {
@@ -407,6 +426,38 @@ public class TestDataInitService {
         }
     }
 
+    public void createUserChatPin(Long id) {
+        Optional<User> user = userService.getById(id);
+
+        List<SingleChat> allSingleChats = singleChatService.getAll();
+        for (int i = 0; i < allSingleChats.size(); i++) {
+            SingleChat singleChat = allSingleChats.get(i);
+            User user2 = singleChat.getUserOne();
+            User user3 = singleChat.getUseTwo();
+            if (user2.getId() == id || user3.getId() == id) {
+                UserChatPin userChatPin = new UserChatPin();
+                userChatPin.setChat(singleChat.getChat());
+                userChatPin.setUser(user.get());
+                userChatPin.setPersistDate(LocalDateTime.now());
+                userChatPinService.persist(userChatPin);
+            }
+        }
+
+        List<GroupChat> allGroupChats = groupChatService.getAll();
+        for (GroupChat groupChat : allGroupChats) {
+            for (User user2 : groupChatService.getUsers(groupChat)) {
+                if (user2.getId() == id) {
+                    Chat chat = groupChat.getChat();
+                    UserChatPin userChatPin = new UserChatPin();
+                    userChatPin.setChat(chat);
+                    userChatPin.setUser(user.get());
+                    userChatPinService.persist(userChatPin);
+                }
+            }
+        }
+    }
+
+
 
     public void init() {
         roleService.persist(ROLE_ADMIN);
@@ -414,6 +465,7 @@ public class TestDataInitService {
         createSuperUser(5);
         createUser(45);
         createTags();
+        createTagRelations();
         createQuestion(10);
         createAnswer(50);
         createIgnoredAndTrackedTags(1);
@@ -425,8 +477,10 @@ public class TestDataInitService {
         createReputation();
         createBookMarks(10);
         createGroupBookmarks(5);
-        createGroupChat();
+        createGroupChats();
         createSingleChat(20);
         createMessage();
+        createUserChatPin(3L);
     }
+
 }
