@@ -7,5 +7,7 @@ import java.util.List;
 
 public interface UserProfileTagDtoDao {
 
-    List<UserProfileTagDto> getUserProfileTagDtoByUserId(Long userId);
+    List<UserProfileTagDto> getUserProfileTagDtoWithoutVotesByUserId(Long userId);
+
+    List<UserProfileTagDto> getTagVotesByList(List<String> tagList);
 }
