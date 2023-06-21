@@ -2,7 +2,6 @@ package com.javamentor.qa.platform.service.impl.dto.user;
 
 import com.javamentor.qa.platform.dao.abstracts.dto.user.UserProfileTagDtoDao;
 import com.javamentor.qa.platform.models.dto.user.UserProfileTagDto;
-import com.javamentor.qa.platform.models.entity.question.Tag;
 import com.javamentor.qa.platform.service.abstracts.dto.user.UserProfileTagDtoService;
 import org.springframework.stereotype.Service;
 
@@ -20,20 +19,17 @@ public class UserProfileTagDtoServiceImpl implements UserProfileTagDtoService {
 
     @Override
     public List<UserProfileTagDto> getUserProfileTagDto(Long userId) {
-        List <UserProfileTagDto> tagDtoList = userProfileTagDtoDao.getUserProfileTagDtoWithoutVotesByUserId(userId);
+        List<UserProfileTagDto> tagDtoList = userProfileTagDtoDao.getUserProfileTagDtoWithoutVotesByUserId(userId);
         List<String> tagList = new ArrayList<>();
-                tagDtoList.stream().forEach(dto -> tagList.add(dto.getTagName()));
-        List <Object []> votesByList = userProfileTagDtoDao.getTagVotesByList(tagList);
+        tagDtoList.stream().forEach(dto -> tagList.add(dto.getTagName()));
+        List<Object[]> votesByList = userProfileTagDtoDao.getTagVotesByList(tagList);
 
-        for (int i = 0; i< tagDtoList.size(); i++) {
+        for (int i = 0; i < tagDtoList.size(); i++) {
             tagDtoList.get(i).getTagName();
-            for (Object [] o : votesByList) {
+            for (Object[] o : votesByList) {
                 if (tagDtoList.get(i).getTagName().equals(o[0])) {
                     tagDtoList.get(i).setCountVoteTag(Long.valueOf(o[1].toString()));
                 }
-//                if (tagDtoList.get(i).getTagName().equals(tagDto.getTagName())) {
-//                    tagDtoList.get(i).setCountVoteTag(tagDto.getCountVoteTag());
-//                }
             }
         }
         return tagDtoList;

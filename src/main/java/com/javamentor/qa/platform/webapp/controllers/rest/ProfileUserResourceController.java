@@ -105,10 +105,26 @@ public class ProfileUserResourceController {
     }
 
 
-    @GetMapping ("/tag/{id}")
-    public ResponseEntity <?> getUserTagsWithRating(@PathVariable("id")Long id){
-        return ResponseEntity.ok(userProfileTagDtoService.getUserProfileTagDto(id));
-//        return ResponseEntity.ok(userProfileTagDtoDao.countTagVotes(id));
+//    @GetMapping ("/tag/{id}")
+//    public ResponseEntity <?> getUserTagsWithRating(@PathVariable("id")Long id){
+//        return ResponseEntity.ok(userProfileTagDtoService.getUserProfileTagDto(id));
+////        return ResponseEntity.ok(userProfileTagDtoDao.countTagVotes(id));
+//    }
+
+    /**
+     * Method returns JSON with list of user tags with their count and votes
+     * @return {@link ResponseEntity} with status Ok and {@link List <UserProfileTagDto>} in body
+     */
+    @GetMapping ("/tag")
+    @ApiOperation(
+            value = "Getting list of user tags with their count and votes",
+            response = GroupBookmarkDto.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Success request. UserProfileTagDto has been successfully returned"),
+            @ApiResponse(code = 400, message = "Invalid password"),
+            @ApiResponse(code = 403, message = "Forbidden")})
+    public ResponseEntity <?> getUserTagsWithRating(@AuthenticationPrincipal User user){
+        return ResponseEntity.ok(userProfileTagDtoService.getUserProfileTagDto(user.getId()));
     }
 
 

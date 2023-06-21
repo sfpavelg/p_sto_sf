@@ -23,7 +23,7 @@ VALUES (100, 'about', 'moscow', '0@gmail.com', 'name1', 'http://imagelink1.com',
         'nickname5', 'password', '2023-01-21 15:17:18.280368', 100),
         (105, 'about', 'spb', 'email6@domain.com', 'name6', null, 'f', 't',
         '2023-01-10 15:17:18.280368', 'http://github.com/6', 'http://site6.com', 'http://vk.com/6',
-        'nickname6', 'password', '2023-01-21 15:17:18.280368', 100);
+        'nickname6', '$2a$10$/Hq12PgE.XuzB3ZizNOIXuBnCjyK/9/oHJ1Y/FRPbJZO8jSBzD1F.', '2023-01-21 15:17:18.280368', 200);
 
 
 INSERT INTO "question"

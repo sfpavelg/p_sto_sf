@@ -228,4 +228,42 @@ public class TestProfileUserResourceController extends AbstractTestApi {
     }
 
 
+    @Test
+    @SqlGroup({
+            @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD,
+                    value = {"/script/TestProfileUserResourceController/testGetUserTagsWithRating/Before.sql"}),
+            @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD,
+                    value = {"/script/TestProfileUserResourceController/testGetUserTagsWithRating/After.sql"})
+    })
+    public void testGetUserTagsWithRating() throws Exception {
+        String JWT = getToken("0@gmail.com", "0pwd");
+
+//      positive get tests
+        this.mvc.perform(get("/api/user/profile/tag")
+                .header("Authorization", "Bearer " + JWT)
+                .contentType(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+
+                .andExpect(jsonPath("$[0].tagName", Is.is("tag with id 109")))
+                .andExpect(jsonPath("$[0].countVoteTag", Is.is(-4)))
+                .andExpect(jsonPath("$[0].countAnswerQuestion", Is.is(1)))
+                .andExpect(jsonPath("$[1].tagName", Is.is("tag with id 100")))
+                .andExpect(jsonPath("$[1].countVoteTag", Is.is(-1)))
+                .andExpect(jsonPath("$[1].countAnswerQuestion", Is.is(3)));
+
+
+        String JWTUser105 = getToken("email6@domain.com", "0pwd");
+
+        this.mvc.perform(get("/api/user/profile/tag")
+                        .header("Authorization", "Bearer " + JWTUser105)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$[0].tagName", Is.is("tag with id 100")))
+                .andExpect(jsonPath("$[0].countVoteTag", Is.is(-1)))
+                .andExpect(jsonPath("$[0].countAnswerQuestion", Is.is(1)));
+    }
 }
