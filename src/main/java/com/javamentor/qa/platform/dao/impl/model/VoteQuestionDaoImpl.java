@@ -25,6 +25,8 @@ public class VoteQuestionDaoImpl extends ReadWriteDaoImpl<VoteQuestion, Long> im
                 .setParameter("questionId", questionId));
     }
 
+
+
     @Override
     public Long getSumUpDownVotes(Long questionId) {
         return entityManager.createQuery("" +
@@ -38,5 +40,4 @@ public class VoteQuestionDaoImpl extends ReadWriteDaoImpl<VoteQuestion, Long> im
                 .setParameter("questionId", questionId)
                 .getSingleResult();
     }
-
 }

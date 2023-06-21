@@ -1,6 +1,5 @@
 package com.javamentor.qa.platform.webapp.controllers.rest;
 
-
 import com.javamentor.qa.platform.models.dto.GroupBookmarkDto;
 import com.javamentor.qa.platform.models.dto.user.UserProfileQuestionDto;
 import com.javamentor.qa.platform.models.entity.GroupBookmark;
@@ -105,12 +104,6 @@ public class ProfileUserResourceController {
     }
 
 
-//    @GetMapping ("/tag/{id}")
-//    public ResponseEntity <?> getUserTagsWithRating(@PathVariable("id")Long id){
-//        return ResponseEntity.ok(userProfileTagDtoService.getUserProfileTagDto(id));
-////        return ResponseEntity.ok(userProfileTagDtoDao.countTagVotes(id));
-//    }
-
     /**
      * Method returns JSON with list of user tags with their count and votes
      * @return {@link ResponseEntity} with status Ok and {@link List <UserProfileTagDto>} in body
@@ -127,5 +120,5 @@ public class ProfileUserResourceController {
         return ResponseEntity.ok(userProfileTagDtoService.getUserProfileTagDto(user.getId()));
     }
 
-
 }
+

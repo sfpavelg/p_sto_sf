@@ -5,5 +5,5 @@ import com.javamentor.qa.platform.models.dto.chat.MessageDto;
 import java.util.HashMap;
 
 public interface MessageDtoService {
-    PageDto<MessageDto> getAllSingleChatMessagesSortedByPersistDate(HashMap<String, Object> param);
+    PageDto<MessageDto> getMessagesBySingleChatIdOrderNew(HashMap<String, Object> param);
 }

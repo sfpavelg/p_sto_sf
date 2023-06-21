@@ -157,6 +157,7 @@ public class TestProfileUserResourceController extends AbstractTestApi {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", Is.is(0)));
     }
+
     @Test
     @Sql(value = {"/script/TestProfileUserResourceController/testAddGroupOfBookmarks/Before.sql"}, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
     @Sql(value = {"/script/TestProfileUserResourceController/testAddGroupOfBookmarks/After.sql"}, executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
@@ -227,6 +228,59 @@ public class TestProfileUserResourceController extends AbstractTestApi {
                 .andExpect(status().is4xxClientError());
     }
 
+    @Test
+    @Sql(value = {"/script/TestProfileUserResourceController/testGetUserProfileVotesInfo/Before.sql"}, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+    @Sql(value = {"/script/TestProfileUserResourceController/testGetUserProfileVotesInfo/After.sql"}, executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
+    public void testGetUserProfileVotesInfo() throws Exception {
+        String token1 = getToken("1000@gmail.com", "44pwd");
+        String token2 = getToken("1001@gmail.com", "44pwd");
+        String token3 = getToken("1002@gmail.com", "44pwd");
+        String token4 = getToken("1003@gmail.com", "44pwd");
+
+        //success with (1up vote_on_question) and (1up vote_on_answer)
+        this.mvc.perform(get("/api/user/profile/vote").header("Authorization", "Bearer " + token1))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.countVoteUp", Is.is(2)))
+                .andExpect(jsonPath("$.countVoteDown", Is.is(0)))
+                .andExpect(jsonPath("$.countVoteQuestion", Is.is(1)))
+                .andExpect(jsonPath("$.countVoteAnswer", Is.is(1)))
+                .andExpect(jsonPath("$.countVoteMonth", Is.is(0)));
+
+        //success with (1up, 1down vote_on_question) and (1up, 1down vote_on_answer + 1 current date)
+        this.mvc.perform(get("/api/user/profile/vote").header("Authorization", "Bearer " + token2))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.countVoteUp", Is.is(2)))
+                .andExpect(jsonPath("$.countVoteDown", Is.is(2)))
+                .andExpect(jsonPath("$.countVoteQuestion", Is.is(2)))
+                .andExpect(jsonPath("$.countVoteAnswer", Is.is(2)))
+                .andExpect(jsonPath("$.countVoteMonth", Is.is(1)));
+
+        //success with (2up vote_on_question) and (2up vote_on_answer)
+        this.mvc.perform(get("/api/user/profile/vote").header("Authorization", "Bearer " + token3))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.countVoteUp", Is.is(4)))
+                .andExpect(jsonPath("$.countVoteDown", Is.is(0)))
+                .andExpect(jsonPath("$.countVoteQuestion", Is.is(2)))
+                .andExpect(jsonPath("$.countVoteAnswer", Is.is(2)))
+                .andExpect(jsonPath("$.countVoteMonth", Is.is(0)));
+
+        //success with 0 votes
+        this.mvc.perform(get("/api/user/profile/vote").header("Authorization", "Bearer " + token4))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.countVoteUp", Is.is(0)))
+                .andExpect(jsonPath("$.countVoteDown", Is.is(0)))
+                .andExpect(jsonPath("$.countVoteQuestion", Is.is(0)))
+                .andExpect(jsonPath("$.countVoteAnswer", Is.is(0)))
+                .andExpect(jsonPath("$.countVoteMonth", Is.is(0)));
+    }
 
     @Test
     @SqlGroup({

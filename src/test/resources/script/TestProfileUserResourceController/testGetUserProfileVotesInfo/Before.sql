@@ -9,21 +9,21 @@ INSERT INTO "user_entity"
 ("id", "about", "city", "email", "full_name", "image_link", "is_deleted",
  "is_enabled", "last_redaction_date", "link_github", "link_site", "link_vk",
  "nickname", "password", "persist_date", "role_id")
-VALUES (1002, 'about', 'moscow', '0@gmail.com', 'name1', 'http://imagelink1.com', 'f', 't',
+VALUES (1000, 'about', 'moscow', '1000@gmail.com', 'name1', 'http://imagelink1.com', 'f', 't',
         '2023-01-10 15:17:18.280368', 'http://github.com/1', 'http://site1.com', 'http://vk.com/1',
-        'nickname1', '$2a$10$/Hq12PgE.XuzB3ZizNOIXuBnCjyK/9/oHJ1Y/FRPbJZO8jSBzD1F.', '2023-01-21 15:17:18.280368', 2000),
-       (1001, 'about', 'spb', 'email2@domain.com', 'name2', 'http://imagelink2.com', 'f', 't',
+        'nickname1', '$2a$10$z6zd/raH0e0ErNqkGzunbO5i6F8H7vOHgQXtJR5t75HCryqLVYoMK', '2023-01-21 15:17:18.280368', 2000),
+       (1001, 'about', 'spb', '1001@gmail.com', 'name2', 'http://imagelink2.com', 'f', 't',
         '2023-01-10 15:17:18.280368', 'http://github.com/4', 'http://site2.com', 'http://vk.com/2',
-        'nickname2', 'password', '2023-01-21 15:17:18.280368', 2000),
-       (1000, 'about', 'NY', 'email3@domain.com', 'name3', null, 'f', 't',
+        'nickname2', '$2a$10$z6zd/raH0e0ErNqkGzunbO5i6F8H7vOHgQXtJR5t75HCryqLVYoMK', '2023-01-21 15:17:18.280368', 2000),
+       (1002, 'about', 'NY', '1002@gmail.com', 'name3', null, 'f', 't',
         '2023-01-10 15:17:18.280368', 'http://github.com/3', 'http://site3.com', 'http://vk.com/3',
-        'nickname3', 'password', '2023-01-21 15:17:18.280368', 1000),
-       (1003, 'about', 'spb', 'email4@domain.com', 'name4', 'http://imagelink4.com', 'f', 't',
+        'nickname3', '$2a$10$z6zd/raH0e0ErNqkGzunbO5i6F8H7vOHgQXtJR5t75HCryqLVYoMK', '2023-01-21 15:17:18.280368', 2000),
+       (1003, 'about', 'spb', '1003@gmail.com', 'name4', 'http://imagelink4.com', 'f', 't',
         '2023-01-10 15:17:18.280368', 'http://github.com/4', 'http://site4.com', 'http://vk.com/4',
-        'nickname4', 'password', '2023-01-21 15:17:18.280368', 2000),
-       (1004, 'about', 'spb', 'email5@domain.com', 'name5', 'http://imagelink5.com', 'f', 't',
+        'nickname4', '$2a$10$z6zd/raH0e0ErNqkGzunbO5i6F8H7vOHgQXtJR5t75HCryqLVYoMK', '2023-01-21 15:17:18.280368', 2000),
+       (1004, 'about', 'spb', '1004@gmail.com', 'name5', 'http://imagelink5.com', 'f', 't',
         '2023-01-10 15:17:18.280368', 'http://github.com/5', 'http://site5.com', 'http://vk.com/5',
-        'nickname5', 'password', '2023-01-21 15:17:18.280368', 1000);
+        'nickname5', '$2a$10$z6zd/raH0e0ErNqkGzunbO5i6F8H7vOHgQXtJR5t75HCryqLVYoMK', '2023-01-21 15:17:18.280368', 1000);
 
 INSERT INTO "question"
 ("id", "description", "is_deleted", "last_redaction_date", "persist_date", "title", "user_id")
@@ -69,11 +69,19 @@ VALUES (1000, '2023-01-27 13:01:11.245126', 'html_body1', 'true', 'false', 'true
 
 INSERT INTO "votes_on_answers"
 ("id", "persist_date", "vote", "answer_id", "user_id")
-VALUES (1000, '2023-01-27 13:01:11.245126', 'UP', 1002, 1001),
-       (1001, '2023-01-27 13:01:11.245126', 'UP', 1002, 1003),
-       (1002, '2023-01-27 13:01:11.245126', 'UP', 1002, 1002),
-       (1003, '2023-01-27 13:01:11.245126', 'DOWN', 1002, 1001),
-       (1004, '2023-01-27 13:01:11.245126', 'UP', 1001, 1000);
+VALUES (1000, '2023-01-27 13:01:11.245126', 'UP_VOTE', 1002, 1001),
+       (1001, '2023-01-27 13:01:11.245126', 'UP_VOTE', 1002, 1002),
+       (1002, '2023-01-27 13:01:11.245126', 'UP_VOTE', 1002, 1002),
+       (1003, '2023-01-27 13:01:11.245126', 'DOWN_VOTE', 1002, 1001),
+       (1004, '2023-01-27 13:01:11.245126', 'UP_VOTE', 1001, 1000);
+
+INSERT INTO "votes_on_questions"
+("id", "persist_date", "vote", "question_id", "user_id")
+VALUES (1000, (NOW()), 'UP_VOTE', 1002, 1001),
+       (1001, '2023-01-27 13:01:11.245126', 'UP_VOTE', 1002, 1002),
+       (1002, '2023-01-27 13:01:11.245126', 'UP_VOTE', 1002, 1002),
+       (1003, '2023-01-27 13:01:11.245126', 'DOWN_VOTE', 1002, 1001),
+       (1004, '2023-01-27 13:01:11.245126', 'UP_VOTE', 1001, 1000);
 
 INSERT INTO "reputation"
 ("id", "count", "persist_date", "type", "answer_id", "author_id", "question_id", "sender_id")

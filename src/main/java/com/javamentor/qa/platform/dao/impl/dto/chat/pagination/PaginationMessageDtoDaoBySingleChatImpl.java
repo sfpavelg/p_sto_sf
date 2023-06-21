@@ -20,7 +20,7 @@ public class PaginationMessageDtoDaoBySingleChatImpl implements PaginationMessag
     public List<MessageDto> getItems(Map<String, Object> param) {
         int itemsOnPageParam = (int) param.get("itemsOnPage");
         int itemsPositionParam = (int) param.get("currentPageNumber") * itemsOnPageParam - itemsOnPageParam;
-        return entityManager.createQuery("SELECT new com.javamentor.qa.platform.models.dto.chat.MessageDto(" +
+        Query query = entityManager.createQuery("SELECT new com.javamentor.qa.platform.models.dto.chat.MessageDto(" +
                         "m.id, " +
                         "m.message," +
                         "m.userSender.nickname, " +
@@ -28,12 +28,12 @@ public class PaginationMessageDtoDaoBySingleChatImpl implements PaginationMessag
                         "m.userSender.imageLink, " +
                         "m.persistDate) " +
                         "FROM Message m " +
-                        "WHERE m.chat.id = (SELECT s.chat.id FROM SingleChat s WHERE s.chat.id = :chatId) " +
+                        "WHERE m.chat.id = :chatId " +
                         "ORDER BY m.persistDate DESC ", MessageDto.class)
                 .setParameter("chatId", param.get("chatId"))
                 .setMaxResults(itemsOnPageParam)
-                .setFirstResult(itemsPositionParam)
-                .getResultList();
+                .setFirstResult(itemsPositionParam);
+        return (List<MessageDto>) query.getResultList();
     }
 
     @Override
