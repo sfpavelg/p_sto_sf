@@ -20,7 +20,7 @@ public class GroupChatServiceImpl extends ReadWriteServiceImpl<GroupChat, Long> 
 
     @Override
     public Set<User> getUsersFromGroupChatById(Long id) {
-        return (Set<User>)groupChatDao.getUsersFromGroupChatById(id);
+        return groupChatDao.getUsersFromGroupChatById(id);
     }
 
 }
