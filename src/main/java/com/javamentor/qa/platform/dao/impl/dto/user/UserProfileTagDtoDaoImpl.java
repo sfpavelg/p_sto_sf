@@ -6,6 +6,8 @@ import org.springframework.stereotype.Repository;
 
 import javax.persistence.*;
 import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Repository
 public class UserProfileTagDtoDaoImpl implements UserProfileTagDtoDao {
@@ -56,16 +58,72 @@ public class UserProfileTagDtoDaoImpl implements UserProfileTagDtoDao {
     }
 
 
-    public List<UserProfileTagDto> getTagVotesByList(List<String> tagList) {
+    public List<Object []> getTagVotesByList(List<String> tagList) {
+//        конструктор нельзя использовать потому что уже есть String, Long constructor.
         Query questionVotes = entityManager.createQuery("SELECT t.name" +
                 ", sum (case when vq.vote ='UP_VOTE' then 1 else -1 end ) " +
                 "FROM Tag t join  t.questions q " +
                 "JOIN VoteQuestion vq ON vq.question.id = q.id " +
                 "WHERE t.name IN (:tagList) " +
                 "GROUP BY t.name").setParameter("tagList", tagList );
-        List<UserProfileTagDto> result = questionVotes.getResultList();
 
-        return result;
+
+        Query answerVotes = entityManager.createQuery("SELECT  t.name" +
+                ", SUM (CASE WHEN va.vote ='UP_VOTE' THEN 1 ELSE -1 END )" +
+                "FROM Tag t JOIN  t.questions q " +
+                "JOIN Answer a ON a.question.id = q.id " +
+                "JOIN VoteAnswer va ON va.answer.id = a.id " +
+                "WHERE t.name IN (:tagList) " +
+                "GROUP BY t.name").setParameter("tagList", tagList );
+
+
+
+        List<Object []> result1 = questionVotes.getResultList();
+        List<Object []> result2 =  answerVotes.getResultList();
+        result1.addAll(result2);
+//
+//        boolean isSorted = false;
+//        int buf;
+//        while(!isSorted) {
+//            isSorted = true;
+//            for (int i = 0; i < result1.size() + result2.size() - 1; i++) {
+//                if(result1.get(i).getTagName().equals(result2.get(i).getTagName())) {
+//                    isSorted = false;
+//
+//                }
+//            }
+//        }
+//
+//        for (int i = 0; i<result1.size(); i++) {
+//            for (int inner = i + 0; i< result1.size(); i++) {
+//                if(result1.get(i).getTagName().equals(result1.get(inner).getTagName())) {
+//                    result1.get(i).setCountVoteTag(Long.sum(result1.get(i).getCountVoteTag(), result1.get(inner).getCountVoteTag()));
+//                    result1.remove(result1.get(inner));
+//                }
+//            }
+//        }
+//        List<UserProfileTagDto> result = new ArrayList<>();
+//        int count = 0;
+//        for (UserProfileTagDto tagDto : result1) {
+//            for (UserProfileTagDto tagDto1: result2) {
+//                if (tagDto.getTagName().equals(tagDto1.getTagName())) {
+//                    result2.get(count).setCountVoteTag(tagDto.getCountVoteTag() + tagDto1.getCountVoteTag());
+////                    result.add(new UserProfileTagDto(tagDto.getTagName(), Long.sum(tagDto.getCountVoteTag(), tagDto1.getCountVoteTag())));
+//                } else if (!(tagDto.getTagName().equals(tagDto1.getTagName())) && count == result1.size() - 1){
+//                    result2.add(new UserProfileTagDto(tagDto.getTagName(), tagDto.getCountVoteTag()));
+//                }
+//                count++;
+//            }
+//        }
+
+
+//        for (UserProfileTagDto tagDto : result2){
+//            for (UserProfileTagDto tagDto1 : result1){
+//            if tagDto.getTagName()
+//            }
+//        }
+
+        return result1;
     }
 
 //    public List<UserProfileTagDto> countTagVotes (Long userId) {

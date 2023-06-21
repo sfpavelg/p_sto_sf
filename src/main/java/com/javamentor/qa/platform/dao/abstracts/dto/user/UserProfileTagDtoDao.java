@@ -9,5 +9,5 @@ public interface UserProfileTagDtoDao {
 
     List<UserProfileTagDto> getUserProfileTagDtoWithoutVotesByUserId(Long userId);
 
-    List<UserProfileTagDto> getTagVotesByList(List<String> tagList);
+    List<Object []> getTagVotesByList(List<String> tagList);
 }

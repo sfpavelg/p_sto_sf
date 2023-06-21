@@ -23,8 +23,19 @@ public class UserProfileTagDtoServiceImpl implements UserProfileTagDtoService {
         List <UserProfileTagDto> tagDtoList = userProfileTagDtoDao.getUserProfileTagDtoWithoutVotesByUserId(userId);
         List<String> tagList = new ArrayList<>();
                 tagDtoList.stream().forEach(dto -> tagList.add(dto.getTagName()));
-        userProfileTagDtoDao.getTagVotesByList(tagList);
+        List <Object []> votesByList = userProfileTagDtoDao.getTagVotesByList(tagList);
 
-        return userProfileTagDtoDao.getTagVotesByList(tagList);
+        for (int i = 0; i< tagDtoList.size(); i++) {
+            tagDtoList.get(i).getTagName();
+            for (Object [] o : votesByList) {
+                if (tagDtoList.get(i).getTagName().equals(o[0])) {
+                    tagDtoList.get(i).setCountVoteTag(Long.valueOf(o[1].toString()));
+                }
+//                if (tagDtoList.get(i).getTagName().equals(tagDto.getTagName())) {
+//                    tagDtoList.get(i).setCountVoteTag(tagDto.getCountVoteTag());
+//                }
+            }
+        }
+        return tagDtoList;
     }
 }
