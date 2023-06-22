@@ -57,4 +57,5 @@ public class UserDtoServiceImpl extends PageDtoService<UserDto> implements UserD
     public List<UserDto> getPageWithListTop10UsersAnswers() {
         return userDtoDao.getPageWithListTop10UsersAnswers();
     }
+
 }
