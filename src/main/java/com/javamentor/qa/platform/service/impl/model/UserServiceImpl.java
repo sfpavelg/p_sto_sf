@@ -47,6 +47,4 @@ public class UserServiceImpl extends ReadWriteServiceImpl<User, Long> implements
         user.setPassword(passwordEncoder.encode(userPassword));
         userDao.changeUserPassword(user);
     }
-
-
 }

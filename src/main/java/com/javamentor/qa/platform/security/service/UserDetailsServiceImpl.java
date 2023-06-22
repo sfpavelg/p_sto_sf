@@ -1,6 +1,7 @@
 package com.javamentor.qa.platform.security.service;
 
 import com.javamentor.qa.platform.dao.abstracts.model.UserDao;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
