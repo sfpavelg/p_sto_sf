@@ -12,8 +12,6 @@ import javax.persistence.Query;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import java.util.List;
-
 @Repository
 @Transactional
 public class GroupChatDaoImpl extends ReadWriteDaoImpl<GroupChat, Long> implements GroupChatDao {

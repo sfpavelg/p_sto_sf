@@ -1149,6 +1149,15 @@ class TestQuestionResourceController extends AbstractTestApi {
                 .getResultList()
                 .size())
                 .isEqualTo(1);
+        // Тест на проверку записи просмотра на несуществующий вопрос
+        this.mvc.perform(post("/api/user/question/{questionId}/view", 100000).header("Authorization", "Bearer " + token1))
+                .andDo(print())
+                .andExpect(status().isOk());
+        assertThat(em.createQuery("select a from QuestionViewed a where a.question.id = 100000 and a.user.id = 100")
+                .getResultList()
+                .size())
+                .isEqualTo(0);
+
     }
 
 }
