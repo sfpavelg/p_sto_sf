@@ -39,6 +39,7 @@ create table if not exists "chat"
     primary key (id)
 );
 
+
 create table if not exists "comment"
 (
     id                  serial8      not null,
