@@ -7,5 +7,5 @@ import javassist.NotFoundException;
 import java.util.List;
 
 public interface ChatDtoService {
-    List<ChatDto> getAllUserChatsByValue(User user, String value) throws NotFoundException;
+    List<ChatDto> getChatDtoByUserIdAndValue(Long id, String value);
 }

@@ -25,14 +25,4 @@ public class GroupChatDaoImpl extends ReadWriteDaoImpl<GroupChat, Long> implemen
                 .setParameter("id", id);
         return (Set<User>) query.getResultList().stream().collect(Collectors.toSet());
     }
-
-    @Override
-    public List<GroupChat> getGroupChatByUserId(Long id, String value) {
-        Query query = entityManager.createQuery("SELECT gc FROM GroupChat gc JOIN FETCH gc.users " +
-                        "AS gcc JOIN FETCH gc.chat AS gcChat JOIN FETCH gcc.role WHERE gcc.id = :userId" +
-                        " AND gc.chat.title LIKE :searchValue")
-                .setParameter("userId", id)
-                .setParameter("searchValue", "%" + value + "%");
-        return (List<GroupChat>) query.getResultList();
-    }
 }

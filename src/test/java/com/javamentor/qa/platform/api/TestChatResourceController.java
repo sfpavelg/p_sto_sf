@@ -109,12 +109,13 @@ public class TestChatResourceController extends AbstractTestApi {
                         .param("items", "0"))
                 .andExpect(status().isBadRequest());
     }
+    @Test
     @Sql(value = {"/script/TestChatResourceController/testGetChatBySearch/Before.sql"}, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
     @Sql(value = {"/script/TestChatResourceController/testGetChatBySearch/After.sql"}, executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
     public void testGetChatBySearch() throws Exception {
         String token = getToken("0@gmail.com", "0pwd");
         //Тест на поиск чата по слову "JavaScript" - 1 чат
-        this.mvc.perform(get("/api/user/chat/Script")
+        this.mvc.perform(get("/api/user/chat/?value=Script")
                         .header("Authorization", "Bearer " + token))
                 .andDo(print())
                 .andExpect(jsonPath("$.[0].id", Is.is(101)))
@@ -123,7 +124,7 @@ public class TestChatResourceController extends AbstractTestApi {
                 .andExpect(jsonPath("$.[0].persistDateTimeLastMessage", Is.is("2023-06-18T13:41:33.174")))
                 .andExpect(status().isOk());
         // Тест на поиск чатов по слову "Java" - должно выйти 2 чата
-        this.mvc.perform(get("/api/user/chat/Java")
+        this.mvc.perform(get("/api/user/chat/?value=Java")
                         .header("Authorization", "Bearer " + token))
                 .andDo(print())
                 .andExpect(jsonPath("$.[0].id", Is.is(100)))
@@ -136,7 +137,7 @@ public class TestChatResourceController extends AbstractTestApi {
                 .andExpect(jsonPath("$.[1].persistDateTimeLastMessage", Is.is("2023-06-18T13:41:33.174")))
                 .andExpect(status().isOk());
         // Тест на поиск чатов с юзером
-        this.mvc.perform(get("/api/user/chat/nickname1")
+        this.mvc.perform(get("/api/user/chat/?value=nickname1")
                         .header("Authorization", "Bearer " + token))
                 .andDo(print())
                 .andExpect(jsonPath("$.[0].id", Is.is(104)))
@@ -146,7 +147,7 @@ public class TestChatResourceController extends AbstractTestApi {
                 .andExpect(jsonPath("$.[0].persistDateTimeLastMessage", Is.is("2023-06-18T13:40:33.174")))
                 .andExpect(status().isOk());
         // Тест на поиск чатов по запросу "nick" - результат 2 чата с юзерами
-        this.mvc.perform(get("/api/user/chat/nick")
+        this.mvc.perform(get("/api/user/chat/?value=nick")
                         .header("Authorization", "Bearer " + token))
                 .andDo(print())
                 .andExpect(jsonPath("$.[0].id", Is.is(104)))

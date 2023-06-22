@@ -21,6 +21,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import java.util.HashMap;
 import javassist.NotFoundException;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @AllArgsConstructor
@@ -59,19 +61,16 @@ public class ChatResourceController {
         return ResponseEntity.ok(messageDtoService.getMessagesBySingleChatIdOrderNew(param));
     }
 
-        @GetMapping("/{value}")
-        @ApiOperation(value = "Поиск чатов по значению запроса - value для юзера", response = ChatDto.class)
-        @ApiResponses(value = {
-                @ApiResponse(code = 200, message = "Success request"),
-                @ApiResponse(code = 401, message = "Unauthorized request"),
-                @ApiResponse(code = 403, message = "Forbidden"),
-                @ApiResponse(code = 400, message = "Invalid password")})
-        public ResponseEntity<?> getChatBySearch (@PathVariable("value") String value,
-                @AuthenticationPrincipal User user) throws NotFoundException {
-            if (value == null || value.equals("")) {
-                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-            }
-            return ResponseEntity.ok(chatDtoService.getAllUserChatsByValue(user, value));
-        }
 
+    @GetMapping
+    @ApiOperation(value = "Поиск чатов по значению запроса - value для юзера", response = ChatDto.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Success request"),
+            @ApiResponse(code = 401, message = "Unauthorized request"),
+            @ApiResponse(code = 403, message = "Forbidden"),
+            @ApiResponse(code = 400, message = "Invalid password")})
+    public ResponseEntity<?> getChatBySearch (@AuthenticationPrincipal User user,
+                                              @RequestParam(value = "value", defaultValue = "") String value) {
+        return ResponseEntity.ok(chatDtoService.getChatDtoByUserIdAndValue(user.getId(), value));
     }
+}
