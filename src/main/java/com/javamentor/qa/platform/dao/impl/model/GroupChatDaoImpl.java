@@ -19,7 +19,7 @@ public class GroupChatDaoImpl extends ReadWriteDaoImpl<GroupChat, Long> implemen
     private EntityManager entityManager;
 
     public Set<User> getUsersFromGroupChatById(Long id) {
-        Query query = entityManager.createQuery("SELECT users FROM GroupChat gc WHERE gc.id = :id")
+        Query query = entityManager.createQuery("SELECT gc.users FROM GroupChat gc WHERE gc.id = :id")
                 .setParameter("id", id);
         return (Set<User>) query.getResultList().stream().collect(Collectors.toSet());
     }
