@@ -130,7 +130,7 @@ public class TestChatResourceController extends AbstractTestApi {
                 .andExpect(jsonPath("$.[0].id", Is.is(100)))
                 .andExpect(jsonPath("$.[0].name", Is.is("Java")))
                 .andExpect(jsonPath("$.[0].lastMessage", Is.is("Hello 0")))
-                .andExpect(jsonPath("$.[0].persistDateTimeLastMessage", Is.is("2023-06-18T13:40:33.176")))
+                .andExpect(jsonPath("$.[0].persistDateTimeLastMessage", Is.is("2023-06-18T13:42:33.176")))
                 .andExpect(jsonPath("$.[1].id", Is.is(101)))
                 .andExpect(jsonPath("$.[1].name", Is.is("JavaScript")))
                 .andExpect(jsonPath("$.[1].lastMessage", Is.is("Hello 1")))
@@ -144,7 +144,7 @@ public class TestChatResourceController extends AbstractTestApi {
                 .andExpect(jsonPath("$.[0].name", Is.is("nickname1")))
                 .andExpect(jsonPath("$.[0].lastMessage", Is.is("Hello 100id")))
                 .andExpect(jsonPath("$.[0].image", Is.is("https://img.com/1")))
-                .andExpect(jsonPath("$.[0].persistDateTimeLastMessage", Is.is("2023-06-18T13:40:33.174")))
+                .andExpect(jsonPath("$.[0].persistDateTimeLastMessage", Is.is("2023-06-18T15:50:33.174")))
                 .andExpect(status().isOk());
         // Тест на поиск чатов по запросу "nick" - результат 2 чата с юзерами
         this.mvc.perform(get("/api/user/chat/?value=nick")
@@ -154,13 +154,18 @@ public class TestChatResourceController extends AbstractTestApi {
                 .andExpect(jsonPath("$.[0].name", Is.is("nickname1")))
                 .andExpect(jsonPath("$.[0].lastMessage", Is.is("Hello 100id")))
                 .andExpect(jsonPath("$.[0].image", Is.is("https://img.com/1")))
-                .andExpect(jsonPath("$.[0].persistDateTimeLastMessage", Is.is("2023-06-18T13:40:33.174")))
+                .andExpect(jsonPath("$.[0].persistDateTimeLastMessage", Is.is("2023-06-18T15:50:33.174")))
                 .andExpect(jsonPath("$.[1].id", Is.is(105)))
                 .andExpect(jsonPath("$.[1].name", Is.is("nickname2")))
                 .andExpect(jsonPath("$.[1].lastMessage", Is.is("Hello 100id, i am 102id")))
                 .andExpect(jsonPath("$.[1].image", Is.is("https://img.com/2")))
                 .andExpect(jsonPath("$.[1].persistDateTimeLastMessage", Is.is("2023-06-18T14:44:33.174")))
                 .andExpect(status().isOk());
+        // Тест на пустой запрос. Должен вывести все чаты в которых состоит юзер.
+        this.mvc.perform(get("/api/user/chat/?value=")
+                        .header("Authorization", "Bearer " + token))
+                .andDo(print())
+                .andExpect(jsonPath("$.size()", Is.is(6)));
 
     }
 
