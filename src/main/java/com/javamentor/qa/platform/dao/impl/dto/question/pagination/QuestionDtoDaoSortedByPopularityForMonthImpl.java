@@ -30,8 +30,8 @@ public class QuestionDtoDaoSortedByPopularityForMonthImpl implements QuestionDto
                                 "q.description, " +
                                 "(SELECT COUNT (qw.question.id) FROM QuestionViewed qw WHERE qw.localDateTime > cast(:monthAgo as timestamp) AND qw.question.id = q.id), " +
                                 "(SELECT COUNT (a.question.id) FROM Answer a WHERE a.persistDateTime > cast(:monthAgo as timestamp) AND a.question.id = q.id), " +
-                                "(SELECT COUNT(vq.question.id) FROM VoteQuestion vq WHERE vq.localDateTime > cast(:monthAgo as timestamp) AND vq.question.id = q.id AND vq.vote = 'up') - " +
-                                "(SELECT COUNT(vq.question.id) FROM VoteQuestion vq WHERE vq.localDateTime > cast(:monthAgo as timestamp) AND vq.question.id = q.id AND vq.vote = 'down'), " +
+                                "(SELECT COUNT(vq.question.id) FROM VoteQuestion vq WHERE vq.localDateTime > cast(:monthAgo as timestamp) AND vq.question.id = q.id AND vq.vote = 'UP_VOTE') - " +
+                                "(SELECT COUNT(vq.question.id) FROM VoteQuestion vq WHERE vq.localDateTime > cast(:monthAgo as timestamp) AND vq.question.id = q.id AND vq.vote = 'DOWN_VOTE'), " +
                                 "q.persistDateTime, " +
                                 "q.lastUpdateDateTime) " +
                                 "FROM Question q " +
@@ -39,8 +39,8 @@ public class QuestionDtoDaoSortedByPopularityForMonthImpl implements QuestionDto
                                 "AND q.id NOT IN (SELECT q.id FROM Question q JOIN q.tags AS tags WHERE tags.id IN :ignoredTags) " +
                                 "ORDER BY (SELECT COUNT (qw.question.id) FROM QuestionViewed qw WHERE qw.localDateTime > cast(:monthAgo as timestamp) AND qw.question.id = q.id) + " +
                                 "(SELECT COUNT (a.question.id) FROM Answer a WHERE a.persistDateTime > cast(:monthAgo as timestamp) AND a.question.id = q.id)*2 + " +
-                                "((SELECT COUNT(vq.question.id) FROM VoteQuestion vq WHERE vq.localDateTime > cast(:monthAgo as timestamp) AND vq.question.id = q.id AND vq.vote = 'up') - " +
-                                "(SELECT COUNT(vq.question.id) FROM VoteQuestion vq WHERE vq.localDateTime > cast(:monthAgo as timestamp) AND vq.question.id = q.id AND vq.vote = 'down'))*5 DESC",
+                                "((SELECT COUNT(vq.question.id) FROM VoteQuestion vq WHERE vq.localDateTime > cast(:monthAgo as timestamp) AND vq.question.id = q.id AND vq.vote = 'UP_VOTE') - " +
+                                "(SELECT COUNT(vq.question.id) FROM VoteQuestion vq WHERE vq.localDateTime > cast(:monthAgo as timestamp) AND vq.question.id = q.id AND vq.vote = 'DOWN_VOTE'))*5 DESC",
                         QuestionViewDto.class)
                 .setParameter("trackedTags", param.get("trackedTags"))
                 .setParameter("ignoredTags", param.get("ignoredTags"))
