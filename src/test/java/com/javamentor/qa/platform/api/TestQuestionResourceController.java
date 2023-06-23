@@ -992,7 +992,7 @@ class TestQuestionResourceController extends AbstractTestApi {
                 .andExpect(jsonPath("$.items[0].viewCount", Is.is(3)))
                 .andExpect(jsonPath("$.items[0].countAnswer", Is.is(7)))
                 .andExpect(jsonPath("$.items[0].countValuable", Is.is(1)))
-                //Total weight = 22; view = 3; answer = 7; votes = 2. (3+ 7*2 + 1*5 = 22)
+                //Total weight = 22; view = 3; answer = 7; votes = 1. (3+ 7*2 + 1*5 = 22)
                 .andExpect(jsonPath("$.items[0].persistDateTime", Is.is("2023-01-27T13:01:11.245128")))
                 .andExpect(jsonPath("$.items[0].lastUpdateDateTime", Is.is("2023-01-27T13:01:11.245128")))
                 .andExpect(jsonPath("$.items[0].listTagDto[0].id", Is.is(102)))
