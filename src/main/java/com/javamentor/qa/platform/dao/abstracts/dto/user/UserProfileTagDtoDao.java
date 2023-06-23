@@ -8,7 +8,9 @@ import java.util.Map;
 
 public interface UserProfileTagDtoDao {
 
-    Map<String, Long> getUserProfileTagDtoWithoutVotesByUserId(Long userId);
+    List<UserProfileTagDto> getUserProfileTagDtoWithoutVotesByUserId(Long userId);
 
-    Map<String, Long> getTagVotesByList(Map<String, Long> tagList);
+    Map<String, Long> getTagVotesFromQuestionsByList (List<String> tagNames);
+
+    Map<String, Long> getTagVotesFromAnswersByList (List<String> tagNames);
 }

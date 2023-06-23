@@ -364,12 +364,11 @@ public class TestDataInitService {
 
     public void createGroupBookmarks(int count) {
         List<User> userList = userService.getAll();
-//        Set <BookMarks> bookmarks = Set.copyOf(bookMarkService.getAll());
         for (int i = 0; i < count; i++) {
             GroupBookmark groupBookmark = new GroupBookmark();
             groupBookmark.setTitle("title number " + i);
             groupBookmark.setUser(userList.get(i));
-//            groupBookmark.setBookMarks();
+            groupBookmark.setBookMarks(null);
             groupBookmarkService.persist(groupBookmark);
         }
     }
