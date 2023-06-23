@@ -20,4 +20,5 @@ public class AnswerServiceImpl extends ReadWriteServiceImpl<Answer, Long> implem
     public void deleteById(Long id) {
         answerDao.deleteById(id);
     }
+
 }
