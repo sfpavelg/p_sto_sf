@@ -290,7 +290,7 @@ public class TestProfileUserResourceController extends AbstractTestApi {
                     value = {"/script/TestProfileUserResourceController/testGetUserTagsWithRating/After.sql"})
     })
     public void testGetUserTagsWithRating() throws Exception {
-        String JWT = getToken("0@gmail.com", "0pwd");
+        String JWT = getToken("100@gmail.com", "0pwd");
 
 //      positive get tests
         this.mvc.perform(get("/api/user/profile/tag")

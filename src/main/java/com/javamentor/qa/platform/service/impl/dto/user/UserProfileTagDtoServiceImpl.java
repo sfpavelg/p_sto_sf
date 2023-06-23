@@ -4,9 +4,9 @@ import com.javamentor.qa.platform.dao.abstracts.dto.user.UserProfileTagDtoDao;
 import com.javamentor.qa.platform.models.dto.user.UserProfileTagDto;
 import com.javamentor.qa.platform.service.abstracts.dto.user.UserProfileTagDtoService;
 import org.springframework.stereotype.Service;
-
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class UserProfileTagDtoServiceImpl implements UserProfileTagDtoService {
@@ -19,19 +19,17 @@ public class UserProfileTagDtoServiceImpl implements UserProfileTagDtoService {
 
     @Override
     public List<UserProfileTagDto> getUserProfileTagDto(Long userId) {
-        List<UserProfileTagDto> tagDtoList = userProfileTagDtoDao.getUserProfileTagDtoWithoutVotesByUserId(userId);
-        List<String> tagList = new ArrayList<>();
-        tagDtoList.stream().forEach(dto -> tagList.add(dto.getTagName()));
-        List<Object[]> votesByList = userProfileTagDtoDao.getTagVotesByList(tagList);
 
-        for (int i = 0; i < tagDtoList.size(); i++) {
-            tagDtoList.get(i).getTagName();
-            for (Object[] o : votesByList) {
-                if (tagDtoList.get(i).getTagName().equals(o[0])) {
-                    tagDtoList.get(i).setCountVoteTag(Long.valueOf(o[1].toString()));
-                }
-            }
+        Map<String, Long> tags = userProfileTagDtoDao.getUserProfileTagDtoWithoutVotesByUserId(userId);
+        Map<String, Long> votes = userProfileTagDtoDao.getTagVotesByList(tags);
+
+
+        List<UserProfileTagDto> resultList = new ArrayList<>();
+        for (Map.Entry<String, Long> entry : tags.entrySet()) {
+            resultList.add(new UserProfileTagDto(entry.getKey(), votes.containsKey(entry.getKey()) ? votes.get(entry.getKey()) : 0, entry.getValue()));
         }
-        return tagDtoList;
+
+
+        return resultList;
     }
 }
