@@ -33,14 +33,27 @@ public class UserProfileTagDtoServiceImpl implements UserProfileTagDtoService {
         List<UserProfileTagDto> resultList = new ArrayList<>();
 
         for (int i = 0; i < tags.size(); i++) {
-            if (votes.containsKey(tags.get(i).getTagName())) {
-                tags.get(i).setCountVoteTag(votes.get(tags.get(i).getTagName()));
-                resultList.add(tags.get(i));
-            } else {
-                tags.get(i).setCountAnswerQuestion(0L);
-                resultList.add(tags.get(i));
-            }
+//            if (votes.containsKey(tags.get(i).getTagName())) {
+//                tags.get(i).setCountVoteTag(votes.get(tags.get(i).getTagName()));
+//                resultList.add(tags.get(i));
+//            } else {
+//                tags.get(i).setCountAnswerQuestion(0L);
+//                resultList.add(tags.get(i));
+//            }
+
         }
+        for (Map.Entry<String, Long>  tag : votes.entrySet() ) {
+//            var countVote = tag.getKey();
+//            var countAnswerQuestion = tag.getValue();
+//            tags.
+
+        }
+
+//        var countVote = votes.get(tag.getTagName());
+//        var countAnswerQuestion =  answerVotes.get(tag.getTagName())
+//        tag.setCountVoteTag(countVote == null? 0 : countVote)
+//        tag.setCountAnswerQuestion(...)
+
 
 
         return resultList;
