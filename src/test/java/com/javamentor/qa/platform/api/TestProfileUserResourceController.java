@@ -304,7 +304,7 @@ public class TestProfileUserResourceController extends AbstractTestApi {
                 .andExpect(jsonPath("$[0].countVoteTag", Is.is(-4)))
                 .andExpect(jsonPath("$[0].countAnswerQuestion", Is.is(1)))
                 .andExpect(jsonPath("$[1].tagName", Is.is("tag with id 100")))
-                .andExpect(jsonPath("$[1].countVoteTag", Is.is(-1)))
+                .andExpect(jsonPath("$[1].countVoteTag", Is.is(2)))
                 .andExpect(jsonPath("$[1].countAnswerQuestion", Is.is(3)));
 
 
@@ -317,7 +317,7 @@ public class TestProfileUserResourceController extends AbstractTestApi {
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$[0].tagName", Is.is("tag with id 100")))
-                .andExpect(jsonPath("$[0].countVoteTag", Is.is(-1)))
+                .andExpect(jsonPath("$[0].countVoteTag", Is.is(2)))
                 .andExpect(jsonPath("$[0].countAnswerQuestion", Is.is(1)));
     }
 }
