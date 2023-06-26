@@ -68,7 +68,8 @@ create table if not exists "comment_question"
 create table if not exists "group_chat"
 (
     chat_id int8 not null,
-    primary key (chat_id)
+    primary key (chat_id),
+    image_link varchar(255)
 );
 
 create table if not exists "groupchat_has_users"
