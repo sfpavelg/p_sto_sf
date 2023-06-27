@@ -2,10 +2,12 @@ package com.javamentor.qa.platform.webapp.controllers.rest;
 
 import com.javamentor.qa.platform.models.dto.chat.MessageDto;
 import com.javamentor.qa.platform.models.dto.chat.SingleChatDto;
-import com.javamentor.qa.platform.models.entity.user.User;
 import com.javamentor.qa.platform.service.abstracts.dto.chat.MessageDtoService;
 import com.javamentor.qa.platform.service.abstracts.dto.chat.SingleChatDtoService;
 import com.javamentor.qa.platform.service.impl.model.SingleChatServiceImpl;
+import com.javamentor.qa.platform.models.dto.chat.ChatDto;
+import com.javamentor.qa.platform.models.entity.user.User;
+import com.javamentor.qa.platform.service.abstracts.dto.chat.ChatDtoService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
@@ -13,15 +15,15 @@ import io.swagger.annotations.ApiResponses;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.PathVariable;
-
 import java.util.HashMap;
 import java.util.List;
+
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 
 
 @RestController
@@ -33,8 +35,8 @@ public class ChatResourceController {
 
     private final MessageDtoService messageDtoService;
     private final SingleChatServiceImpl singleChatService;
+    private final ChatDtoService chatDtoService;
     private final SingleChatDtoService singleChatDtoService;
-
     /**
      * Gets all single chat MessageDto sorted by persist date.
      *
@@ -62,6 +64,19 @@ public class ChatResourceController {
     }
 
 
+    @GetMapping
+    @ApiOperation(value = "Поиск чатов по значению запроса - value для юзера", response = ChatDto.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Success request"),
+            @ApiResponse(code = 401, message = "Unauthorized request"),
+            @ApiResponse(code = 403, message = "Forbidden"),
+            @ApiResponse(code = 400, message = "Invalid password")})
+    public ResponseEntity<?> getChatBySearch (@AuthenticationPrincipal User user,
+                                              @RequestParam(value = "value", defaultValue = "") String value) {
+        return ResponseEntity.ok(chatDtoService.getChatDtoByUserIdAndValue(user.getId(), value));
+    }
+}
+
     /**
      * Gets all single chat dtos.
      *
@@ -81,3 +96,4 @@ public class ChatResourceController {
     }
 
 }
+
