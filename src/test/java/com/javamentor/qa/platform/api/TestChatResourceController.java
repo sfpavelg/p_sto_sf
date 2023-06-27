@@ -102,4 +102,33 @@ public class TestChatResourceController extends AbstractTestApi {
                         .param("items", "0"))
                 .andExpect(status().isBadRequest());
     }
+
+    @Test
+    @Sql(value = {"/script/TestChatResourceController/testGetSingleChatDto/Before.sql"}, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+    @Sql(value = {"/script/TestChatResourceController/testGetSingleChatDto/After.sql"}, executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
+    public void testGetSingleChatDto() throws Exception {
+        String token = getToken("email1@domain.com", "password");
+
+        //        Successfully test's
+        this.mvc.perform(get("/api/user/chat/single")
+                        .header("Authorization", "Bearer " + token))
+                .andExpect(status().isOk())
+                .andDo(print())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$[0].id", Is.is(100)))
+                .andExpect(jsonPath("$[0].name", Is.is("name2")))
+                .andExpect(jsonPath("$[0].image", Is.is("http://imagelink2.com")))
+                .andExpect(jsonPath("$[0].lastMessage", Is.is("user 102 LAST message for tests")))
+                .andExpect(jsonPath("$[1].id", Is.is(101)))
+                .andExpect(jsonPath("$[1].name", Is.is("name4")))
+                .andExpect(jsonPath("$[1].image", Is.is("http://imagelink4.com")))
+                .andExpect(jsonPath("$[1].lastMessage", Is.is("user 101 LAST message for tests")));
+
+        //          Empty list test
+        token = getToken("email3@domain.com", "password");
+        this.mvc.perform(get("/api/user/chat/single")
+                        .header("Authorization", "Bearer " + token))
+                .andExpect(status().is4xxClientError());
+    }
+
 }
