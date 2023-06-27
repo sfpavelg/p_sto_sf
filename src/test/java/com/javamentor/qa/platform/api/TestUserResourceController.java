@@ -479,5 +479,83 @@ public class TestUserResourceController extends AbstractTestApi {
 
     }
 
+    @Test
+    @Sql(value = {"/script/TestUserResourceController/testGetBookmarksDtoByUserId/Before.sql"}, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+    @Sql(value = {"/script/TestUserResourceController/testGetBookmarksDtoByUserId/After.sql"}, executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
+    public void testGetBookmarksDtoByUserId() throws Exception {
+        String token1 = getToken("1000@gmail.com", "44pwd");
+        String token2 = getToken("1001@gmail.com", "44pwd");
+        String token3 = getToken("1002@gmail.com", "44pwd");
+        String token4 = getToken("1003@gmail.com", "44pwd");
 
+        //success with 0 bookmarks
+        this.mvc.perform(get("/api/user/profile/bookmarks").header("Authorization", "Bearer " + token1))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.length()", Is.is(0)));
+
+        //success with 1 bookmarks
+        this.mvc.perform(get("/api/user/profile/bookmarks").header("Authorization", "Bearer " + token2))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.length()", Is.is(1)))
+                .andExpect(jsonPath("$.[0].questionId", Is.is(1000)))
+                .andExpect(jsonPath("$.[0].tagDtoList.size()", Is.is(2)))
+                .andExpect(jsonPath("$.[0].tagDtoList.[0].id", Is.is(1000)))
+                .andExpect(jsonPath("$.[0].tagDtoList.[1].id", Is.is(1001)))
+                .andExpect(jsonPath("$.[0].countAnswer", Is.is(2)))
+                .andExpect(jsonPath("$.[0].countVote", Is.is(0)))
+                .andExpect(jsonPath("$.[0].countView", Is.is(2)));
+
+        //success with 2 bookmarks
+        this.mvc.perform(get("/api/user/profile/bookmarks").header("Authorization", "Bearer " + token3))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.length()", Is.is(2)))
+                .andExpect(jsonPath("$.[0].questionId", Is.is(1000)))
+                .andExpect(jsonPath("$.[0].tagDtoList.size()", Is.is(2)))
+                .andExpect(jsonPath("$.[0].tagDtoList.[0].id", Is.is(1000)))
+                .andExpect(jsonPath("$.[0].tagDtoList.[1].id", Is.is(1001)))
+                .andExpect(jsonPath("$.[0].countAnswer", Is.is(2)))
+                .andExpect(jsonPath("$.[0].countVote", Is.is(0)))
+                .andExpect(jsonPath("$.[0].countView", Is.is(2)))
+                .andExpect(jsonPath("$.[1].questionId", Is.is(1001)))
+                .andExpect(jsonPath("$.[1].tagDtoList.size()", Is.is(2)))
+                .andExpect(jsonPath("$.[1].tagDtoList.[0].id", Is.is(1002)))
+                .andExpect(jsonPath("$.[1].tagDtoList.[1].id", Is.is(1003)))
+                .andExpect(jsonPath("$.[1].countAnswer", Is.is(1)))
+                .andExpect(jsonPath("$.[1].countVote", Is.is(1)))
+                .andExpect(jsonPath("$.[1].countView", Is.is(1)));
+
+        //success with 3 bookmarks
+        this.mvc.perform(get("/api/user/profile/bookmarks").header("Authorization", "Bearer " + token4))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.length()", Is.is(3)))
+                .andExpect(jsonPath("$.[0].questionId", Is.is(1002)))
+                .andExpect(jsonPath("$.[0].tagDtoList.size()", Is.is(2)))
+                .andExpect(jsonPath("$.[0].tagDtoList.[0].id", Is.is(1004)))
+                .andExpect(jsonPath("$.[0].tagDtoList.[1].id", Is.is(1005)))
+                .andExpect(jsonPath("$.[0].countAnswer", Is.is(1)))
+                .andExpect(jsonPath("$.[0].countVote", Is.is(2)))
+                .andExpect(jsonPath("$.[0].countView", Is.is(1)))
+                .andExpect(jsonPath("$.[1].questionId", Is.is(1003)))
+                .andExpect(jsonPath("$.[1].tagDtoList.size()", Is.is(2)))
+                .andExpect(jsonPath("$.[1].tagDtoList.[0].id", Is.is(1006)))
+                .andExpect(jsonPath("$.[1].tagDtoList.[1].id", Is.is(1007)))
+                .andExpect(jsonPath("$.[1].countAnswer", Is.is(0)))
+                .andExpect(jsonPath("$.[1].countVote", Is.is(0)))
+                .andExpect(jsonPath("$.[1].countView", Is.is(1)))
+                .andExpect(jsonPath("$.[2].questionId", Is.is(1004)))
+                .andExpect(jsonPath("$.[2].tagDtoList.size()", Is.is(2)))
+                .andExpect(jsonPath("$.[2].tagDtoList.[0].id", Is.is(1008)))
+                .andExpect(jsonPath("$.[2].tagDtoList.[1].id", Is.is(1009)))
+                .andExpect(jsonPath("$.[2].countAnswer", Is.is(1)))
+                .andExpect(jsonPath("$.[2].countVote", Is.is(0)))
+                .andExpect(jsonPath("$.[2].countView", Is.is(0)));
+    }
 }

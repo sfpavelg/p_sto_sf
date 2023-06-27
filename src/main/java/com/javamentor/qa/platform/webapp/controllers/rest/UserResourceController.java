@@ -1,8 +1,10 @@
 package com.javamentor.qa.platform.webapp.controllers.rest;
 
+import com.javamentor.qa.platform.models.dto.BookmarksDto;
 import com.javamentor.qa.platform.models.dto.PageDto;
 import com.javamentor.qa.platform.models.dto.user.UserDto;
 import com.javamentor.qa.platform.models.entity.user.User;
+import com.javamentor.qa.platform.service.abstracts.dto.BookmarksDtoService;
 import com.javamentor.qa.platform.service.abstracts.dto.user.UserDtoService;
 import com.javamentor.qa.platform.service.abstracts.model.UserService;
 import io.swagger.annotations.Api;
@@ -13,6 +15,7 @@ import javassist.NotFoundException;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -23,6 +26,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.HashMap;
+import java.util.List;
 
 @RestController
 @AllArgsConstructor
@@ -32,6 +36,7 @@ public class UserResourceController {
 
     private final UserService userService;
     private final UserDtoService userDtoService;
+    private final BookmarksDtoService bookmarksDtoService;
 
     @PatchMapping("/changePassword")
     @ApiOperation(value = "Change user password")
@@ -120,6 +125,16 @@ public class UserResourceController {
         return ResponseEntity.ok(userDtoService.getPageWithListTop10UsersAnswers());
     }
 
-
+    @GetMapping("/profile/bookmarks")
+    @ApiOperation(
+            value = "Getting list of bookmarks in user profile",
+            response = BookmarksDto.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Success request. BookmarksDto has been successfully returned"),
+            @ApiResponse(code = 400, message = "Invalid password"),
+            @ApiResponse(code = 403, message = "Forbidden")})
+    public ResponseEntity<List<BookmarksDto>> getBookmarksDtoByUserId(@AuthenticationPrincipal User user) {
+        return ResponseEntity.ok(bookmarksDtoService.getBookmarksDto(user.getId()));
+    }
 }
 
