@@ -952,7 +952,8 @@ class TestQuestionResourceController extends AbstractTestApi {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id", Is.is(1)))
                 .andExpect(jsonPath("$.questionId",Is.is(100)))
-                .andExpect(jsonPath("$.userId",Is.is(100)));
+                .andExpect(jsonPath("$.userId",Is.is(100)))
+                .andExpect(jsonPath("$.note",Is.is("testNote")));
         //Тест на добавление несуществующего вопроса.
         this.mvc.perform(post("/api/user/question/{questionId}/bookmark", 120)
                         .header("Authorization", "Bearer " + token))
