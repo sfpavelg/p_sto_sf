@@ -3,6 +3,9 @@ package com.javamentor.qa.platform.webapp.controllers.rest;
 import com.javamentor.qa.platform.models.dto.chat.MessageDto;
 import com.javamentor.qa.platform.service.abstracts.dto.chat.MessageDtoService;
 import com.javamentor.qa.platform.service.impl.model.SingleChatServiceImpl;
+import com.javamentor.qa.platform.models.dto.chat.ChatDto;
+import com.javamentor.qa.platform.models.entity.user.User;
+import com.javamentor.qa.platform.service.abstracts.dto.chat.ChatDtoService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
@@ -16,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.PathVariable;
 import java.util.HashMap;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 
 
 @RestController
@@ -27,6 +31,7 @@ public class ChatResourceController {
 
     private final MessageDtoService messageDtoService;
     private final SingleChatServiceImpl singleChatService;
+    private final ChatDtoService chatDtoService;
 
     /**
      * Gets all single chat MessageDto sorted by persist date.
@@ -44,7 +49,7 @@ public class ChatResourceController {
     public ResponseEntity<?> getMessagesBySingleChatIdOrderNew(@RequestParam(value = "page", required = false, defaultValue = "1") Integer pageNumber,
                                                                @RequestParam(value = "items", required = false, defaultValue = "10") Integer itemsCountOnPage,
                                                                @PathVariable("id") Long chatId) {
-        if(!singleChatService.existsById(chatId)) {
+        if (!singleChatService.existsById(chatId)) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
         HashMap<String, Object> param = new HashMap<>();
@@ -52,5 +57,18 @@ public class ChatResourceController {
         param.put("itemsOnPage", itemsCountOnPage);
         param.put("chatId", chatId);
         return ResponseEntity.ok(messageDtoService.getMessagesBySingleChatIdOrderNew(param));
+    }
+
+
+    @GetMapping
+    @ApiOperation(value = "Поиск чатов по значению запроса - value для юзера", response = ChatDto.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Success request"),
+            @ApiResponse(code = 401, message = "Unauthorized request"),
+            @ApiResponse(code = 403, message = "Forbidden"),
+            @ApiResponse(code = 400, message = "Invalid password")})
+    public ResponseEntity<?> getChatBySearch (@AuthenticationPrincipal User user,
+                                              @RequestParam(value = "value", defaultValue = "") String value) {
+        return ResponseEntity.ok(chatDtoService.getChatDtoByUserIdAndValue(user.getId(), value));
     }
 }
