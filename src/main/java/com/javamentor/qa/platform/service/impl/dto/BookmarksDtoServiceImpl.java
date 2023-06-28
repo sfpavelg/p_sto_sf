@@ -8,6 +8,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
@@ -18,8 +19,9 @@ public class BookmarksDtoServiceImpl implements BookmarksDtoService {
 
     @Override
     public List<BookmarksDto> getBookmarksDto(Long userId) {
-        List<BookmarksDto> bookmarksDtoList = bookmarksDtoDao.getBookmarksDtoById(userId);
-        bookmarksDtoList.forEach(b -> b.setTagDtoList(tagDtoDao.getTagDtoById(b.getQuestionId())));
-        return bookmarksDtoList;
+        return bookmarksDtoDao.getBookmarksDtoById(userId).stream().peek(
+                userProfileQuestionDto -> userProfileQuestionDto.setTagDtoList(
+                        tagDtoDao.getTagDtoById(userProfileQuestionDto.getQuestionId())
+                )).collect(Collectors.toList());
     }
 }
