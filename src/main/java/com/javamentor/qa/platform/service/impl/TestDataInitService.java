@@ -368,7 +368,7 @@ public class TestDataInitService {
             GroupBookmark groupBookmark = new GroupBookmark();
             groupBookmark.setTitle("title number " + i);
             groupBookmark.setUser(userList.get(i));
-            groupBookmark.setBookMarks(Set.of(bookMarkService.getAll().get(i)));
+            groupBookmark.setBookMarks(Set.copyOf(bookMarkService.getAll().subList(0, i)));
             groupBookmarkService.persist(groupBookmark);
         }
     }
