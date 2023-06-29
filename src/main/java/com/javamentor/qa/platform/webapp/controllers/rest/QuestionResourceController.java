@@ -323,13 +323,14 @@ public class QuestionResourceController {
     }
 
     /**
-     * The method returns JSON with {@link QuestionDto} with same tag name.
+     * This method returns a page of QuestionDto objects that match the specified tag name.
      *
-     * @param tagName Name of the tag for search.
-     * @param pageNumber page number for pagination purpose.
-     * @param itemsCountOnPage optional parameter, items quantity on each page.
-     * @param user current authenticated user.
-     * @return {@link QuestionDto} with status Ok.
+     * @param tagName The name of the tag for search.
+     * @param pageNumber The page number for pagination purpose.
+     * @param itemsCountOnPage optional parameter, the number of items per page.
+     * @param user The current authenticated user.
+     * @return A ResponseEntity<?> object with the page of QuestionDto objects.
+     * @see QuestionDto
      */
     @GetMapping("/tag")
     @ApiOperation(value = "Get a page with a list of QuestionDto by tag name", response = QuestionDto.class)
