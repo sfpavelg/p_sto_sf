@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
@@ -21,7 +22,11 @@ public class BookmarksDtoServiceImpl implements BookmarksDtoService {
     @Override
     public List<BookmarksDto> getBookmarksDto(Long userId) {
         List<BookmarksDto> bookmarks = bookmarksDtoDao.getBookmarksDtoById(userId);
-        Map<Long, List<TagDto>> tags = tagDtoDao.getMapTagDtoAndQuestionId();
+        List<Long> questionIdList = bookmarks.stream()
+                .map(BookmarksDto::getQuestionId)
+                .collect(Collectors.toList());
+
+        Map<Long, List<TagDto>> tags = tagDtoDao.getMapTagDtoAndQuestionId(questionIdList);
 
         bookmarks.stream()
                 .filter(b -> tags.containsKey(b.getQuestionId()))

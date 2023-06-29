@@ -45,10 +45,11 @@ public class TagDtoDaoImpl implements TagDtoDao {
     }
 
     @Override
-    public Map<Long, List<TagDto>> getMapTagDtoAndQuestionId() {
+    public Map<Long, List<TagDto>> getMapTagDtoAndQuestionId(List<Long> questionIdList) {
         List<Tuple> tags = entityManager.createQuery("" +
                         "select t.id as id, t.name as name, t.description as description, q.id as q_id " +
-                        "from Tag t join t.questions q ", Tuple.class)
+                        "from Tag t join t.questions q where q.id in (:qid)", Tuple.class)
+                .setParameter("qid", questionIdList)
                 .getResultList();
 
         Map<Long, List<TagDto>> tagsmap = new HashMap<>();
