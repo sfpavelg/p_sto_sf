@@ -35,6 +35,8 @@ public class GroupChat{
     @Column(name = "is_global")
     private boolean isGlobal = false;
 
+    @Column(name = "image_link")
+    private String imageLink;
     @PrePersist
     private void prePersistFunction() {
         checkConstraints();
