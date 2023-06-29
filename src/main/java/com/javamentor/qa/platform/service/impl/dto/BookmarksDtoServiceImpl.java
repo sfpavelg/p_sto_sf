@@ -28,9 +28,7 @@ public class BookmarksDtoServiceImpl implements BookmarksDtoService {
 
         Map<Long, List<TagDto>> tags = tagDtoDao.getMapTagDtoAndQuestionId(questionIdList);
 
-        bookmarks.stream()
-                .filter(b -> tags.containsKey(b.getQuestionId()))
-                .forEach(b -> b.setTagDtoList(tags.get(b.getQuestionId())));
+        bookmarks.forEach(b -> b.setTagDtoList(tags.get(b.getQuestionId())));
         return bookmarks;
     }
 }
