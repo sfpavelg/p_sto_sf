@@ -322,10 +322,20 @@ public class QuestionResourceController {
         return ResponseEntity.ok(HttpStatus.OK);
     }
 
+    /**
+     * The method returns JSON with {@link QuestionDto} with same tag name.
+     *
+     * @param tagName Name of the tag for search.
+     * @param pageNumber page number for pagination purpose.
+     * @param itemsCountOnPage optional parameter, items quantity on each page.
+     * @param user current authenticated user.
+     * @return {@link QuestionDto} with status Ok.
+     */
     @GetMapping("/tag")
     @ApiOperation(value = "Get a page with a list of QuestionDto by tag name", response = QuestionDto.class)
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Success request. QuestionDto object returned in response"),
+            @ApiResponse(code = 401, message = "Unauthorized request"),
             @ApiResponse(code = 403, message = "Forbidden"),
             @ApiResponse(code = 404, message = "Tag don't exist")})
     public ResponseEntity<?> getQuestionDtoListByTag(@RequestParam(value = "pageNumber") Integer pageNumber,

@@ -912,7 +912,7 @@ class TestQuestionResourceController extends AbstractTestApi {
                         .content("Test Comment"))
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id",Is.is(1)))
+                .andExpect(jsonPath("$.id", Is.is(1)))
                 .andExpect(jsonPath("$.questionId", Is.is(100)))
                 .andExpect(jsonPath("$.text", Is.is("Test Comment")))
                 .andExpect(jsonPath("$.userId", Is.is(100)))
@@ -940,6 +940,7 @@ class TestQuestionResourceController extends AbstractTestApi {
                 .andDo(print())
                 .andExpect(status().isBadRequest());
     }
+
     @Test
     @Sql(value = {"/script/TestQuestionResourceController/testAddQuestionToCurrentUserBookmark/Before.sql"}, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
     @Sql(value = {"/script/TestQuestionResourceController/testAddQuestionToCurrentUserBookmark/After.sql"}, executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
@@ -947,12 +948,12 @@ class TestQuestionResourceController extends AbstractTestApi {
         String token = getToken("0@gmail.com", "0pwd");
         //Тест на добавление вопроса в закладки.
         this.mvc.perform(post("/api/user/question/{questionId}/bookmark", 100)
-                .header("Authorization", "Bearer " + token))
+                        .header("Authorization", "Bearer " + token))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id", Is.is(1)))
-                .andExpect(jsonPath("$.questionId",Is.is(100)))
-                .andExpect(jsonPath("$.userId",Is.is(100)));
+                .andExpect(jsonPath("$.questionId", Is.is(100)))
+                .andExpect(jsonPath("$.userId", Is.is(100)));
         //Тест на добавление несуществующего вопроса.
         this.mvc.perform(post("/api/user/question/{questionId}/bookmark", 120)
                         .header("Authorization", "Bearer " + token))
@@ -1160,4 +1161,74 @@ class TestQuestionResourceController extends AbstractTestApi {
 
     }
 
+    @Test
+    @SqlGroup({
+            @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD,
+                    value = {"/script/TestQuestionResourceController/testGetQuestionDtoListByTag/Before.sql"}),
+            @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD,
+                    value = {"/script/TestQuestionResourceController/testGetQuestionDtoListByTag/After.sql"})
+    })
+    public void testGetQuestionDtoListByTag() throws Exception {
+        String JWT = getToken("100@gmail.com", "0pwd");
+
+
+//      positive get test
+        this.mvc.perform(get("/api/user/question/tag")
+                        .header("Authorization", "Bearer " + JWT)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .param("tagName", "tag with id 100")
+                        .param("pageNumber", "1"))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+
+                .andExpect(jsonPath("$.currentPageNumber", Is.is(1)))
+                .andExpect(jsonPath("$.totalPageCount", Is.is(1)))
+                .andExpect(jsonPath("$.totalResultCount", Is.is(5)))
+                .andExpect(jsonPath("$.itemsOnPage", Is.is(10)))
+                .andExpect(jsonPath("$.items[0].id", Is.is(100)))
+                .andExpect(jsonPath("$.items[0].title", Is.is("title1")))
+                .andExpect(jsonPath("$.items[0].authorId", Is.is(100)))
+                .andExpect(jsonPath("$.items[0].authorReputation", Is.is(0)))
+                .andExpect(jsonPath("$.items[0].authorName", Is.is("name1")))
+                .andExpect(jsonPath("$.items[0].authorImage", Is.is("http://imagelink1.com")))
+                .andExpect(jsonPath("$.items[0].description", Is.is("description1")))
+                .andExpect(jsonPath("$.items[0].viewCount", Is.is(0)))
+                .andExpect(jsonPath("$.items[0].countAnswer", Is.is(4)))
+                .andExpect(jsonPath("$.items[0].countValuable", Is.is(2)))
+                .andExpect(jsonPath("$.items[0].listTagDto[0].id", Is.is(100)))
+                .andExpect(jsonPath("$.items[0].listTagDto[0].name", Is.is("tag with id 100")))
+                .andExpect(jsonPath("$.items[0].listAnswerDto[0].id", Is.is(104)))
+                .andExpect(jsonPath("$.items[0].listAnswerDto[0].questionId", Is.is(100)));
+
+//        positive pagination test
+
+        this.mvc.perform(get("/api/user/question/tag")
+                        .header("Authorization", "Bearer " + JWT)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .param("tagName", "tag with id 100")
+                        .param("pageNumber", "5")
+                        .param("items", "1"))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.currentPageNumber", Is.is(5)))
+                .andExpect(jsonPath("$.totalPageCount", Is.is(5)))
+                .andExpect(jsonPath("$.totalResultCount", Is.is(5)))
+                .andExpect(jsonPath("$.itemsOnPage", Is.is(1)))
+                .andExpect(jsonPath("$.items[0].id", Is.is(114)));
+
+
+//        negative pagination test. No page number
+
+        this.mvc.perform(get("/api/user/question/tag")
+                        .header("Authorization", "Bearer " + JWT)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .param("tagName", "tag with id 100")
+                        .param("items", "1"))
+                .andDo(print())
+                .andExpect(status().isBadRequest());
+
+    }
 }
+

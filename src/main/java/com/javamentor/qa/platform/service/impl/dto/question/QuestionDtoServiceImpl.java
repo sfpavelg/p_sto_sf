@@ -8,7 +8,6 @@ import com.javamentor.qa.platform.dao.abstracts.dto.tag.TagDtoDao;
 import com.javamentor.qa.platform.models.dto.PageDto;
 import com.javamentor.qa.platform.models.dto.answer.AnswerDto;
 import com.javamentor.qa.platform.models.dto.question.QuestionDto;
-import com.javamentor.qa.platform.models.dto.question.QuestionViewDto;
 import com.javamentor.qa.platform.models.dto.tag.TagDto;
 import com.javamentor.qa.platform.service.abstracts.dto.PageDtoService;
 import com.javamentor.qa.platform.service.abstracts.dto.question.QuestionDtoService;
@@ -60,16 +59,15 @@ public class QuestionDtoServiceImpl extends PageDtoService<QuestionDto> implemen
     }
 
     @Override
-    public  PageDto<QuestionDto> getPageWithListQuestionDtoByTag(HashMap<String, Object> param) {
+    public PageDto<QuestionDto> getPageWithListQuestionDtoByTag(HashMap<String, Object> param) {
         param.put("daoDtoImpl", "questionDtoByTagPaginationDaoImpl");
-//        PageDto<QuestionDto> pageDto = pageDto(param);
-//        List<QuestionDto> listQuestionDto = pageDto.getItems();
-
-        //        List<Long> questionId = listQuestionViewDto.stream().map(QuestionViewDto::getId).collect(toList());
-//        Map<Long, List<TagDto>> tagsMap = tagDtoDao.getTagsMapByQuestionId(questionId);
-//        listQuestionViewDto.forEach(lQuestionDto -> lQuestionDto.setListTagDto(tagsMap.get(lQuestionDto.getId())));
-//        Map<Long, List<AnswerDto>> answersMap = answerDtoDao.getAnswersMapByQuestionId(questionId);
-//        listQuestionViewDto.forEach(lQuestionDto -> lQuestionDto.setListAnswerDto(answersMap.get(lQuestionDto.getId())));
-        return pageDto(param);
+        PageDto<QuestionDto> result = pageDto(param);
+        List<QuestionDto> questionDtoList = result.getItems();
+        List<Long> questionId = questionDtoList.stream().map(QuestionDto::getId).collect(toList());
+        Map<Long, List<TagDto>> tagsMap = tagDtoDao.getTagsMapByQuestionId(questionId);
+        questionDtoList.forEach(questionDto -> questionDto.setListTagDto(tagsMap.get(questionDto.getId())));
+        Map<Long, List<AnswerDto>> answersMap = answerDtoDao.getAnswersMapByQuestionId(questionId);
+        questionDtoList.forEach(questionDto -> questionDto.setListAnswerDto(answersMap.get(questionDto.getId())));
+        return result;
     }
 }
