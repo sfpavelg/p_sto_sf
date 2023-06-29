@@ -6,12 +6,25 @@ import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.Tuple;
 import java.util.List;
 
 @Repository
 public class BookmarksDtoDaoImpl implements BookmarksDtoDao {
     @PersistenceContext
     private EntityManager entityManager;
+
+
+    @Override
+    public List<Tuple> getTupleTagsForBookmarksDtoById(Long userId) {
+        return entityManager.createQuery("" +
+                        "select t.id as id, t.name as name, t.description as description, q.id as q_id " +
+                        "from Tag t join t.questions q join BookMarks b with q.id = b.question.id where b.user.id = :userId", Tuple.class)
+                .setParameter("userId", userId)
+                .getResultList();
+    }
+
+
     @Override
     public List<BookmarksDto> getBookmarksDtoById(Long userId) {
         return entityManager.createQuery("select new com.javamentor.qa.platform.models.dto.BookmarksDto(" +
@@ -22,7 +35,7 @@ public class BookmarksDtoDaoImpl implements BookmarksDtoDao {
                         "(select count(vq.question.id) from VoteQuestion vq where vq.question.id = q.id and vq.vote = 'DOWN_VOTE'), " +
                         "(select count (qw.question.id) from QuestionViewed qw where qw.question.id = q.id), " +
                         "q.persistDateTime)" +
-                "from Question q left join BookMarks b with q.id = b.question.id where b.user.id = :userId", BookmarksDto.class)
+                        "from Question q left join BookMarks b with q.id = b.question.id where b.user.id = :userId", BookmarksDto.class)
                 .setParameter("userId", userId)
                 .getResultList();
     }

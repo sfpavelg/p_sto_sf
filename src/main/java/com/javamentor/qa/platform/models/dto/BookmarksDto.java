@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Getter
@@ -17,7 +18,7 @@ public class BookmarksDto {
 
     private Long questionId;
     private String title;
-    private List<TagDto> tagDtoList;
+    private List<TagDto> tagDtoList = new ArrayList<>();
     private Long countAnswer;
     private Long countVote;
     private Long countView;
