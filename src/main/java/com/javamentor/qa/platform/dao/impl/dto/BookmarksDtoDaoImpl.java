@@ -6,24 +6,12 @@ import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import javax.persistence.Tuple;
 import java.util.List;
 
 @Repository
 public class BookmarksDtoDaoImpl implements BookmarksDtoDao {
     @PersistenceContext
     private EntityManager entityManager;
-
-
-    @Override
-    public List<Tuple> getTupleTagsForBookmarksDtoById(Long userId) {
-        return entityManager.createQuery("" +
-                        "select t.id as id, t.name as name, t.description as description, q.id as q_id " +
-                        "from Tag t join t.questions q join BookMarks b with q.id = b.question.id where b.user.id = :userId", Tuple.class)
-                .setParameter("userId", userId)
-                .getResultList();
-    }
-
 
     @Override
     public List<BookmarksDto> getBookmarksDtoById(Long userId) {
