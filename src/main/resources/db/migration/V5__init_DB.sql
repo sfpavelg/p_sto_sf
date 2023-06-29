@@ -1,2 +1,1 @@
-alter table group_chat
-    add image_link varchar(255)
+alter table group_bookmark drop column bookmark_id;
