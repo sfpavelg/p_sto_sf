@@ -75,7 +75,6 @@ public class ChatResourceController {
                                               @RequestParam(value = "value", defaultValue = "") String value) {
         return ResponseEntity.ok(chatDtoService.getChatDtoByUserIdAndValue(user.getId(), value));
     }
-}
 
     /**
      * Gets all single chat dtos.
@@ -86,12 +85,9 @@ public class ChatResourceController {
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Success request. SingleChatDto list returned in response"),
             @ApiResponse(code = 401, message = "Unauthorized request"),
-            @ApiResponse(code = 403, message = "Forbidden"),
-            @ApiResponse(code = 404, message = "No Single Chats for you")})
+            @ApiResponse(code = 403, message = "Forbidden")})
     @GetMapping("/single")
     public ResponseEntity<List<SingleChatDto>> getSingleChatDto(@AuthenticationPrincipal User user) {
-        List<SingleChatDto> list = singleChatDtoService.getSingleChatDto(user);
-        if (list.size() == 0) return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         return new ResponseEntity<>(singleChatDtoService.getSingleChatDto(user), HttpStatus.OK);
     }
 

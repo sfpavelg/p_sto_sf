@@ -189,12 +189,6 @@ public class TestChatResourceController extends AbstractTestApi {
                 .andExpect(jsonPath("$[1].name", Is.is("name4")))
                 .andExpect(jsonPath("$[1].image", Is.is("http://imagelink4.com")))
                 .andExpect(jsonPath("$[1].lastMessage", Is.is("user 101 LAST message for tests")));
-
-        //          Empty list test
-        token = getToken("email3@domain.com", "password");
-        this.mvc.perform(get("/api/user/chat/single")
-                        .header("Authorization", "Bearer " + token))
-                .andExpect(status().is4xxClientError());
     }
 
 }
