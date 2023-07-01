@@ -86,8 +86,8 @@ public class QuestionResourceController {
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         Question question = questionConverter.questionCreateDtoToQuestion(questionCreateDto, new User());
         questionService.persist(question);
-        return ResponseEntity.ok(questionDtoService.getQuestionDtoById(question.getId(), user.getId()));    }
-
+        return ResponseEntity.ok(questionDtoService.getQuestionDtoById(question.getId(), user.getId()));
+    }
 
 
     /**
@@ -211,14 +211,14 @@ public class QuestionResourceController {
     /**
      * The method returns JSON with a paginated list of QuestionDTO objects, sorted by newest..
      *
-     * @param pageNumber        Page number of the page to be displayed. The parameter must be greater than zero.
-     * @param itemsCountOnPage  Optional parameter. The number of items per page. The default value is 10.
-     *                          The parameter must be greater than zero
-     * @param trackedTag        Optional parameter, contains a list of ID tags of the {@link Tag} entity, for which it
-     *                          is necessary to give a list of unanswered questions.
-     * @param ignoredTag        Optional parameter, contains a list of ID tags of the {@link Tag} entity that should be
-     *                          ignored when displaying a list of unanswered questions. If the question contains at least
-     *                          one ignored tag, the question is not output.
+     * @param pageNumber       Page number of the page to be displayed. The parameter must be greater than zero.
+     * @param itemsCountOnPage Optional parameter. The number of items per page. The default value is 10.
+     *                         The parameter must be greater than zero
+     * @param trackedTag       Optional parameter, contains a list of ID tags of the {@link Tag} entity, for which it
+     *                         is necessary to give a list of unanswered questions.
+     * @param ignoredTag       Optional parameter, contains a list of ID tags of the {@link Tag} entity that should be
+     *                         ignored when displaying a list of unanswered questions. If the question contains at least
+     *                         one ignored tag, the question is not output.
      * @return {@link ResponseEntity} with status Ok and {@link PageDto<QuestionViewDto>} in body.
      */
     @GetMapping("/new")
@@ -261,11 +261,12 @@ public class QuestionResourceController {
         commentQuestionService.persist(commentQuestion);
         return ResponseEntity.ok(commentDtoService.getCommentById(commentQuestion.getComment().getId()));
     }
+
     /**
      * The method returns JSON with table fields containing bookmark id, question id and user id.
      *
-     * @param questionId       Question id passed to the URL for adding a question to bookmarks.
-     * @param user             Authenticated user logged in.
+     * @param questionId Question id passed to the URL for adding a question to bookmarks.
+     * @param user       Authenticated user logged in.
      * @return {@link ResponseEntity} with status Ok.
      */
     @PostMapping("/{questionId}/bookmark")
@@ -302,6 +303,7 @@ public class QuestionResourceController {
         param.put("ignoredTags", ignoredTags);
         return ResponseEntity.ok(questionViewDtoService.getPageWithListMostPopularQuestionForMonthDto(param));
     }
+
     @PostMapping("/{questionId}/view")
     @ApiOperation(value = "Adding a user view", response = Long.class)
     @ApiResponses(value = {
@@ -320,4 +322,35 @@ public class QuestionResourceController {
         questionViewedService.persist(questionViewed);
         return ResponseEntity.ok(HttpStatus.OK);
     }
+
+    /**
+     * This method returns a page of QuestionDto objects that match the specified tag name.
+     *
+     * @param tagName The name of the tag for search.
+     * @param pageNumber The page number for pagination purpose.
+     * @param itemsCountOnPage optional parameter, the number of items per page.
+     * @param user The current authenticated user.
+     * @return A ResponseEntity<?> object with the page of QuestionDto objects.
+     * @see QuestionDto
+     */
+    @GetMapping("/tag")
+    @ApiOperation(value = "Get a page with a list of QuestionDto by tag name", response = QuestionDto.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Success request. QuestionDto object returned in response"),
+            @ApiResponse(code = 401, message = "Unauthorized request"),
+            @ApiResponse(code = 403, message = "Forbidden"),
+            @ApiResponse(code = 404, message = "Tag don't exist")})
+    public ResponseEntity<?> getQuestionDtoListByTag(@RequestParam(value = "pageNumber") Integer pageNumber,
+                                                     @RequestParam(value = "items", required = false, defaultValue = "10") Integer itemsCountOnPage,
+                                                     @RequestParam(value = "tagName") String tagName,
+                                                     @AuthenticationPrincipal User user) {
+        HashMap<String, Object> param = new HashMap<>();
+        param.put("currentPageNumber", pageNumber);
+        param.put("itemsOnPage", itemsCountOnPage);
+        param.put("tagName", tagName);
+        param.put("userId", user.getId());
+        return ResponseEntity.ok(questionDtoService.getPageWithListQuestionDtoByTag(param));
+    }
+
+
 }

@@ -39,7 +39,7 @@ public class ChatDtoDaoImpl extends ReadWriteDaoImpl<SingleChat, Long> implement
                         "select new com.javamentor.qa.platform.models.dto.chat.ChatDto(" +
                                 "gc.id, " +
                                 "gc.chat.title," +
-                                "'null'," +
+                                "gc.imageLink," +
                                 "(select m.message from Message as m where m.id = (select max(l.id) as mid from Message as l join l.chat join l.userSender as us join us.role where l.chat.id = gc.id))," +
                                 "(select m.persistDate from Message as m where m.id = (select max(l.id) as mid from Message as l join l.chat join l.userSender as us join us.role where l.chat.id = gc.id)))" +
 

@@ -369,7 +369,7 @@ public class TestDataInitService {
             GroupBookmark groupBookmark = new GroupBookmark();
             groupBookmark.setTitle("title number " + i);
             groupBookmark.setUser(userList.get(i));
-            groupBookmark.setBookMarks(null);
+            groupBookmark.setBookMarks(Set.copyOf(bookMarkService.getAll().subList(0, i)));
             groupBookmarkService.persist(groupBookmark);
         }
     }
@@ -397,6 +397,7 @@ public class TestDataInitService {
         GroupChat groupChatJava = new GroupChat();
         groupChatJava.setChat(chatJava);
         groupChatJava.setUsers(userSetJava);
+        groupChatJava.setImageLink("https://cdn-icons-png.flaticon.com/512/1144/1144760.png");
         groupChatService.persist(groupChatJava);
 
 
@@ -406,6 +407,7 @@ public class TestDataInitService {
         groupGlobalChat.setChat(chatGlobal);
         groupGlobalChat.setUsers(userSetJava);
         groupGlobalChat.setGlobal(true);
+        groupGlobalChat.setImageLink("https://cdn-icons-png.flaticon.com/512/1144/1144760.png");
         groupChatService.persist(groupGlobalChat);
     }
 

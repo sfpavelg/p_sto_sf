@@ -5,6 +5,7 @@ import com.javamentor.qa.platform.dao.util.SingleResultUtil;
 import com.javamentor.qa.platform.models.dto.tag.RelatedTagsDto;
 import com.javamentor.qa.platform.models.dto.tag.TagDto;
 import org.springframework.stereotype.Repository;
+
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
@@ -44,6 +45,24 @@ public class TagDtoDaoImpl implements TagDtoDao {
     }
 
     @Override
+    public Map<Long, List<TagDto>> getMapTagDtoAndQuestionId(List<Long> questionIdList) {
+        List<Tuple> tags = entityManager.createQuery("" +
+                        "select t.id as id, t.name as name, t.description as description, q.id as q_id " +
+                        "from Tag t join t.questions q where q.id in (:qid)", Tuple.class)
+                .setParameter("qid", questionIdList)
+                .getResultList();
+
+        Map<Long, List<TagDto>> tagsmap = new HashMap<>();
+        for (Tuple tuple : tags) {
+            Long key = tuple.get(3, Long.class);
+            TagDto tagDto = new TagDto(tuple.get(0, Long.class), tuple.get(1, String.class), tuple.get(2, String.class));
+            tagsmap.computeIfAbsent(key, k -> new ArrayList<>()).add(tagDto);
+        }
+
+        return tagsmap;
+    }
+
+    @Override
     public Optional<TagDto> getById(Long id) {
         Query query = entityManager.createQuery("select new com.javamentor.qa.platform.models.dto.tag.TagDto(" +
                         "t.id, " +
@@ -67,11 +86,11 @@ public class TagDtoDaoImpl implements TagDtoDao {
     @Override
     public Map<Long, List<TagDto>> getTagsMapByQuestionId(List<Long> qId) {
         List<Tuple> tags = entityManager.createQuery(
-                "select t.id as tag_id, " +
-                        "t.name as tag_name, " +
-                        "t.description as tag_description, " +
-                        "q.id as question_id " +
-                        "from Tag t join t.questions q where q.id in :id", Tuple.class)
+                        "select t.id as tag_id, " +
+                                "t.name as tag_name, " +
+                                "t.description as tag_description, " +
+                                "q.id as question_id " +
+                                "from Tag t join t.questions q where q.id in :id", Tuple.class)
                 .setParameter("id", qId)
                 .getResultList();
         Map<Long, List<TagDto>> tagsMap = new HashMap<>();

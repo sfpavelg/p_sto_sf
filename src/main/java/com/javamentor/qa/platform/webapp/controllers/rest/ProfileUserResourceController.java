@@ -2,12 +2,14 @@ package com.javamentor.qa.platform.webapp.controllers.rest;
 
 import com.javamentor.qa.platform.models.dto.GroupBookmarkDto;
 import com.javamentor.qa.platform.models.dto.user.UserProfileQuestionDto;
+import com.javamentor.qa.platform.models.dto.user.UserProfileVoteDto;
 import com.javamentor.qa.platform.models.entity.GroupBookmark;
 import com.javamentor.qa.platform.models.entity.user.User;
 import com.javamentor.qa.platform.service.abstracts.dto.GroupBookmarkDtoService;
 import com.javamentor.qa.platform.service.abstracts.dto.answer.AnswerDtoService;
 import com.javamentor.qa.platform.service.abstracts.dto.user.UserProfileQuestionDtoService;
 import com.javamentor.qa.platform.service.abstracts.dto.user.UserProfileTagDtoService;
+import com.javamentor.qa.platform.service.abstracts.dto.user.UserProfileVoteDtoService;
 import com.javamentor.qa.platform.service.abstracts.model.GroupBookmarkService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -32,6 +34,7 @@ public class ProfileUserResourceController {
     private final GroupBookmarkDtoService groupBookmarkDtoService;
     private final GroupBookmarkService groupBookmarkService;
     private final UserProfileTagDtoService userProfileTagDtoService;
+    private final UserProfileVoteDtoService userProfileVoteDtoService;
 
     @GetMapping("/questions")
     @ApiOperation(
@@ -120,5 +123,14 @@ public class ProfileUserResourceController {
         return ResponseEntity.ok(userProfileTagDtoService.getUserProfileTagDto(user.getId()));
     }
 
+    @GetMapping("/vote")
+    @ApiOperation(value = "Getting user profile votes info", response = UserProfileVoteDto.class)
+    @ApiResponses(value = {
+    @ApiResponse(code = 200, message = "Success request"),
+    @ApiResponse(code = 401, message = "Unauthorized request"),
+    @ApiResponse(code = 403, message = "Forbidden"),})
+        public ResponseEntity<?> getUserProfileVoteDto(@AuthenticationPrincipal User user) {
+            return ResponseEntity.ok(userProfileVoteDtoService.getUserProfileVoteDtoByUserId(user.getId()));
+        }
 }
 

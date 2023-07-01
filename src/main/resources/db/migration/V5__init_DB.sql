@@ -1,2 +1,4 @@
-alter table bookmarks
-    add "note" varchar(255);
+alter table group_bookmark drop column bookmark_id;
+
+
+
