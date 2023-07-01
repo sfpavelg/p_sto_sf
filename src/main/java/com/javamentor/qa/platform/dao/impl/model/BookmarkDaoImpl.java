@@ -17,7 +17,11 @@ public class BookmarkDaoImpl extends ReadWriteDaoImpl<BookMarks, Long> implement
         long count = (long) entityManager
                 .createQuery("SELECT COUNT(it) from BookMarks it where it.question.id = :questionId" +
                         " and it.user.id = :userId")
-                .setParameter("questionId", questionId).setParameter("userId", userId).getSingleResult();
+                .setParameter("questionId", questionId)
+                .setParameter("userId", userId)
+                .getSingleResult();
         return count > 0;
     }
+
+
 }
