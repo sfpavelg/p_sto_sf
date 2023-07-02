@@ -14,4 +14,5 @@ public interface QuestionDtoService {
 
     PageDto<QuestionDto> getPageWithListQuestionDtoByTag(HashMap<String, Object> param);
 
+    Long getCountQuestionDto();
 }

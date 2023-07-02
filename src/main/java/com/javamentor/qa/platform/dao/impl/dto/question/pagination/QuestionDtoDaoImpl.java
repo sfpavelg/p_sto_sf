@@ -48,5 +48,10 @@ public class QuestionDtoDaoImpl implements QuestionDtoDao {
         return SingleResultUtil.getSingleResultOrNull(query);
     }
 
+    @Override
+    public Long getCountQuestionDto() {
+        Query query = entityManager.createQuery("select count(*) from Question");
+        return (long) query.getSingleResult();
+    }
 
 }

@@ -70,4 +70,9 @@ public class QuestionDtoServiceImpl extends PageDtoService<QuestionDto> implemen
         questionDtoList.forEach(questionDto -> questionDto.setListAnswerDto(answersMap.get(questionDto.getId())));
         return result;
     }
+
+    @Override
+    public Long getCountQuestionDto() {
+        return questionDtoDao.getCountQuestionDto();
+    }
 }
