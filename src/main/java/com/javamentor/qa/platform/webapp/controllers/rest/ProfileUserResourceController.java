@@ -132,5 +132,10 @@ public class ProfileUserResourceController {
         public ResponseEntity<?> getUserProfileVoteDto(@AuthenticationPrincipal User user) {
             return ResponseEntity.ok(userProfileVoteDtoService.getUserProfileVoteDtoByUserId(user.getId()));
         }
+
+        @GetMapping("{userId}")
+    public ResponseEntity<?> getUserProfileDto(@PathVariable Long id) {
+        return null;
+    }
 }
 
