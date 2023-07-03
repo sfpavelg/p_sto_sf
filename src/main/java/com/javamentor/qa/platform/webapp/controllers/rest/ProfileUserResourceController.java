@@ -132,5 +132,6 @@ public class ProfileUserResourceController {
         public ResponseEntity<?> getUserProfileVoteDto(@AuthenticationPrincipal User user) {
             return ResponseEntity.ok(userProfileVoteDtoService.getUserProfileVoteDtoByUserId(user.getId()));
         }
+
 }
 

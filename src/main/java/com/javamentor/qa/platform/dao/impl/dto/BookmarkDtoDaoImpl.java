@@ -20,7 +20,8 @@ public class BookmarkDtoDaoImpl implements BookmarkDtoDao {
         Query query = entityManager.createQuery("select new com.javamentor.qa.platform.models.dto.BookmarkDto(" +
                 "b.id, " +
                 "b.question.id, " +
-                "b.user.id) " +
+                "b.user.id, " +
+                "b.note) " +
                 "FROM BookMarks b " +
                 "WHERE b.id = :id", BookmarkDto.class).setParameter("id", id);
         return SingleResultUtil.getSingleResultOrNull(query);

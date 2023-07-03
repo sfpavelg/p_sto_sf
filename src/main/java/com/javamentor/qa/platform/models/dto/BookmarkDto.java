@@ -13,4 +13,5 @@ public class BookmarkDto {
     private Long id;
     private Long questionId;
     private Long userId;
+    private String note;
 }

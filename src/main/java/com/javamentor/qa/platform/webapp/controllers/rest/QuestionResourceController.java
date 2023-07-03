@@ -278,8 +278,9 @@ public class QuestionResourceController {
             @ApiResponse(code = 400, message = "Invalid password"),
             @ApiResponse(code = 404, message = "Incorrect id Question. Question with id not found")})
     public ResponseEntity<?> addQuestionToCurrentUserBookmark(@PathVariable("questionId") Long questionId,
-                                                              @AuthenticationPrincipal User user) throws NotFoundException {
-        BookMarks bookMark = bookmarkService.persistByQuestionId(questionId, user);
+                                                              @AuthenticationPrincipal User user, @RequestBody String note) throws NotFoundException {
+
+        BookMarks bookMark = bookmarkService.persistByQuestionId(questionId, user, note);
         return ResponseEntity.ok(bookmarkDtoService.getBookmarkById(bookMark.getId()));
     }
 
