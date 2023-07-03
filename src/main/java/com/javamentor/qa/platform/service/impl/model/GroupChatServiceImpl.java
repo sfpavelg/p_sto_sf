@@ -33,7 +33,7 @@ public class GroupChatServiceImpl extends ReadWriteServiceImpl<GroupChat, Long> 
         Optional <GroupChat> groupChat = Optional.ofNullable(groupChatDao.getGroupChatWithUsersById(chatId)
                 .orElseThrow(() -> new NotFoundException("Пользователей нет в чате " + chatId)));
 
-        if (groupChat.get().getUsers().stream().filter(u -> (u.getId() == userId)).collect(Collectors.toSet()).isEmpty()) {
+        if (groupChat.get().getUsers().stream().noneMatch(u -> (u.getId() == userId))) {
             throw new NotFoundException("Пользователя нет в чате " + chatId);
         }
         GroupChat foundGroupChat = groupChat.get();
