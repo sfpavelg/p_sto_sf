@@ -2,18 +2,18 @@ package com.javamentor.qa.platform.api;
 
 import com.javamentor.qa.platform.AbstractTestApi;
 import org.hamcrest.core.Is;
+import org.hamcrest.core.IsNull;
 import org.junit.jupiter.api.Test;
 import org.springframework.test.context.jdbc.Sql;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.jdbc.Sql;
+import org.springframework.test.context.jdbc.SqlGroup;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -169,5 +169,64 @@ public class TestChatResourceController extends AbstractTestApi {
 
     }
 
+    @Test
+    @SqlGroup({
+            @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD,
+                    value = {"/script/TestChatResourceController/testgetGroupChat/Before.sql"}),
+            @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD,
+                    value = {"/script/TestChatResourceController/testGetGroupChat/After.sql"})
+    })
+    public void testGetGroupChat() throws Exception {
+        String token = getToken("100@gmail.com", "100pwd");
 
+        // Successful test
+        this.mvc.perform(get("/api/user/chat/group").header("Authorization", "Bearer " + token))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+        // Method returned 2 GroupCHatDTO's with last messages for both of them
+                .andExpect(jsonPath("$[0].id", Is.is(500)))
+                .andExpect(jsonPath("$[0].chatName", Is.is("java1")))
+                .andExpect(jsonPath("$[0].lastMessage", Is.is("testmessage1")))
+                .andExpect(jsonPath("$[0].imageLink", Is.is("https://cdn-icons-png.flaticon.com/512/1144/1144760.png")))
+                .andExpect(jsonPath("$[1].id", Is.is(501)))
+                .andExpect(jsonPath("$[1].chatName", Is.is("java2")))
+                .andExpect(jsonPath("$[1].lastMessage", Is.is("testmessage3")))
+                .andExpect(jsonPath("$[1].imageLink", Is.is("https://cdn-icons-png.flaticon.com/512/1144/1144760.png")))
+        // Method returned GroupChatDTO with null message
+                .andExpect(jsonPath("$[2].id", Is.is(502)))
+                .andExpect(jsonPath("$[2].chatName", Is.is("java3")))
+                .andExpect(jsonPath("$[2].lastMessage", IsNull.nullValue()))
+                .andExpect(jsonPath("$[2].imageLink", Is.is("https://cdn-icons-png.flaticon.com/512/1144/1144760.png")));
+    }
+
+    @Test
+    @SqlGroup({
+            @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD,
+                    value = {"/script/TestChatResourceController/testDeleteChatById/Before.sql"}),
+            @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD,
+                    value = {"/script/TestChatResourceController/testDeleteChatById/After.sql"})
+    })
+    public void testDeleteChatById() throws Exception {
+        String token = getToken("100@gmail.com", "100pwd");
+        // Successful test,method deleted User from GroupChat
+        this.mvc.perform(delete("/api/user/chat/{id}",500).header("Authorization", "Bearer " + token))
+                .andDo(print())
+                .andExpect(status().isOk());
+
+        // Successful test,method deleted User from Singlechat
+        this.mvc.perform(delete("/api/user/chat/{id}",502).header("Authorization", "Bearer " + token))
+                .andDo(print())
+                .andExpect(status().isOk());
+
+        // Failed test, chat with such id does not exist
+        this.mvc.perform(delete("/api/user/chat/{id}",5000).header("Authorization", "Bearer " + token))
+                .andDo(print())
+                .andExpect(status().isBadRequest());
+
+        // Failed test, User is not in chat with such id
+        this.mvc.perform(delete("/api/user/chat/{id}",503).header("Authorization", "Bearer " + token))
+                .andDo(print())
+                .andExpect(status().is4xxClientError());
+    }
 }
