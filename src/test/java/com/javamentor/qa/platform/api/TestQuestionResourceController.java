@@ -1242,6 +1242,14 @@ class TestQuestionResourceController extends AbstractTestApi {
                 .andExpect(status().isOk());
         assertThat(em.createQuery("select count(*) from Question").getSingleResult())
                 .isEqualTo(5L);
+
+//        Test on zero question
+        this.mvc.perform(get("/api/user/question/count")
+                        .header("Authorization", "Bearer " + JWT))
+                .andDo(print())
+                .andExpect(status().isOk());
+        assertThat(em.createQuery("select count(*) from Question q where q.id > 105").getSingleResult())
+                .isEqualTo(0L);
     }
 
 }
