@@ -1228,7 +1228,28 @@ class TestQuestionResourceController extends AbstractTestApi {
                         .param("items", "1"))
                 .andDo(print())
                 .andExpect(status().isBadRequest());
-
     }
-}
 
+    @Test
+    @Sql(value = {"/script/TestQuestionResourceController/testGetCountQuestionDto/Before.sql"}, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+    @Sql(value = "/script/TestQuestionResourceController/testGetCountQuestionDto/After.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
+    public void testGetCountQuestionDto() throws Exception {
+        String JWT = getToken("0@gmail.com", "0pwd");
+
+        this.mvc.perform(get("/api/user/question/count")
+                        .header("Authorization", "Bearer " + JWT))
+                .andDo(print())
+                .andExpect(status().isOk());
+        assertThat(em.createQuery("select count(*) from Question").getSingleResult())
+                .isEqualTo(5L);
+
+//        Test on zero question
+        this.mvc.perform(get("/api/user/question/count")
+                        .header("Authorization", "Bearer " + JWT))
+                .andDo(print())
+                .andExpect(status().isOk());
+        assertThat(em.createQuery("select count(*) from Question q where q.id > 105").getSingleResult())
+                .isEqualTo(0L);
+    }
+
+}

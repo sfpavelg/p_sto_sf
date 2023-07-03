@@ -351,5 +351,13 @@ public class QuestionResourceController {
         return ResponseEntity.ok(questionDtoService.getPageWithListQuestionDtoByTag(param));
     }
 
+    @GetMapping("/count")
+    @ApiOperation(value = "Get count of questions from the database")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Success request."),
+            @ApiResponse(code = 404, message = "Not found.")})
+    public ResponseEntity<?> getCountQuestionDto() {
+        return ResponseEntity.ok(questionDtoService.getCountQuestionDto());
+    }
 
 }
