@@ -133,9 +133,5 @@ public class ProfileUserResourceController {
             return ResponseEntity.ok(userProfileVoteDtoService.getUserProfileVoteDtoByUserId(user.getId()));
         }
 
-        @GetMapping("{userId}")
-    public ResponseEntity<?> getUserProfileDto(@PathVariable Long id) {
-        return null;
-    }
 }
 
