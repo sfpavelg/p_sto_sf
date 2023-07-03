@@ -7,8 +7,6 @@ import com.javamentor.qa.platform.service.abstracts.model.GroupChatService;
 import javassist.NotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -30,15 +28,13 @@ public class GroupChatServiceImpl extends ReadWriteServiceImpl<GroupChat, Long> 
     @Transactional
     @Override
     public void deleteUserFromChatById(Long chatId, Long userId) throws NotFoundException {
-        Optional <GroupChat> groupChat = Optional.ofNullable(groupChatDao.getGroupChatWithUsersById(chatId)
-                .orElseThrow(() -> new NotFoundException("Пользователей нет в чате " + chatId)));
-
-        if (groupChat.get().getUsers().stream().noneMatch(u -> (u.getId() == userId))) {
+        GroupChat groupChat = groupChatDao.getGroupChatWithUsersById(chatId)
+                .orElseThrow(() -> new NotFoundException("Пользователя нет в чате " + chatId));
+        if (groupChat.getUsers().stream().noneMatch(u -> (u.getId() == userId))) {
             throw new NotFoundException("Пользователя нет в чате " + chatId);
         }
-        GroupChat foundGroupChat = groupChat.get();
-        Set<User> users = groupChat.get().getUsers().stream().filter(u -> (u.getId() != userId)).collect(Collectors.toSet());
-        groupChat.get().setUsers(users);
-        groupChatDao.update(foundGroupChat);
+        Set<User> users = groupChat.getUsers().stream().filter(u -> (u.getId() != userId)).collect(Collectors.toSet());
+        groupChat.setUsers(users);
+        groupChatDao.update(groupChat);
     }
 }

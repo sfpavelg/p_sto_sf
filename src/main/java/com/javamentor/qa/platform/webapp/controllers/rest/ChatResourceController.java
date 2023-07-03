@@ -20,17 +20,14 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.HashMap;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-
 
 @RestController
 @AllArgsConstructor
 @RequestMapping("/api/user/chat")
 @Api("Chat controller")
 public class ChatResourceController {
-
 
     private final MessageDtoService messageDtoService;
     private final SingleChatServiceImpl singleChatService;
@@ -63,7 +60,6 @@ public class ChatResourceController {
         param.put("chatId", chatId);
         return ResponseEntity.ok(messageDtoService.getMessagesBySingleChatIdOrderNew(param));
     }
-
 
     @GetMapping
     @ApiOperation(value = "Поиск чатов по значению запроса - value для юзера", response = ChatDto.class)

@@ -22,18 +22,16 @@ public class SingleChatServiceImpl extends ReadWriteServiceImpl<SingleChat, Long
     @Transactional
     @Override
     public void deleteUserFromChatById(Long chatId, Long userId) throws NotFoundException {
-        Optional<SingleChat> singleChat = Optional.ofNullable(singleChatDao.getSingleChatWithUsersById(chatId)
-                .orElseThrow(() -> new NotFoundException("Пользователей нет в чате " + chatId)));
-        if (singleChat.get().getUseTwo().getId() != userId && singleChat.get().getUserOne().getId() != userId) {
+        SingleChat singleChat = singleChatDao.getSingleChatWithUsersById(chatId)
+                .orElseThrow(() -> new NotFoundException("Пользователя нет в чате " + chatId));
+        if (singleChat.getUseTwo().getId() != userId && singleChat.getUserOne().getId() != userId) {
             throw new NotFoundException("Пользователя нет в чате " + chatId);
         }
-        if (Objects.equals(singleChat.get().getUserOne().getId(), userId)) {
-            SingleChat foundSingleChat = singleChat.get();
-            foundSingleChat.setUserOne(null);
-            singleChatDao.update(foundSingleChat);
+        if (Objects.equals(singleChat.getUserOne().getId(), userId)) {
+            singleChat.setUserOne(null);
+            singleChatDao.update(singleChat);
         }
-        SingleChat foundSingleChat = singleChat.get();
-        foundSingleChat.setUseTwo(null);
-        singleChatDao.update(foundSingleChat);
+        singleChat.setUseTwo(null);
+        singleChatDao.update(singleChat);
     }
 }
