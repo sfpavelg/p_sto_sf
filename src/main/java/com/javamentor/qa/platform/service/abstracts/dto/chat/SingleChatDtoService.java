@@ -6,5 +6,5 @@ import com.javamentor.qa.platform.models.entity.user.User;
 import java.util.List;
 
 public interface SingleChatDtoService {
-    List<SingleChatDto> getSingleChatDto(User user);
+    List<SingleChatDto> getSingleChatDto(Long userId);
 }

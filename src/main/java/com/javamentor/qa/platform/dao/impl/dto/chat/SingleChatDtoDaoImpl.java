@@ -17,7 +17,7 @@ public class SingleChatDtoDaoImpl implements SingleChatDtoDao {
     private EntityManager entityManager;
 
     @Override
-    public List<SingleChatDto> getSingleChatDto(User user) {
+    public List<SingleChatDto> getSingleChatDto(Long userId) {
         TypedQuery<SingleChatDto> query = entityManager.createQuery(
                 "SELECT NEW com.javamentor.qa.platform.models.dto.chat.SingleChatDto (" +
                         "sc.id, " +
@@ -28,7 +28,7 @@ public class SingleChatDtoDaoImpl implements SingleChatDtoDao {
                         ")" +
                         "FROM com.javamentor.qa.platform.models.entity.chat.SingleChat sc " +
                         "WHERE sc.userOne.id = :id OR sc.useTwo.id = :id", SingleChatDto.class);
-        query.setParameter("id", user.getId());
+        query.setParameter("id", userId);
         return query.getResultList();
     }
 }

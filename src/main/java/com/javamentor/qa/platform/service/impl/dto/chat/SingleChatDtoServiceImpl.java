@@ -2,7 +2,6 @@ package com.javamentor.qa.platform.service.impl.dto.chat;
 
 import com.javamentor.qa.platform.dao.abstracts.dto.chat.SingleChatDtoDao;
 import com.javamentor.qa.platform.models.dto.chat.SingleChatDto;
-import com.javamentor.qa.platform.models.entity.user.User;
 import com.javamentor.qa.platform.service.abstracts.dto.chat.SingleChatDtoService;
 import org.springframework.stereotype.Service;
 
@@ -18,7 +17,7 @@ public class SingleChatDtoServiceImpl implements SingleChatDtoService {
     }
 
     @Override
-    public List<SingleChatDto> getSingleChatDto(User user) {
-        return singleChatDtoDao.getSingleChatDto(user);
+    public List<SingleChatDto> getSingleChatDto(Long userId) {
+        return singleChatDtoDao.getSingleChatDto(userId);
     }
 }

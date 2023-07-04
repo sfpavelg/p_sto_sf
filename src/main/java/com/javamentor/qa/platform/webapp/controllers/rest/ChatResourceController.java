@@ -88,8 +88,7 @@ public class ChatResourceController {
             @ApiResponse(code = 403, message = "Forbidden")})
     @GetMapping("/single")
     public ResponseEntity<List<SingleChatDto>> getSingleChatDto(@AuthenticationPrincipal User user) {
-        return new ResponseEntity<>(singleChatDtoService.getSingleChatDto(user), HttpStatus.OK);
+        return new ResponseEntity<>(singleChatDtoService.getSingleChatDto(user.getId()), HttpStatus.OK);
     }
-
 }
 
