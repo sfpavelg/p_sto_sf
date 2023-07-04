@@ -2,7 +2,6 @@ package com.javamentor.qa.platform.dao.impl.dto.chat;
 
 import com.javamentor.qa.platform.dao.abstracts.dto.chat.SingleChatDtoDao;
 import com.javamentor.qa.platform.models.dto.chat.SingleChatDto;
-import com.javamentor.qa.platform.models.entity.user.User;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
