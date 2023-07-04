@@ -6,4 +6,6 @@ import java.util.Optional;
 
 public interface QuestionDtoDao {
     Optional<QuestionDto> getQuestionDtoById(Long id, Long userId);
+
+    Long getCountQuestionDto();
 }
