@@ -7,7 +7,6 @@ import java.util.Optional;
 
 public interface QuestionDtoDao {
     Optional<QuestionDto> getQuestionDtoById(Long id, Long userId);
-    List<QuestionDto> getQuestionDtoByParameters(Long userId, List<String> text, List<String> tags, Long views, Long user, Long answers);
-
+    List<QuestionDto> getQuestionDtoByUserIdAndValue(Long userId, String value);
     Long getCountQuestionDto();
 }

@@ -80,11 +80,7 @@ public class QuestionDtoServiceImpl extends PageDtoService<QuestionDto> implemen
     }
     @Override
     public List<QuestionDto> getQuestionDtoByUserIdAndValue(Long userId, String value) throws NotFoundException {
-        List<QuestionDto> questionDtoList = questionDtoDao.getQuestionDtoByParameters(userId, getTextByValue(value),
-                getTagsByValue(value),
-                getNumericParameterByValueAndRegex(value,"views:\\d+"),
-                getNumericParameterByValueAndRegex(value, "user:\\d+"),
-                getNumericParameterByValueAndRegex(value,"answers:\\d+" ));
+        List<QuestionDto> questionDtoList = questionDtoDao.getQuestionDtoByUserIdAndValue(userId, value);
         if (!questionDtoList.isEmpty()) {
             for (QuestionDto questionDto : questionDtoList) {
                 questionDto.setListAnswerDto(answerDtoDao.getAllByQuestionIdSortedByUsefulAndCount(questionDto.getId()));
@@ -93,33 +89,5 @@ public class QuestionDtoServiceImpl extends PageDtoService<QuestionDto> implemen
         }
         return questionDtoList;
     }
-    private List<String> getTextByValue(String text) {
-        return List.of(text.replaceAll("\\[.+?]", "")
-                .replaceAll("user:\\d+", "")
-                .replaceAll("answers:\\d+", "")
-                .replaceAll("views:\\d+", "")
-                .trim()
-                .replaceAll("\\s+", " ").split(" ", 0));
-    }
 
-    private Long getNumericParameterByValueAndRegex(String text, String regex) {
-        Matcher matcher = Pattern.compile(regex).matcher(text);
-        if (matcher.find()) {
-            if (!text.substring(matcher.start(), matcher.end()).replaceAll("\\D+", "").isEmpty()) {
-                return Long.valueOf(text.substring(matcher.start(), matcher.end()).replaceAll("\\D+", ""));
-            }
-        }
-        return null;
-    }
-
-    private List<String> getTagsByValue(String value) {
-        int end = 0;
-        List<String> tags = new ArrayList<>();
-        Matcher matcher = Pattern.compile("\\[.+?]").matcher(value);
-        while (matcher.find(end)) {
-            tags.add(value.substring(matcher.start(), matcher.end()).replaceAll("\\[|\\]", ""));
-            end = matcher.end();
-        }
-        return tags;
-    }
 }

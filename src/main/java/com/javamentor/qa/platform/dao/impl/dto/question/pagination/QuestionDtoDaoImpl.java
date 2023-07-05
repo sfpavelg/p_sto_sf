@@ -1,11 +1,10 @@
 package com.javamentor.qa.platform.dao.impl.dto.question.pagination;
 
+import com.javamentor.qa.platform.dao.abstracts.dto.question.facade.ParametersForSearchQuestionDto;
+import com.javamentor.qa.platform.dao.abstracts.dto.question.facade.QueryForSearchQuestionDto;
 import com.javamentor.qa.platform.dao.abstracts.dto.question.pagination.QuestionDtoDao;
 import com.javamentor.qa.platform.dao.util.SingleResultUtil;
 import com.javamentor.qa.platform.models.dto.question.QuestionDto;
-import io.swagger.models.auth.In;
-import org.hibernate.type.StandardBasicTypes;
-import org.junit.jupiter.api.DisplayNameGenerator;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
@@ -19,7 +18,13 @@ import java.util.Optional;
 public class QuestionDtoDaoImpl implements QuestionDtoDao {
     @PersistenceContext
     private EntityManager entityManager;
+    private final ParametersForSearchQuestionDto parametersForSearchQuestionDto;
+    private final QueryForSearchQuestionDto queryForSearchQuestionDto;
 
+    public QuestionDtoDaoImpl(ParametersForSearchQuestionDto parametersForSearchQuestionDto, QueryForSearchQuestionDto queryForSearchQuestionDto) {
+        this.parametersForSearchQuestionDto = parametersForSearchQuestionDto;
+        this.queryForSearchQuestionDto = queryForSearchQuestionDto;
+    }
 
     @Override
     public Optional<QuestionDto> getQuestionDtoById(Long id, Long userId) {
@@ -59,8 +64,8 @@ public class QuestionDtoDaoImpl implements QuestionDtoDao {
     }
 
     @Override
-    public List<QuestionDto> getQuestionDtoByParameters(Long userId, List<String> text, List<String> tags, Long views, Long user, Long answers) {
-        StringBuilder stringQuery = new StringBuilder("select distinct new com.javamentor.qa.platform.models.dto.question.QuestionDto (" +
+    public List<QuestionDto> getQuestionDtoByUserIdAndValue(Long userId, String value) {
+        String stringQuery = ("select distinct new com.javamentor.qa.platform.models.dto.question.QuestionDto (" +
                 "q.id, " +
                 "q.title, " +
                 "u.id, " +
@@ -82,31 +87,12 @@ public class QuestionDtoDaoImpl implements QuestionDtoDao {
                 "where (u.id = :user or :user is null) and " +
                 "((select count (a.question.id) from Answer a where a.question.id = q.id) >= :answers or :answers is null) and " +
                 "((select count (qw.question.id) from QuestionViewed qw where qw.question.id = q.id) >= :views or :views is null)");
-        //Добавление в stringQuery набора элементов из List<String> text
-        for (int i = 0; i < text.size(); i++) {
-            stringQuery.append(" and (:text").append(i).append(" is null or q.title like concat('%', :text").append(i).append(", '%'))");
-        }
-        //Добавление в stringQuery набора элементов из List<String> tags
-        for (int i =0; i < tags.size(); i++) {
-            stringQuery.append(" and (:tag").append(i).append(" is null or t.name like (:tag").append(i).append("))");
-        }
-        stringQuery.append(" group by q.id, u.id, t.id");
+        Query query = entityManager.createQuery(queryForSearchQuestionDto.editQueryByStringQueryAndParameters(stringQuery,
+                parametersForSearchQuestionDto.getAllParametersByValue(value)));
+        query.setParameter("userId", userId);
+        query = queryForSearchQuestionDto.setParametersForQueryByQueryAndParameters(query, parametersForSearchQuestionDto.getAllParametersByValue(value));
 
-        Query query = entityManager.createQuery(stringQuery.toString(), QuestionDto.class)
-                .setParameter("userId", userId)
-                .setParameter("user", user)
-                .setParameter("answers", answers)
-                .setParameter("views", views);
 
-        //Установка параметров для элементов из List<String> text
-        for (int i = 0; i < text.size(); i++) {
-            query.setParameter("text" + i, text.get(i));
-        }
-        //Установка параметров для элементов из List<String> tags
-        for (int i = 0; i < tags.size(); i++) {
-            query.setParameter("tag" + i, tags.get(i));
-        }
-        System.out.println(tags);
         return query.getResultList();
     }
 }
