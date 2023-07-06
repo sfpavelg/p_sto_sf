@@ -9,4 +9,5 @@ public interface GroupChatService extends ReadWriteService<GroupChat, Long> {
 
     Set<User> getUsersFromGroupChatById(Long id);
 
+    void updateImage(Long chatId, String newImage);
 }

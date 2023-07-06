@@ -1,19 +1,20 @@
 package com.javamentor.qa.platform.api;
 
 import com.javamentor.qa.platform.AbstractTestApi;
+import com.javamentor.qa.platform.models.entity.chat.GroupChat;
 import org.hamcrest.core.Is;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.test.context.jdbc.Sql;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
 import org.springframework.http.MediaType;
 import org.springframework.test.context.jdbc.Sql;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -67,9 +68,9 @@ public class TestChatResourceController extends AbstractTestApi {
 
 //          Pagination positive test
         this.mvc.perform(get("/api/user/chat/{id}/single/message", 102)
-                .header("Authorization", "Bearer " + token).contentType(MediaType.APPLICATION_JSON)
-                .param("page", "2")
-                .param("items", "2"))
+                        .header("Authorization", "Bearer " + token).contentType(MediaType.APPLICATION_JSON)
+                        .param("page", "2")
+                        .param("items", "2"))
                 .andExpect(status().isOk())
                 .andDo(print())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
@@ -98,9 +99,9 @@ public class TestChatResourceController extends AbstractTestApi {
                 .andExpect(jsonPath("$.items[0].imageLink", Is.is("http://imagelink5.com")));
 //        Pagination  negative test wrong page
         this.mvc.perform(get("/api/user/chat/{id}/single/message", 102)
-                .header("Authorization", "Bearer " + token).contentType(MediaType.APPLICATION_JSON)
-                .param("page", "0")
-                .param("items", "1"))
+                        .header("Authorization", "Bearer " + token).contentType(MediaType.APPLICATION_JSON)
+                        .param("page", "0")
+                        .param("items", "1"))
                 .andExpect(status().isBadRequest());
 //        Pagination  negative test wrong items
         this.mvc.perform(get("/api/user/chat/{id}/single/message", 102)
@@ -109,6 +110,7 @@ public class TestChatResourceController extends AbstractTestApi {
                         .param("items", "0"))
                 .andExpect(status().isBadRequest());
     }
+
     @Test
     @Sql(value = {"/script/TestChatResourceController/testGetChatBySearch/Before.sql"}, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
     @Sql(value = {"/script/TestChatResourceController/testGetChatBySearch/After.sql"}, executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
@@ -169,5 +171,28 @@ public class TestChatResourceController extends AbstractTestApi {
 
     }
 
+    @Test
+    @Sql(value = {"/script/TestChatResourceController/testUpdateImageGroupChat/Before.sql"}, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+    @Sql(value = {"/script/TestChatResourceController/testUpdateImageGroupChat/After.sql"}, executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
+    public void testUpdateImageGroupChat() throws Exception {
+        String token = getToken("email0@domain.com", "password");
 
+        //Successfully test's
+        Long chatId = 100l;
+        String newImage="http://images.com/newimage.jpeg";
+        this.mvc.perform(patch("/api/user/chat/" + chatId + "/group/image")
+                .header("Authorization", "Bearer " + token)
+                .content(newImage)
+                .contentType(MediaType.TEXT_PLAIN_VALUE));
+        GroupChat groupChat = em.createQuery("select gc from GroupChat gc where gc.chat.id = :chatId", GroupChat.class)
+                .setParameter("chatId", chatId)
+                .getSingleResult();
+        Assertions.assertTrue(groupChat.getImageLink().equals(newImage));
+
+        //Bad group chat's id request
+        chatId = 201l;
+        this.mvc.perform(patch("/api/user/chat/" + chatId + "/group/image")
+                        .header("Authorization", "Bearer " + token))
+                .andExpect(status().isBadRequest());
+    }
 }

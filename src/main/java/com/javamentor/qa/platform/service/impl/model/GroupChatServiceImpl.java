@@ -23,4 +23,9 @@ public class GroupChatServiceImpl extends ReadWriteServiceImpl<GroupChat, Long> 
         return groupChatDao.getUsersFromGroupChatById(id);
     }
 
+    @Override
+    public void updateImage(Long chatId, String newImage) {
+        groupChatDao.updateImage(chatId, newImage);
+    }
+
 }
