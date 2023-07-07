@@ -4,6 +4,6 @@ import javax.persistence.Query;
 import java.util.Map;
 
 public interface QueryForSearchQuestionDto {
-     String editQueryByStringQueryAndParameters (String query, Map<String, Object> parameters);
-     Query setParametersForQueryByQueryAndParameters(Query query, Map<String, Object> parameters);
+     String editQueryByStringQueryAndParameters (String query, String value);
+     Query setAllParametersForQueryByQueryAndValue(Query query, String value);
 }

@@ -18,11 +18,9 @@ import java.util.Optional;
 public class QuestionDtoDaoImpl implements QuestionDtoDao {
     @PersistenceContext
     private EntityManager entityManager;
-    private final ParametersForSearchQuestionDto parametersForSearchQuestionDto;
     private final QueryForSearchQuestionDto queryForSearchQuestionDto;
 
-    public QuestionDtoDaoImpl(ParametersForSearchQuestionDto parametersForSearchQuestionDto, QueryForSearchQuestionDto queryForSearchQuestionDto) {
-        this.parametersForSearchQuestionDto = parametersForSearchQuestionDto;
+    public QuestionDtoDaoImpl(QueryForSearchQuestionDto queryForSearchQuestionDto) {
         this.queryForSearchQuestionDto = queryForSearchQuestionDto;
     }
 
@@ -84,13 +82,10 @@ public class QuestionDtoDaoImpl implements QuestionDtoDao {
                 "from Question q " +
                 "join q.user as u " +
                 "join q.tags as t " +
-                "where (u.id = :user or :user is null) and " +
-                "((select count (a.question.id) from Answer a where a.question.id = q.id) >= :answers or :answers is null) and " +
-                "((select count (qw.question.id) from QuestionViewed qw where qw.question.id = q.id) >= :views or :views is null)");
-        Query query = entityManager.createQuery(queryForSearchQuestionDto.editQueryByStringQueryAndParameters(stringQuery,
-                parametersForSearchQuestionDto.getAllParametersByValue(value)));
+                "where (u.id = :user or :user is null)");
+        Query query = entityManager.createQuery(queryForSearchQuestionDto.editQueryByStringQueryAndParameters(stringQuery, value));
         query.setParameter("userId", userId);
-        query = queryForSearchQuestionDto.setParametersForQueryByQueryAndParameters(query, parametersForSearchQuestionDto.getAllParametersByValue(value));
+        query = queryForSearchQuestionDto.setAllParametersForQueryByQueryAndValue(query, value);
 
 
         return query.getResultList();
