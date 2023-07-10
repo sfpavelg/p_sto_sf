@@ -37,6 +37,7 @@ public class GroupChat{
 
     @Column(name = "image_link")
     private String imageLink;
+
     @PrePersist
     private void prePersistFunction() {
         checkConstraints();
