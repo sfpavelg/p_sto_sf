@@ -17,7 +17,10 @@ import org.springframework.stereotype.Service;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.ArrayList;
 import java.util.Optional;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static java.util.stream.Collectors.toList;
 
@@ -75,4 +78,16 @@ public class QuestionDtoServiceImpl extends PageDtoService<QuestionDto> implemen
     public Long getCountQuestionDto() {
         return questionDtoDao.getCountQuestionDto();
     }
+    @Override
+    public List<QuestionDto> getQuestionDtoByUserIdAndValue(Long userId, String value) throws NotFoundException {
+        List<QuestionDto> questionDtoList = questionDtoDao.getQuestionDtoByUserIdAndValue(userId, value);
+        if (!questionDtoList.isEmpty()) {
+            for (QuestionDto questionDto : questionDtoList) {
+                questionDto.setListAnswerDto(answerDtoDao.getAllByQuestionIdSortedByUsefulAndCount(questionDto.getId()));
+                questionDto.setListTagDto(tagDtoDao.getTagDtoById(questionDto.getId()));
+            }
+        }
+        return questionDtoList;
+    }
+
 }
