@@ -2,20 +2,21 @@ package com.javamentor.qa.platform.api;
 
 import com.javamentor.qa.platform.AbstractTestApi;
 import com.javamentor.qa.platform.models.entity.chat.GroupChat;
+import org.hamcrest.Matchers;
 import org.hamcrest.core.Is;
+import org.hamcrest.core.IsNull;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.test.context.jdbc.Sql;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import org.springframework.http.MediaType;
-import org.springframework.test.context.jdbc.Sql;
 
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 public class TestChatResourceController extends AbstractTestApi {
@@ -169,6 +170,62 @@ public class TestChatResourceController extends AbstractTestApi {
                 .andDo(print())
                 .andExpect(jsonPath("$.size()", Is.is(6)));
 
+    }
+
+    @Test
+    @Sql(value = {"/script/TestChatResourceController/testGetSingleChatDto/Before.sql"}, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+    @Sql(value = {"/script/TestChatResourceController/testGetSingleChatDto/After.sql"}, executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
+    public void testGetSingleChatDto() throws Exception {
+        String token = getToken("email1@domain.com", "password");
+
+        //        Successfully test's
+        this.mvc.perform(get("/api/user/chat/single")
+                        .header("Authorization", "Bearer " + token))
+                .andExpect(status().isOk())
+                .andDo(print())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$[0].id", Is.is(100)))
+                .andExpect(jsonPath("$[0].name", Is.is("name2")))
+                .andExpect(jsonPath("$[0].image", Is.is("http://imagelink2.com")))
+                .andExpect(jsonPath("$[0].lastMessage", Is.is("user 102 LAST message for tests")))
+                .andExpect(jsonPath("$[1].id", Is.is(101)))
+                .andExpect(jsonPath("$[1].name", Is.is("name4")))
+                .andExpect(jsonPath("$[1].image", Is.is("http://imagelink4.com")))
+                .andExpect(jsonPath("$[1].lastMessage", Is.is("user 101 LAST message for tests")));
+
+        // there are no single chats
+        token = getToken("email3@domain.com", "password");
+        this.mvc.perform(get("/api/user/chat/single")
+                        .header("Authorization", "Bearer " + token))
+                .andExpect(status().isOk())
+                .andDo(print())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$", Matchers.hasSize(0)));
+
+        //there is no last message
+        token = getToken("email7@domain.com", "password");
+        this.mvc.perform(get("/api/user/chat/single")
+                        .header("Authorization", "Bearer " + token))
+                .andExpect(status().isOk())
+                .andDo(print())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$[0].id", Is.is(103)))
+                .andExpect(jsonPath("$[0].name", Is.is("name8")))
+                .andExpect(jsonPath("$[0].image", Is.is("http://imagelink8.com")))
+                .andExpect(jsonPath("$[0].lastMessage").value(IsNull.nullValue()))
+                .andExpect(jsonPath("$[0].persistDateTimeLastMessage").value(IsNull.nullValue()));
+
+        //there is no imageLink
+        token = getToken("email9@domain.com", "password");
+        this.mvc.perform(get("/api/user/chat/single")
+                        .header("Authorization", "Bearer " + token))
+                .andExpect(status().isOk())
+                .andDo(print())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$[0].id", Is.is(104)))
+                .andExpect(jsonPath("$[0].name", Is.is("name10")))
+                .andExpect(jsonPath("$[0].image").value(IsNull.nullValue()))
+                .andExpect(jsonPath("$[0].lastMessage", Is.is("user 110 LAST message for tests")));
     }
 
     @Test
