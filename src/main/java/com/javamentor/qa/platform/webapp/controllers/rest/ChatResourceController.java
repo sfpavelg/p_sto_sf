@@ -4,6 +4,7 @@ import com.javamentor.qa.platform.models.dto.chat.MessageDto;
 import com.javamentor.qa.platform.models.dto.chat.SingleChatDto;
 import com.javamentor.qa.platform.service.abstracts.dto.chat.MessageDtoService;
 import com.javamentor.qa.platform.service.abstracts.dto.chat.SingleChatDtoService;
+import com.javamentor.qa.platform.service.abstracts.model.GroupChatService;
 import com.javamentor.qa.platform.service.impl.model.SingleChatServiceImpl;
 import com.javamentor.qa.platform.models.dto.chat.ChatDto;
 import com.javamentor.qa.platform.models.entity.user.User;
@@ -39,6 +40,8 @@ public class ChatResourceController {
     private final SingleChatServiceImpl singleChatService;
     private final ChatDtoService chatDtoService;
     private final SingleChatDtoService singleChatDtoService;
+    private final GroupChatService groupChatService;
+
     /**
      * Gets all single chat MessageDto sorted by persist date.
      *
@@ -102,9 +105,6 @@ public class ChatResourceController {
             @ApiResponse(code = 404, message = "No chat with such id")})
     public ResponseEntity<?> updateImageGroupChat(@PathVariable("id") Long chatId,
                                                   @RequestBody String newImage){
-        if (!groupChatService.existsById(chatId)) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
         groupChatService.updateImage(chatId, newImage);
         return ResponseEntity.ok().build();
     }
