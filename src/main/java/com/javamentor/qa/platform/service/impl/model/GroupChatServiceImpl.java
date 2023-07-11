@@ -4,6 +4,7 @@ import com.javamentor.qa.platform.dao.abstracts.model.GroupChatDao;
 import com.javamentor.qa.platform.models.entity.chat.GroupChat;
 import com.javamentor.qa.platform.models.entity.user.User;
 import com.javamentor.qa.platform.service.abstracts.model.GroupChatService;
+import javassist.NotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.Set;
@@ -24,7 +25,7 @@ public class GroupChatServiceImpl extends ReadWriteServiceImpl<GroupChat, Long> 
     }
 
     @Override
-    public void updateImage(Long chatId, String newImage) {
+    public void updateImage(Long chatId, String newImage) throws NotFoundException {
         groupChatDao.updateImage(chatId, newImage);
     }
 

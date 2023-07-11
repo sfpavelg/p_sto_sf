@@ -13,6 +13,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
+import javassist.NotFoundException;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -104,7 +105,7 @@ public class ChatResourceController {
             @ApiResponse(code = 403, message = "Forbidden"),
             @ApiResponse(code = 404, message = "No chat with such id")})
     public ResponseEntity<?> updateImageGroupChat(@PathVariable("id") Long chatId,
-                                                  @RequestBody String newImage){
+                                                  @RequestBody String newImage) throws NotFoundException {
         groupChatService.updateImage(chatId, newImage);
         return ResponseEntity.ok().build();
     }

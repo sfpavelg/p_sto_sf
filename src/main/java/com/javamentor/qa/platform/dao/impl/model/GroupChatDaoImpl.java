@@ -3,6 +3,7 @@ package com.javamentor.qa.platform.dao.impl.model;
 import com.javamentor.qa.platform.dao.abstracts.model.GroupChatDao;
 import com.javamentor.qa.platform.models.entity.chat.GroupChat;
 import com.javamentor.qa.platform.models.entity.user.User;
+import javassist.NotFoundException;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,9 +26,13 @@ public class GroupChatDaoImpl extends ReadWriteDaoImpl<GroupChat, Long> implemen
     }
 
     @Override
-    public void updateImage(Long chatId, String newImage) {
-        GroupChat updatedGroupChat = getById(chatId).get();
-        updatedGroupChat.setImageLink(newImage);
-        persist(updatedGroupChat);
+    public void updateImage(Long chatId, String newImage) throws NotFoundException {
+        if (existsById(chatId)) {
+            GroupChat updatedGroupChat = getById(chatId).get();
+            updatedGroupChat.setImageLink(newImage);
+            persist(updatedGroupChat);
+        } else {
+            throw new NotFoundException("Групповой чат с таким id не существует");
+        }
     }
 }
