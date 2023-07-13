@@ -26,6 +26,7 @@ public class GroupChatServiceImpl extends ReadWriteServiceImpl<GroupChat, Long> 
 
     @Override
     public void updateImage(Long chatId, String newImage) throws NotFoundException {
+        if (!groupChatDao.existsById(chatId)) throw  new NotFoundException("Чат с таким id  не существует");
         groupChatDao.updateImage(chatId, newImage);
     }
 

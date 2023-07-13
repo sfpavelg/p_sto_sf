@@ -26,13 +26,10 @@ public class GroupChatDaoImpl extends ReadWriteDaoImpl<GroupChat, Long> implemen
     }
 
     @Override
-    public void updateImage(Long chatId, String newImage) throws NotFoundException {
-        if (existsById(chatId)) {
-            GroupChat updatedGroupChat = getById(chatId).get();
-            updatedGroupChat.setImageLink(newImage);
-            persist(updatedGroupChat);
-        } else {
-            throw new NotFoundException("Групповой чат с таким id не существует");
-        }
+    public void updateImage(Long chatId, String newImage) {
+        GroupChat updatedGroupChat = getById(chatId).get();
+        updatedGroupChat.setImageLink(newImage);
+        update(updatedGroupChat);
+
     }
 }
