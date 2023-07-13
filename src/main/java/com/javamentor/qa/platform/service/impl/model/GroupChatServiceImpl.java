@@ -6,6 +6,7 @@ import com.javamentor.qa.platform.models.entity.user.User;
 import com.javamentor.qa.platform.service.abstracts.model.GroupChatService;
 import javassist.NotFoundException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Set;
 
@@ -26,11 +27,14 @@ public class GroupChatServiceImpl extends ReadWriteServiceImpl<GroupChat, Long> 
     }
 
     @Override
+    @Transactional
     public void updateImage(Long chatId, String newImage) throws NotFoundException {
         if (!groupChatDao.existsById(chatId)) {
             throw new NotFoundException("Чат с таким id  не существует");
         }
-        groupChatDao.updateImage(chatId, newImage);
+        GroupChat updatedGroupChat = groupChatDao.getById(chatId).get();
+        updatedGroupChat.setImageLink(newImage);
+        groupChatDao.update(updatedGroupChat);
     }
 
 }

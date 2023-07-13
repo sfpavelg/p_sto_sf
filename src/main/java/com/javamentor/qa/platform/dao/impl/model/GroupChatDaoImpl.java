@@ -24,11 +24,4 @@ public class GroupChatDaoImpl extends ReadWriteDaoImpl<GroupChat, Long> implemen
         return (Set<User>) query.getResultList().stream().collect(Collectors.toSet());
     }
 
-    @Override
-    public void updateImage(Long chatId, String newImage) {
-        GroupChat updatedGroupChat = getById(chatId).get();
-        updatedGroupChat.setImageLink(newImage);
-        update(updatedGroupChat);
-
-    }
 }
