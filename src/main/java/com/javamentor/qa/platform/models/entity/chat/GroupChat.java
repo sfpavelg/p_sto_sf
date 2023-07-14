@@ -32,6 +32,9 @@ public class GroupChat{
             inverseJoinColumns = @JoinColumn(name = "user_id"))
     private Set<User> users;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    private User author;
+
     @Column(name = "is_global")
     private boolean isGlobal = false;
 
