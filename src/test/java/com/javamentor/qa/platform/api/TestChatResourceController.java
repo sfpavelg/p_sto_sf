@@ -1,18 +1,31 @@
 package com.javamentor.qa.platform.api;
 
 import com.javamentor.qa.platform.AbstractTestApi;
+import com.javamentor.qa.platform.models.entity.chat.Chat;
+import com.javamentor.qa.platform.models.entity.chat.GroupChat;
+import com.javamentor.qa.platform.models.entity.chat.Message;
+import com.javamentor.qa.platform.models.entity.chat.SingleChat;
+import com.javamentor.qa.platform.models.entity.question.answer.Answer;
 import org.hamcrest.Matchers;
 import org.hamcrest.core.Is;
 import org.hamcrest.core.IsNull;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.test.context.jdbc.Sql;
 
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import org.springframework.http.MediaType;
+import org.thymeleaf.util.AggregateCharSequence;
+
+import java.util.List;
+import java.util.Objects;
+import java.util.function.LongFunction;
+import java.util.stream.IntStream;
 
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -223,5 +236,67 @@ public class TestChatResourceController extends AbstractTestApi {
                 .andExpect(jsonPath("$[0].name", Is.is("name10")))
                 .andExpect(jsonPath("$[0].image").value(IsNull.nullValue()))
                 .andExpect(jsonPath("$[0].lastMessage", Is.is("user 110 LAST message for tests")));
+    }
+
+    @Test
+    @Sql(value = {"/script/TestChatResourceController/testDeleteChat/Before.sql"}, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+    @Sql(value = {"/script/TestChatResourceController/testDeleteChat/After.sql"}, executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
+    public void testDeleteChat() throws Exception {
+        String token = getToken("email1@domain.com", "password");
+
+        //        Successfully test's for group chat
+        Long chatId = 100l;
+        this.mvc.perform(delete("/api/user/chat/" + chatId)
+                        .header("Authorization", "Bearer " + token))
+                .andExpect(status().isOk())
+                .andExpect(content().string("Чат удалён"));
+
+        List<Chat> list = em.createQuery("select c from Chat c where c.id = :id")
+                .setParameter("id", chatId)
+                .getResultList();
+        Assertions.assertTrue(list.isEmpty());
+
+        List<Message> messages = em.createNativeQuery("select * from message where chat_id = :id")
+                .setParameter("id", chatId)
+                .getResultList();
+        Assertions.assertTrue(messages.isEmpty());
+
+        List<GroupChat> groupChats = em.createQuery("select gc from GroupChat gc where gc.id = :id")
+                .setParameter("id", chatId)
+                .getResultList();
+        Assertions.assertTrue(groupChats.isEmpty());
+
+        List<Object> objects = em.createNativeQuery("select * from groupchat_has_users where chat_id = :id")
+                .setParameter("id", chatId)
+                .getResultList();
+        Assertions.assertTrue(objects.isEmpty());
+
+        //        Successfully test's for single chat
+        chatId = 102l;
+        this.mvc.perform(delete("/api/user/chat/" + chatId)
+                        .header("Authorization", "Bearer " + token))
+                .andExpect(status().isOk())
+                .andExpect(content().string("Чат удалён"));
+
+        list = em.createQuery("select c from Chat c where c.id = :id")
+                .setParameter("id", chatId)
+                .getResultList();
+        Assertions.assertTrue(list.isEmpty());
+
+        messages = em.createNativeQuery("select * from message where chat_id = :id")
+                .setParameter("id", chatId)
+                .getResultList();
+        Assertions.assertTrue(messages.isEmpty());
+
+        List<SingleChat> singleChats = em.createQuery("select sc from SingleChat sc where sc.id = :id")
+                .setParameter("id", chatId)
+                .getResultList();
+        Assertions.assertTrue(singleChats.isEmpty());
+
+        //Wrong id test
+        chatId = 1000l;
+        this.mvc.perform(delete("/api/user/chat/" + chatId)
+                        .header("Authorization", "Bearer " + token))
+                .andExpect(status().isNotFound());
     }
 }

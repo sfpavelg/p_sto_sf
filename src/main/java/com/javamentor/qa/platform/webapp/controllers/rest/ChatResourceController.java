@@ -4,6 +4,7 @@ import com.javamentor.qa.platform.models.dto.chat.MessageDto;
 import com.javamentor.qa.platform.models.dto.chat.SingleChatDto;
 import com.javamentor.qa.platform.service.abstracts.dto.chat.MessageDtoService;
 import com.javamentor.qa.platform.service.abstracts.dto.chat.SingleChatDtoService;
+import com.javamentor.qa.platform.service.abstracts.model.ChatService;
 import com.javamentor.qa.platform.service.impl.model.SingleChatServiceImpl;
 import com.javamentor.qa.platform.models.dto.chat.ChatDto;
 import com.javamentor.qa.platform.models.entity.user.User;
@@ -12,14 +13,17 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
+import javassist.NotFoundException;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.PathVariable;
+
 import java.util.HashMap;
 import java.util.List;
 
@@ -32,11 +36,12 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 @Api("Chat controller")
 public class ChatResourceController {
 
-
     private final MessageDtoService messageDtoService;
     private final SingleChatServiceImpl singleChatService;
     private final ChatDtoService chatDtoService;
     private final SingleChatDtoService singleChatDtoService;
+    private final ChatService chatService;
+
     /**
      * Gets all single chat MessageDto sorted by persist date.
      *
@@ -71,15 +76,15 @@ public class ChatResourceController {
             @ApiResponse(code = 401, message = "Unauthorized request"),
             @ApiResponse(code = 403, message = "Forbidden"),
             @ApiResponse(code = 400, message = "Invalid password")})
-    public ResponseEntity<?> getChatBySearch (@AuthenticationPrincipal User user,
-                                              @RequestParam(value = "value", defaultValue = "") String value) {
+    public ResponseEntity<?> getChatBySearch(@AuthenticationPrincipal User user,
+                                             @RequestParam(value = "value", defaultValue = "") String value) {
         return ResponseEntity.ok(chatDtoService.getChatDtoByUserIdAndValue(user.getId(), value));
     }
 
     /**
      * Gets all single chat dtos.
      *
-     *  @return A {@link ResponseEntity} containing a List of {@link SingleChatDto } objects, or a 404 response if no chats with the auth user.
+     * @return A {@link ResponseEntity} containing a List of {@link SingleChatDto } objects, or a 404 response if no chats with the auth user.
      */
     @ApiOperation(value = "Get user's list SingleChatDto", response = SingleChatDto.class)
     @ApiResponses(value = {
@@ -89,6 +94,18 @@ public class ChatResourceController {
     @GetMapping("/single")
     public ResponseEntity<List<SingleChatDto>> getSingleChatDto(@AuthenticationPrincipal User user) {
         return new ResponseEntity<>(singleChatDtoService.getSingleChatDto(user.getId()), HttpStatus.OK);
+    }
+
+    @ApiOperation(value = "Delete chat by id")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Success request. Chat has been deleted"),
+            @ApiResponse(code = 401, message = "Unauthorized request"),
+            @ApiResponse(code = 403, message = "Forbidden"),
+            @ApiResponse(code = 404, message = "The chat with the specified ID was not found.")})
+    @DeleteMapping("/{id}")
+    public ResponseEntity<String> deleteChat(@PathVariable("id") Long chatId) throws NotFoundException {
+        chatService.deleteChatById(chatId);
+        return new ResponseEntity<>("Чат удалён", HttpStatus.OK);
     }
 }
 
