@@ -14,16 +14,19 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
+import javassist.NotFoundException;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.PathVariable;
+
 import java.util.HashMap;
 import java.util.List;
 
@@ -78,15 +81,15 @@ public class ChatResourceController {
             @ApiResponse(code = 401, message = "Unauthorized request"),
             @ApiResponse(code = 403, message = "Forbidden"),
             @ApiResponse(code = 400, message = "Invalid password")})
-    public ResponseEntity<?> getChatBySearch (@AuthenticationPrincipal User user,
-                                              @RequestParam(value = "value", defaultValue = "") String value) {
+    public ResponseEntity<?> getChatBySearch(@AuthenticationPrincipal User user,
+                                             @RequestParam(value = "value", defaultValue = "") String value) {
         return ResponseEntity.ok(chatDtoService.getChatDtoByUserIdAndValue(user.getId(), value));
     }
 
     /**
      * Gets all single chat dtos.
      *
-     *  @return A {@link ResponseEntity} containing a List of {@link SingleChatDto } objects, or a 404 response if no chats with the auth user.
+     * @return A {@link ResponseEntity} containing a List of {@link SingleChatDto } objects, or a 404 response if no chats with the auth user.
      */
     @ApiOperation(value = "Get user's list SingleChatDto", response = SingleChatDto.class)
     @ApiResponses(value = {
