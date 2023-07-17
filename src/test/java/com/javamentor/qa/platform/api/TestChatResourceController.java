@@ -1,13 +1,16 @@
 package com.javamentor.qa.platform.api;
 
 import com.javamentor.qa.platform.AbstractTestApi;
+import com.javamentor.qa.platform.models.entity.chat.GroupChat;
 import org.hamcrest.Matchers;
 import org.hamcrest.core.Is;
 import org.hamcrest.core.IsNull;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.test.context.jdbc.Sql;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -223,5 +226,30 @@ public class TestChatResourceController extends AbstractTestApi {
                 .andExpect(jsonPath("$[0].name", Is.is("name10")))
                 .andExpect(jsonPath("$[0].image").value(IsNull.nullValue()))
                 .andExpect(jsonPath("$[0].lastMessage", Is.is("user 110 LAST message for tests")));
+    }
+
+    @Test
+    @Sql(value = {"/script/TestChatResourceController/testUpdateImageGroupChat/Before.sql"}, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+    @Sql(value = {"/script/TestChatResourceController/testUpdateImageGroupChat/After.sql"}, executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
+    public void testUpdateImageGroupChat() throws Exception {
+        String token = getToken("email0@domain.com", "password");
+
+        //Successfully test's
+        Long chatId = 100l;
+        String newImage="http://images.com/newimage.jpeg";
+        this.mvc.perform(patch("/api/user/chat/" + chatId + "/group/image")
+                .header("Authorization", "Bearer " + token)
+                .content(newImage)
+                .contentType(MediaType.TEXT_PLAIN_VALUE));
+        GroupChat groupChat = em.createQuery("select gc from GroupChat gc where gc.chat.id = :chatId", GroupChat.class)
+                .setParameter("chatId", chatId)
+                .getSingleResult();
+        Assertions.assertTrue(groupChat.getImageLink().equals(newImage));
+
+        //Bad group chat's id request
+        chatId = 201l;
+        this.mvc.perform(patch("/api/user/chat/" + chatId + "/group/image")
+                        .header("Authorization", "Bearer " + token))
+                .andExpect(status().isBadRequest());
     }
 }
