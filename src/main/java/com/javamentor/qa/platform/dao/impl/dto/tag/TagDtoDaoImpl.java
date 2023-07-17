@@ -4,6 +4,7 @@ import com.javamentor.qa.platform.dao.abstracts.dto.tag.TagDtoDao;
 import com.javamentor.qa.platform.dao.util.SingleResultUtil;
 import com.javamentor.qa.platform.models.dto.tag.RelatedTagsDto;
 import com.javamentor.qa.platform.models.dto.tag.TagDto;
+import com.javamentor.qa.platform.models.dto.tag.UserTagFavoriteDto;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
@@ -124,6 +125,19 @@ public class TagDtoDaoImpl implements TagDtoDao {
                 .setParameter("name", tagName)
                 .setMaxResults(6);
         return (List<TagDto>) query.getResultList();
+    }
+
+    @Override
+    public List<UserTagFavoriteDto> getByUserId(Long userId) {
+
+        return entityManager.createQuery("select new com.javamentor.qa.platform.models.dto.tag.UserTagFavoriteDto(" +
+                        "t.id," +
+                        "t.name," +
+                        "count(t.id) as countMessage)" +
+                        "from Tag t left join t.questions q left join q.answers a left join a.user u where u.id = :userId group by t.id order by countMessage desc", UserTagFavoriteDto.class)
+                .setParameter("userId", userId)
+                .setMaxResults(15)
+                .getResultList();
     }
 
 

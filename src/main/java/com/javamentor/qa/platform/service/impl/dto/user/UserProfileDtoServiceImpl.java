@@ -1,6 +1,6 @@
 package com.javamentor.qa.platform.service.impl.dto.user;
 
-import com.javamentor.qa.platform.dao.abstracts.dto.tag.UserTagFavoriteDtoDao;
+import com.javamentor.qa.platform.dao.abstracts.dto.tag.TagDtoDao;
 import com.javamentor.qa.platform.dao.abstracts.dto.user.UserDtoDao;
 import com.javamentor.qa.platform.models.dto.user.UserProfileDto;
 import com.javamentor.qa.platform.service.abstracts.dto.user.UserProfileDtoService;
@@ -14,7 +14,7 @@ import java.util.Optional;
 @AllArgsConstructor
 public class UserProfileDtoServiceImpl implements UserProfileDtoService {
     private UserDtoDao userDtoDao;
-    private UserTagFavoriteDtoDao userTagFavoriteDtoDao;
+    private TagDtoDao tagDtoDao;
     @Override
     public UserProfileDto getUserProfileDtoByUserId(Long userId) throws NotFoundException {
             Optional<UserProfileDto> userProfileDto = userDtoDao.getUserProfileDtoByUserId(userId);
@@ -22,7 +22,7 @@ public class UserProfileDtoServiceImpl implements UserProfileDtoService {
                 throw new NotFoundException("User with this id:" + userId + " not found");
             }
             UserProfileDto userProfileDtoWithListTag = userProfileDto.get();
-            userProfileDtoWithListTag.setUserTagFavoriteDtoList(userTagFavoriteDtoDao.getByUserId(userId));
+            userProfileDtoWithListTag.setUserTagFavoriteDtoList(tagDtoDao.getByUserId(userId));
             return userProfileDtoWithListTag;
     }
 }
