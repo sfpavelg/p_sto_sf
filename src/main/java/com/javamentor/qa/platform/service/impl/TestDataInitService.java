@@ -3,8 +3,8 @@ package com.javamentor.qa.platform.service.impl;
 import com.javamentor.qa.platform.models.entity.BookMarks;
 import com.javamentor.qa.platform.models.entity.Comment;
 import com.javamentor.qa.platform.models.entity.CommentType;
-import com.javamentor.qa.platform.models.entity.chat.*;
 import com.javamentor.qa.platform.models.entity.GroupBookmark;
+import com.javamentor.qa.platform.models.entity.chat.*;
 import com.javamentor.qa.platform.models.entity.question.*;
 import com.javamentor.qa.platform.models.entity.question.answer.Answer;
 import com.javamentor.qa.platform.models.entity.question.answer.CommentAnswer;
@@ -19,16 +19,12 @@ import com.javamentor.qa.platform.service.abstracts.model.tag.IgnoredTagService;
 import com.javamentor.qa.platform.service.abstracts.model.tag.RelatedTagService;
 import com.javamentor.qa.platform.service.abstracts.model.tag.TagService;
 import com.javamentor.qa.platform.service.abstracts.model.tag.TrackedTagService;
-import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
-
-import javax.transaction.Transactional;
 import java.time.LocalDateTime;
 import java.util.*;
-import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -390,13 +386,16 @@ public class TestDataInitService {
         }
     }
 
-    public void createGroupChats() {
+    public void createGroupChats(Long authorId) {
         Set<User> userSetJava = new HashSet<>(userService.getAll());
         Chat chatJava = new Chat(ChatType.GROUP);
         chatJava.setTitle("Java");
         GroupChat groupChatJava = new GroupChat();
         groupChatJava.setChat(chatJava);
         groupChatJava.setUsers(userSetJava);
+        if (authorId >= 1) {
+            groupChatJava.setAuthor(userService.getById(authorId).get());
+        }
         groupChatJava.setImageLink("https://cdn-icons-png.flaticon.com/512/1144/1144760.png");
         groupChatService.persist(groupChatJava);
 
@@ -406,6 +405,9 @@ public class TestDataInitService {
         GroupChat groupGlobalChat = new GroupChat();
         groupGlobalChat.setChat(chatGlobal);
         groupGlobalChat.setUsers(userSetJava);
+        if (authorId >= 1) {
+            groupGlobalChat.setAuthor(userService.getById(authorId).get());
+        }
         groupGlobalChat.setGlobal(true);
         groupGlobalChat.setImageLink("https://cdn-icons-png.flaticon.com/512/1144/1144760.png");
         groupChatService.persist(groupGlobalChat);
@@ -480,7 +482,7 @@ public class TestDataInitService {
         createReputation();
         createBookMarks(10);
         createGroupBookmarks(5);
-        createGroupChats();
+        createGroupChats(1L);
         createSingleChat(20);
         createMessage();
         createUserChatPin(3L);
