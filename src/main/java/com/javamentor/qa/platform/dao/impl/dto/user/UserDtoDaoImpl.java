@@ -3,6 +3,7 @@ package com.javamentor.qa.platform.dao.impl.dto.user;
 import com.javamentor.qa.platform.dao.abstracts.dto.user.UserDtoDao;
 import com.javamentor.qa.platform.dao.util.SingleResultUtil;
 import com.javamentor.qa.platform.models.dto.user.UserDto;
+import com.javamentor.qa.platform.models.dto.user.UserProfileDto;
 import com.javamentor.qa.platform.models.dto.user.UserProfileQuestionDto;
 import com.javamentor.qa.platform.models.dto.user.UserProfileVoteDto;
 import org.springframework.stereotype.Repository;
@@ -96,5 +97,19 @@ public class UserDtoDaoImpl implements UserDtoDao {
                 .setParameter("userId", userId).setParameter("startDate", startDate)
                 .setParameter("endDate", currentDateTime)
                 .getSingleResult();
+    }
+
+    @Override
+    public Optional<UserProfileDto> getUserProfileDtoByUserId(Long userId) {
+        return SingleResultUtil.getSingleResultOrNull( entityManager.createQuery("SELECT new com.javamentor.qa.platform.models.dto.user.UserProfileDto(" +
+                        "cast((select u.id from User u where u.id = :userId) as long)," +
+                        "cast((select sum(r.count) from Reputation r where r.author.id = :userId) as integer)," +
+                        "cast((select count(a.id) from Answer a where a.user.id = :userId) as long)," +
+                        "cast((select count(q.id) from Question q where q.user.id = :userId) as long)," +
+                        "cast(((select count(qv.id) from QuestionViewed qv left join qv.question q where q.user.id = :userId) +" +
+                                "(select count(qv.id) from QuestionViewed qv left join qv.question q left join q.answers a where a.user.id = :userId)) as long)) " +
+                                "from User u where u.id = :userId"
+                , UserProfileDto.class)
+                .setParameter("userId", userId));
     }
 }

@@ -4,6 +4,7 @@ import com.javamentor.qa.platform.models.dto.chat.MessageDto;
 import com.javamentor.qa.platform.models.dto.chat.SingleChatDto;
 import com.javamentor.qa.platform.service.abstracts.dto.chat.MessageDtoService;
 import com.javamentor.qa.platform.service.abstracts.dto.chat.SingleChatDtoService;
+import com.javamentor.qa.platform.service.abstracts.model.GroupChatService;
 import com.javamentor.qa.platform.service.impl.model.SingleChatServiceImpl;
 import com.javamentor.qa.platform.models.dto.chat.ChatDto;
 import com.javamentor.qa.platform.models.entity.user.User;
@@ -12,10 +13,13 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
+import javassist.NotFoundException;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -37,6 +41,8 @@ public class ChatResourceController {
     private final SingleChatServiceImpl singleChatService;
     private final ChatDtoService chatDtoService;
     private final SingleChatDtoService singleChatDtoService;
+    private final GroupChatService groupChatService;
+
     /**
      * Gets all single chat MessageDto sorted by persist date.
      *
@@ -90,5 +96,19 @@ public class ChatResourceController {
     public ResponseEntity<List<SingleChatDto>> getSingleChatDto(@AuthenticationPrincipal User user) {
         return new ResponseEntity<>(singleChatDtoService.getSingleChatDto(user.getId()), HttpStatus.OK);
     }
+
+    @PatchMapping("/{id}/group/image")
+    @ApiOperation(value = "Update group chat image")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Success request. Group chat image was updated"),
+            @ApiResponse(code = 401, message = "Unauthorized request"),
+            @ApiResponse(code = 403, message = "Forbidden"),
+            @ApiResponse(code = 404, message = "No chat with such id")})
+    public ResponseEntity<?> updateImageGroupChat(@PathVariable("id") Long chatId,
+                                                  @RequestBody String newImage) throws NotFoundException {
+        groupChatService.updateImage(chatId, newImage);
+        return ResponseEntity.ok().build();
+    }
+
 }
 

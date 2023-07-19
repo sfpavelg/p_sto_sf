@@ -6,6 +6,5 @@ import com.javamentor.qa.platform.models.entity.user.User;
 import java.util.Set;
 
 public interface GroupChatDao extends ReadWriteDao<GroupChat, Long> {
-
     Set<User> getUsersFromGroupChatById(Long id);
 }
