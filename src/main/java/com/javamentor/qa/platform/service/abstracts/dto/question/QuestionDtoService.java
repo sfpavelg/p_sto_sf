@@ -8,10 +8,14 @@ import javassist.NotFoundException;
 import java.util.HashMap;
 import java.util.List;
 
+import java.util.List;
+
 
 public interface QuestionDtoService {
     QuestionDto getQuestionDtoById(Long id, Long userId) throws NotFoundException;
+    List<QuestionDto> getQuestionDtoByUserIdAndValue(Long userId, String value) throws NotFoundException;
 
     PageDto<QuestionDto> getPageWithListQuestionDtoByTag(HashMap<String, Object> param);
 
+    Long getCountQuestionDto();
 }

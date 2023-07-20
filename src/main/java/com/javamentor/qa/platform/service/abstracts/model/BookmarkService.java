@@ -5,5 +5,5 @@ import com.javamentor.qa.platform.models.entity.user.User;
 import javassist.NotFoundException;
 
 public interface BookmarkService extends ReadWriteService<BookMarks, Long>{
-    BookMarks persistByQuestionId(Long id, User user) throws NotFoundException;
+    BookMarks persistByQuestionId(Long id, User user, String note) throws NotFoundException;
 }

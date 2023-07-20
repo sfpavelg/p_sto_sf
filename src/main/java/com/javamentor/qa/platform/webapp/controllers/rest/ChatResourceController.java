@@ -1,11 +1,12 @@
 package com.javamentor.qa.platform.webapp.controllers.rest;
 
-import com.javamentor.qa.platform.models.dto.chat.GroupChatDto;
 import com.javamentor.qa.platform.models.dto.chat.MessageDto;
 import com.javamentor.qa.platform.models.entity.chat.ChatType;
 import com.javamentor.qa.platform.service.abstracts.dto.chat.GroupChatDtoService;
+import com.javamentor.qa.platform.models.dto.chat.SingleChatDto;
 import com.javamentor.qa.platform.service.abstracts.dto.chat.MessageDtoService;
 import com.javamentor.qa.platform.service.abstracts.model.GroupChatService;
+import com.javamentor.qa.platform.service.abstracts.dto.chat.SingleChatDtoService;
 import com.javamentor.qa.platform.service.impl.model.SingleChatServiceImpl;
 import com.javamentor.qa.platform.models.dto.chat.ChatDto;
 import com.javamentor.qa.platform.models.entity.user.User;
@@ -21,6 +22,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import java.util.HashMap;
+import java.util.List;
+
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 
 @RestController
@@ -35,6 +38,7 @@ public class ChatResourceController {
     private final GroupChatService groupChatService;
     private final GroupChatDtoService groupChatDtoService;
 
+    private final SingleChatDtoService singleChatDtoService;
     /**
      * Gets all single chat MessageDto sorted by persist date.
      *
@@ -61,6 +65,7 @@ public class ChatResourceController {
         return ResponseEntity.ok(messageDtoService.getMessagesBySingleChatIdOrderNew(param));
     }
 
+
     @GetMapping
     @ApiOperation(value = "Поиск чатов по значению запроса - value для юзера", response = ChatDto.class)
     @ApiResponses(value = {
@@ -74,12 +79,27 @@ public class ChatResourceController {
     }
 
     /**
+     * Gets all single chat dtos.
+     *
+     *  @return A {@link ResponseEntity} containing a List of {@link SingleChatDto } objects, or a 404 response if no chats with the auth user.
+     */
+    @ApiOperation(value = "Get user's list SingleChatDto", response = SingleChatDto.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Success request. SingleChatDto list returned in response"),
+            @ApiResponse(code = 401, message = "Unauthorized request"),
+            @ApiResponse(code = 403, message = "Forbidden")})
+    @GetMapping("/single")
+    public ResponseEntity<List<SingleChatDto>> getSingleChatDto(@AuthenticationPrincipal User user) {
+        return new ResponseEntity<>(singleChatDtoService.getSingleChatDto(user.getId()), HttpStatus.OK);
+    }
+
+    /**
      *
      * Method returns JSON of GroupChatDto with last message in the group chat
      *
      * */
 
-    @ApiOperation(value = "Getting the GroupChatDto", response = GroupChatDto.class)
+    @ApiOperation(value = "Getting the GroupChatDto")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "GroupChatDto object returned in response"),
             @ApiResponse(code = 401, message = "Unauthorized request"),
@@ -113,3 +133,4 @@ public class ChatResourceController {
         return ResponseEntity.badRequest().body("Такого чата нет");
     }
 }
+

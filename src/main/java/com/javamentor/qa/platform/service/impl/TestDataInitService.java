@@ -358,6 +358,7 @@ public class TestDataInitService {
             BookMarks bookMarks = new BookMarks();
             bookMarks.setUser(userService.getAll().get(i));
             bookMarks.setQuestion(questionService.getAll().get(i));
+            bookMarks.setNote("note #" + i);
             bookMarkService.persist(bookMarks);
         }
     }

@@ -912,7 +912,7 @@ class TestQuestionResourceController extends AbstractTestApi {
                         .content("Test Comment"))
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id", Is.is(1)))
+                .andExpect(jsonPath("$.id",Is.is(1)))
                 .andExpect(jsonPath("$.questionId", Is.is(100)))
                 .andExpect(jsonPath("$.text", Is.is("Test Comment")))
                 .andExpect(jsonPath("$.userId", Is.is(100)))
@@ -940,7 +940,6 @@ class TestQuestionResourceController extends AbstractTestApi {
                 .andDo(print())
                 .andExpect(status().isBadRequest());
     }
-
     @Test
     @Sql(value = {"/script/TestQuestionResourceController/testAddQuestionToCurrentUserBookmark/Before.sql"}, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
     @Sql(value = {"/script/TestQuestionResourceController/testAddQuestionToCurrentUserBookmark/After.sql"}, executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
@@ -948,21 +947,22 @@ class TestQuestionResourceController extends AbstractTestApi {
         String token = getToken("0@gmail.com", "0pwd");
         //Тест на добавление вопроса в закладки.
         this.mvc.perform(post("/api/user/question/{questionId}/bookmark", 100)
-                        .header("Authorization", "Bearer " + token))
+                .header("Authorization", "Bearer " + token).content("Test note"))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id", Is.is(1)))
-                .andExpect(jsonPath("$.questionId", Is.is(100)))
-                .andExpect(jsonPath("$.userId", Is.is(100)));
+                .andExpect(jsonPath("$.questionId",Is.is(100)))
+                .andExpect(jsonPath("$.userId",Is.is(100)))
+                .andExpect(jsonPath("$.note", Is.is("Test note")));
         //Тест на добавление несуществующего вопроса.
         this.mvc.perform(post("/api/user/question/{questionId}/bookmark", 120)
-                        .header("Authorization", "Bearer " + token))
+                        .header("Authorization", "Bearer " + token).content("Test note"))
                 .andDo(print())
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$", Is.is("Question not found")));
         //Тест на добавление одного и того же вопроса.
         this.mvc.perform(post("/api/user/question/{questionId}/bookmark", 100)
-                        .header("Authorization", "Bearer " + token))
+                        .header("Authorization", "Bearer " + token).content("Test note"))
                 .andDo(print())
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$", Is.is("Question already exist")));
@@ -1160,6 +1160,162 @@ class TestQuestionResourceController extends AbstractTestApi {
                 .isEqualTo(0);
 
     }
+    @Test
+    @SqlGroup({
+            @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD,
+                    value = {"/script/TestQuestionResourceController/testGetQuestionsByValue/Before.sql"}),
+            @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD,
+                    value = {"/script/TestQuestionResourceController/testGetQuestionsByValue/After.sql"})
+    })
+    public void testGetQuestionsByValue() throws Exception {
+        String token = getToken("100@gmail.com", "0pwd");
+
+        //Поиск по названию
+        this.mvc.perform(get("/api/user/question/search/?value=title1")
+                        .header("Authorization", "Bearer " + token))
+                .andDo(print())
+                .andExpect(jsonPath("$.[0].id", Is.is(100)))
+                .andExpect(jsonPath("$.[0].title", Is.is("title1")))
+                .andExpect(jsonPath("$.[0].authorId", Is.is(100)))
+                .andExpect(jsonPath("$.[0].authorReputation", Is.is(0)))
+                .andExpect(jsonPath("$.[0].authorName", Is.is("name1")))
+                .andExpect(jsonPath("$.[0].authorImage", Is.is("http://imagelink1.com")))
+                .andExpect(jsonPath("$.[0].description", Is.is("description1")))
+                .andExpect(jsonPath("$.[0].viewCount", Is.is(0)))
+                .andExpect(jsonPath("$.[0].countAnswer", Is.is(3)))
+                .andExpect(jsonPath("$.[0].countValuable", Is.is(0)))
+                .andExpect(jsonPath("$.[0].listTagDto[0].id", Is.is(100)))
+                .andExpect(jsonPath("$.[0].listTagDto[0].name", Is.is("tag with id 100")))
+                .andExpect(jsonPath("$.[0].listAnswerDto[0].id", Is.is(107)))
+                .andExpect(jsonPath("$.[0].listAnswerDto[0].questionId", Is.is(100)));
+
+        //Поиск по тегу
+        this.mvc.perform(get("/api/user/question/search/?value=[tag with id 106]")
+                        .header("Authorization", "Bearer " + token))
+                .andDo(print())
+                .andExpect(jsonPath("$.size()", Is.is(2)))
+                .andExpect(jsonPath("$.[0].id", Is.is(102)))
+                .andExpect(jsonPath("$.[0].title", Is.is("title3")))
+                .andExpect(jsonPath("$.[0].authorId", Is.is(102)))
+                .andExpect(jsonPath("$.[0].authorReputation", Is.is(0)))
+                .andExpect(jsonPath("$.[0].authorName", Is.is("name3")))
+                .andExpect(jsonPath("$.[0].authorImage", Is.is("http://imagelink3.com")))
+                .andExpect(jsonPath("$.[0].description", Is.is("description3")))
+                .andExpect(jsonPath("$.[0].viewCount", Is.is(2)))
+                .andExpect(jsonPath("$.[0].countAnswer", Is.is(3)))
+                .andExpect(jsonPath("$.[0].countValuable", Is.is(0)))
+                .andExpect(jsonPath("$.[0].listTagDto[0].id", Is.is(100)))
+                .andExpect(jsonPath("$.[0].listTagDto[0].name", Is.is("tag with id 100")))
+                .andExpect(jsonPath("$.[0].listTagDto[1].id", Is.is(106)))
+                .andExpect(jsonPath("$.[0].listTagDto[1].name", Is.is("tag with id 106")))
+                .andExpect(jsonPath("$.[0].listAnswerDto[0].id", Is.is(102)))
+                .andExpect(jsonPath("$.[0].listAnswerDto[0].questionId", Is.is(102)))
+                .andExpect(jsonPath("$.[1].id", Is.is(109)))
+                .andExpect(jsonPath("$.[1].title", Is.is("title10")))
+                .andExpect(jsonPath("$.[1].authorId", Is.is(104)))
+                .andExpect(jsonPath("$.[1].authorReputation", Is.is(0)))
+                .andExpect(jsonPath("$.[1].authorName", Is.is("name5")))
+                .andExpect(jsonPath("$.[1].authorImage", Is.is("http://imagelink5.com")))
+                .andExpect(jsonPath("$.[1].description", Is.is("description10")))
+                .andExpect(jsonPath("$.[1].viewCount", Is.is(0)))
+                .andExpect(jsonPath("$.[1].countAnswer", Is.is(0)))
+                .andExpect(jsonPath("$.[1].countValuable", Is.is(0)))
+                .andExpect(jsonPath("$.[1].listTagDto[0].id", Is.is(103)))
+                .andExpect(jsonPath("$.[1].listTagDto[0].name", Is.is("tag with id 103")))
+                .andExpect(jsonPath("$.[1].listTagDto[1].id", Is.is(106)))
+                .andExpect(jsonPath("$.[1].listTagDto[1].name", Is.is("tag with id 106")));
+        // Поиск по user
+        this.mvc.perform(get("/api/user/question/search/?value=user:105")
+                        .header("Authorization", "Bearer " + token))
+                .andDo(print())
+                .andExpect(jsonPath("$.size()", Is.is(1)))
+                .andExpect(jsonPath("$.[0].id", Is.is(114)))
+                .andExpect(jsonPath("$.[0].title", Is.is("title15")))
+                .andExpect(jsonPath("$.[0].authorId", Is.is(105)))
+                .andExpect(jsonPath("$.[0].authorReputation", Is.is(0)))
+                .andExpect(jsonPath("$.[0].authorName", Is.is("name6")))
+                .andExpect(jsonPath("$.[0].authorImage", Is.is("http://imagelink6.com")))
+                .andExpect(jsonPath("$.[0].description", Is.is("description15")))
+                .andExpect(jsonPath("$.[0].viewCount", Is.is(0)))
+                .andExpect(jsonPath("$.[0].countAnswer", Is.is(0)))
+                .andExpect(jsonPath("$.[0].countValuable", Is.is(0)))
+                .andExpect(jsonPath("$.[0].listTagDto[0].id", Is.is(100)))
+                .andExpect(jsonPath("$.[0].listTagDto[0].name", Is.is("tag with id 100")));
+        // Поиск по answers
+        this.mvc.perform(get("/api/user/question/search/?value=answers:3")
+                        .header("Authorization", "Bearer " + token))
+                .andDo(print())
+                .andExpect(jsonPath("$.size()", Is.is(2)))
+                .andExpect(jsonPath("$.[0].id", Is.is(100)))
+                .andExpect(jsonPath("$.[0].title", Is.is("title1")))
+                .andExpect(jsonPath("$.[0].authorId", Is.is(100)))
+                .andExpect(jsonPath("$.[0].authorReputation", Is.is(0)))
+                .andExpect(jsonPath("$.[0].authorName", Is.is("name1")))
+                .andExpect(jsonPath("$.[0].authorImage", Is.is("http://imagelink1.com")))
+                .andExpect(jsonPath("$.[0].description", Is.is("description1")))
+                .andExpect(jsonPath("$.[0].viewCount", Is.is(0)))
+                .andExpect(jsonPath("$.[0].countAnswer", Is.is(3)))
+                .andExpect(jsonPath("$.[0].countValuable", Is.is(0)))
+                .andExpect(jsonPath("$.[0].listTagDto[0].id", Is.is(100)))
+                .andExpect(jsonPath("$.[0].listTagDto[0].name", Is.is("tag with id 100")))
+                .andExpect(jsonPath("$.[0].listAnswerDto[0].id", Is.is(107)))
+                .andExpect(jsonPath("$.[0].listAnswerDto[0].questionId", Is.is(100)))
+                .andExpect(jsonPath("$.[1].id", Is.is(102)))
+                .andExpect(jsonPath("$.[1].title", Is.is("title3")))
+                .andExpect(jsonPath("$.[1].authorId", Is.is(102)))
+                .andExpect(jsonPath("$.[1].authorReputation", Is.is(0)))
+                .andExpect(jsonPath("$.[1].authorName", Is.is("name3")))
+                .andExpect(jsonPath("$.[1].authorImage", Is.is("http://imagelink3.com")))
+                .andExpect(jsonPath("$.[1].description", Is.is("description3")))
+                .andExpect(jsonPath("$.[1].viewCount", Is.is(2)))
+                .andExpect(jsonPath("$.[1].countAnswer", Is.is(3)))
+                .andExpect(jsonPath("$.[1].countValuable", Is.is(0)))
+                .andExpect(jsonPath("$.[1].listTagDto[0].id", Is.is(100)))
+                .andExpect(jsonPath("$.[1].listTagDto[0].name", Is.is("tag with id 100")))
+                .andExpect(jsonPath("$.[1].listTagDto[1].id", Is.is(106)))
+                .andExpect(jsonPath("$.[1].listTagDto[1].name", Is.is("tag with id 106")))
+                .andExpect(jsonPath("$.[1].listAnswerDto[0].id", Is.is(102)))
+                .andExpect(jsonPath("$.[1].listAnswerDto[0].questionId", Is.is(102)));
+        // Поиск по views
+        this.mvc.perform(get("/api/user/question/search/?value=views:3")
+                        .header("Authorization", "Bearer " + token))
+                .andDo(print())
+                .andExpect(jsonPath("$.size()", Is.is(1)))
+                .andExpect(jsonPath("$.[0].id", Is.is(108)))
+                .andExpect(jsonPath("$.[0].title", Is.is("title9")))
+                .andExpect(jsonPath("$.[0].authorId", Is.is(103)))
+                .andExpect(jsonPath("$.[0].authorReputation", Is.is(0)))
+                .andExpect(jsonPath("$.[0].authorName", Is.is("name4")))
+                .andExpect(jsonPath("$.[0].authorImage", Is.is("http://imagelink4.com")))
+                .andExpect(jsonPath("$.[0].description", Is.is("description9")))
+                .andExpect(jsonPath("$.[0].viewCount", Is.is(4)))
+                .andExpect(jsonPath("$.[0].countAnswer", Is.is(0)))
+                .andExpect(jsonPath("$.[0].countValuable", Is.is(0)))
+                .andExpect(jsonPath("$.[0].listTagDto[0].id", Is.is(102)))
+                .andExpect(jsonPath("$.[0].listTagDto[0].name", Is.is("tag with id 102")));
+
+        // Поиск по двум параметрам tag and user
+        this.mvc.perform(get("/api/user/question/search/?value=[tag with id 106] user:102")
+                        .header("Authorization", "Bearer " + token))
+                .andDo(print())
+                .andExpect(jsonPath("$.size()", Is.is(1)))
+                .andExpect(jsonPath("$.[0].id", Is.is(102)))
+                .andExpect(jsonPath("$.[0].title", Is.is("title3")))
+                .andExpect(jsonPath("$.[0].authorId", Is.is(102)))
+                .andExpect(jsonPath("$.[0].authorReputation", Is.is(0)))
+                .andExpect(jsonPath("$.[0].authorName", Is.is("name3")))
+                .andExpect(jsonPath("$.[0].authorImage", Is.is("http://imagelink3.com")))
+                .andExpect(jsonPath("$.[0].description", Is.is("description3")))
+                .andExpect(jsonPath("$.[0].viewCount", Is.is(2)))
+                .andExpect(jsonPath("$.[0].countAnswer", Is.is(3)))
+                .andExpect(jsonPath("$.[0].countValuable", Is.is(0)))
+                .andExpect(jsonPath("$.[0].listTagDto[0].id", Is.is(100)))
+                .andExpect(jsonPath("$.[0].listTagDto[0].name", Is.is("tag with id 100")))
+                .andExpect(jsonPath("$.[0].listTagDto[1].id", Is.is(106)))
+                .andExpect(jsonPath("$.[0].listTagDto[1].name", Is.is("tag with id 106")))
+                .andExpect(jsonPath("$.[0].listAnswerDto[0].id", Is.is(102)))
+                .andExpect(jsonPath("$.[0].listAnswerDto[0].questionId", Is.is(102)));
+    }
 
     @Test
     @SqlGroup({
@@ -1228,7 +1384,28 @@ class TestQuestionResourceController extends AbstractTestApi {
                         .param("items", "1"))
                 .andDo(print())
                 .andExpect(status().isBadRequest());
-
     }
-}
 
+    @Test
+    @Sql(value = {"/script/TestQuestionResourceController/testGetCountQuestionDto/Before.sql"}, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+    @Sql(value = "/script/TestQuestionResourceController/testGetCountQuestionDto/After.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
+    public void testGetCountQuestionDto() throws Exception {
+        String JWT = getToken("0@gmail.com", "0pwd");
+
+        this.mvc.perform(get("/api/user/question/count")
+                        .header("Authorization", "Bearer " + JWT))
+                .andDo(print())
+                .andExpect(status().isOk());
+        assertThat(em.createQuery("select count(*) from Question").getSingleResult())
+                .isEqualTo(5L);
+
+//        Test on zero question
+        this.mvc.perform(get("/api/user/question/count")
+                        .header("Authorization", "Bearer " + JWT))
+                .andDo(print())
+                .andExpect(status().isOk());
+        assertThat(em.createQuery("select count(*) from Question q where q.id > 105").getSingleResult())
+                .isEqualTo(0L);
+    }
+
+}

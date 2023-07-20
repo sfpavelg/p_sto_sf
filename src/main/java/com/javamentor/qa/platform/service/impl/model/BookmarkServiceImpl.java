@@ -25,7 +25,7 @@ public class BookmarkServiceImpl extends ReadWriteServiceImpl<BookMarks, Long> i
 
     @Override
     @Transactional
-    public BookMarks persistByQuestionId(Long id, User user) throws NotFoundException {
+    public BookMarks persistByQuestionId(Long id, User user, String note) throws NotFoundException {
         BookMarks bookMarks = new BookMarks();
         if (user == null) {
             throw new NotFoundException("User not found");
@@ -39,6 +39,7 @@ public class BookmarkServiceImpl extends ReadWriteServiceImpl<BookMarks, Long> i
         }
         bookMarks.setUser(user);
         bookMarks.setQuestion(question.get());
+        bookMarks.setNote(note);
         persist(bookMarks);
         return bookMarks;
     }

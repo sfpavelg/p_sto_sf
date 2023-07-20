@@ -1,6 +1,7 @@
 package com.javamentor.qa.platform.webapp.controllers.rest;
 
 import com.javamentor.qa.platform.models.dto.PageDto;
+import com.javamentor.qa.platform.models.dto.chat.ChatDto;
 import com.javamentor.qa.platform.models.dto.question.QuestionCommentDto;
 import com.javamentor.qa.platform.models.dto.question.QuestionCreateDto;
 import com.javamentor.qa.platform.models.dto.question.QuestionDto;
@@ -278,8 +279,9 @@ public class QuestionResourceController {
             @ApiResponse(code = 400, message = "Invalid password"),
             @ApiResponse(code = 404, message = "Incorrect id Question. Question with id not found")})
     public ResponseEntity<?> addQuestionToCurrentUserBookmark(@PathVariable("questionId") Long questionId,
-                                                              @AuthenticationPrincipal User user) throws NotFoundException {
-        BookMarks bookMark = bookmarkService.persistByQuestionId(questionId, user);
+                                                              @AuthenticationPrincipal User user, @RequestBody String note) throws NotFoundException {
+
+        BookMarks bookMark = bookmarkService.persistByQuestionId(questionId, user, note);
         return ResponseEntity.ok(bookmarkDtoService.getBookmarkById(bookMark.getId()));
     }
 
@@ -351,5 +353,25 @@ public class QuestionResourceController {
         return ResponseEntity.ok(questionDtoService.getPageWithListQuestionDtoByTag(param));
     }
 
+    @GetMapping("/count")
+    @ApiOperation(value = "Get count of questions from the database")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Success request."),
+            @ApiResponse(code = 404, message = "Not found.")})
+    public ResponseEntity<?> getCountQuestionDto() {
+        return ResponseEntity.ok(questionDtoService.getCountQuestionDto());
+    }
 
+
+    @GetMapping("/search")
+    @ApiOperation(value = "Поиск вопросов по значению запроса - value для юзера", response = ChatDto.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Success request"),
+            @ApiResponse(code = 401, message = "Unauthorized request"),
+            @ApiResponse(code = 403, message = "Forbidden"),
+            @ApiResponse(code = 400, message = "Invalid password")})
+    public ResponseEntity<?> getQuestionsByValue (@AuthenticationPrincipal User user,
+                                              @RequestParam(value = "value", defaultValue = "") String value) throws NotFoundException {
+        return ResponseEntity.ok(questionDtoService.getQuestionDtoByUserIdAndValue(user.getId(), value));
+    }
 }

@@ -1,20 +1,19 @@
 package com.javamentor.qa.platform.api;
 
 import com.javamentor.qa.platform.AbstractTestApi;
+import org.hamcrest.Matchers;
 import org.hamcrest.core.Is;
 import org.hamcrest.core.IsNull;
 import org.junit.jupiter.api.Test;
 import org.springframework.test.context.jdbc.Sql;
 
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import org.springframework.http.MediaType;
-import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.jdbc.SqlGroup;
-
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 public class TestChatResourceController extends AbstractTestApi {
@@ -67,9 +66,9 @@ public class TestChatResourceController extends AbstractTestApi {
 
 //          Pagination positive test
         this.mvc.perform(get("/api/user/chat/{id}/single/message", 102)
-                .header("Authorization", "Bearer " + token).contentType(MediaType.APPLICATION_JSON)
-                .param("page", "2")
-                .param("items", "2"))
+                        .header("Authorization", "Bearer " + token).contentType(MediaType.APPLICATION_JSON)
+                        .param("page", "2")
+                        .param("items", "2"))
                 .andExpect(status().isOk())
                 .andDo(print())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
@@ -98,9 +97,9 @@ public class TestChatResourceController extends AbstractTestApi {
                 .andExpect(jsonPath("$.items[0].imageLink", Is.is("http://imagelink5.com")));
 //        Pagination  negative test wrong page
         this.mvc.perform(get("/api/user/chat/{id}/single/message", 102)
-                .header("Authorization", "Bearer " + token).contentType(MediaType.APPLICATION_JSON)
-                .param("page", "0")
-                .param("items", "1"))
+                        .header("Authorization", "Bearer " + token).contentType(MediaType.APPLICATION_JSON)
+                        .param("page", "0")
+                        .param("items", "1"))
                 .andExpect(status().isBadRequest());
 //        Pagination  negative test wrong items
         this.mvc.perform(get("/api/user/chat/{id}/single/message", 102)
@@ -109,6 +108,7 @@ public class TestChatResourceController extends AbstractTestApi {
                         .param("items", "0"))
                 .andExpect(status().isBadRequest());
     }
+
     @Test
     @Sql(value = {"/script/TestChatResourceController/testGetChatBySearch/Before.sql"}, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
     @Sql(value = {"/script/TestChatResourceController/testGetChatBySearch/After.sql"}, executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
@@ -170,9 +170,64 @@ public class TestChatResourceController extends AbstractTestApi {
     }
 
     @Test
+    @Sql(value = {"/script/TestChatResourceController/testGetSingleChatDto/Before.sql"}, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+    @Sql(value = {"/script/TestChatResourceController/testGetSingleChatDto/After.sql"}, executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
+    public void testGetSingleChatDto() throws Exception {
+        String token = getToken("email1@domain.com", "password");
+
+        //        Successfully test's
+        this.mvc.perform(get("/api/user/chat/single")
+                        .header("Authorization", "Bearer " + token))
+                .andExpect(status().isOk())
+                .andDo(print())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$[0].id", Is.is(100)))
+                .andExpect(jsonPath("$[0].name", Is.is("name2")))
+                .andExpect(jsonPath("$[0].image", Is.is("http://imagelink2.com")))
+                .andExpect(jsonPath("$[0].lastMessage", Is.is("user 102 LAST message for tests")))
+                .andExpect(jsonPath("$[1].id", Is.is(101)))
+                .andExpect(jsonPath("$[1].name", Is.is("name4")))
+                .andExpect(jsonPath("$[1].image", Is.is("http://imagelink4.com")))
+                .andExpect(jsonPath("$[1].lastMessage", Is.is("user 101 LAST message for tests")));
+        // there are no single chats
+        token = getToken("email3@domain.com", "password");
+        this.mvc.perform(get("/api/user/chat/single")
+                        .header("Authorization", "Bearer " + token))
+                .andExpect(status().isOk())
+                .andDo(print())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$", Matchers.hasSize(0)));
+
+        //there is no last message
+        token = getToken("email7@domain.com", "password");
+        this.mvc.perform(get("/api/user/chat/single")
+                        .header("Authorization", "Bearer " + token))
+                .andExpect(status().isOk())
+                .andDo(print())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$[0].id", Is.is(103)))
+                .andExpect(jsonPath("$[0].name", Is.is("name8")))
+                .andExpect(jsonPath("$[0].image", Is.is("http://imagelink8.com")))
+                .andExpect(jsonPath("$[0].lastMessage").value(IsNull.nullValue()))
+                .andExpect(jsonPath("$[0].persistDateTimeLastMessage").value(IsNull.nullValue()));
+
+        //there is no imageLink
+        token = getToken("email9@domain.com", "password");
+        this.mvc.perform(get("/api/user/chat/single")
+                        .header("Authorization", "Bearer " + token))
+                .andExpect(status().isOk())
+                .andDo(print())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$[0].id", Is.is(104)))
+                .andExpect(jsonPath("$[0].name", Is.is("name10")))
+                .andExpect(jsonPath("$[0].image").value(IsNull.nullValue()))
+                .andExpect(jsonPath("$[0].lastMessage", Is.is("user 110 LAST message for tests")));
+    }
+
+    @Test
     @SqlGroup({
             @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD,
-                    value = {"/script/TestChatResourceController/testgetGroupChat/Before.sql"}),
+                    value = {"/script/TestChatResourceController/testGetGroupChat/Before.sql"}),
             @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD,
                     value = {"/script/TestChatResourceController/testGetGroupChat/After.sql"})
     })
@@ -188,16 +243,16 @@ public class TestChatResourceController extends AbstractTestApi {
                 .andExpect(jsonPath("$[0].id", Is.is(500)))
                 .andExpect(jsonPath("$[0].chatName", Is.is("java1")))
                 .andExpect(jsonPath("$[0].lastMessage", Is.is("testmessage1")))
-                .andExpect(jsonPath("$[0].imageLink", Is.is("https://cdn-icons-png.flaticon.com/512/1144/1144760.png")))
+                .andExpect(jsonPath("$[0].imageLink", Is.is("https://cdn-icons-png.flaticon.com/512/1144/1144761.png")))
                 .andExpect(jsonPath("$[1].id", Is.is(501)))
                 .andExpect(jsonPath("$[1].chatName", Is.is("java2")))
                 .andExpect(jsonPath("$[1].lastMessage", Is.is("testmessage3")))
-                .andExpect(jsonPath("$[1].imageLink", Is.is("https://cdn-icons-png.flaticon.com/512/1144/1144760.png")))
+                .andExpect(jsonPath("$[1].imageLink", Is.is("https://cdn-icons-png.flaticon.com/512/1144/1144762.png")))
         // Method returned GroupChatDTO with null message
                 .andExpect(jsonPath("$[2].id", Is.is(502)))
                 .andExpect(jsonPath("$[2].chatName", Is.is("java3")))
                 .andExpect(jsonPath("$[2].lastMessage", IsNull.nullValue()))
-                .andExpect(jsonPath("$[2].imageLink", Is.is("https://cdn-icons-png.flaticon.com/512/1144/1144760.png")));
+                .andExpect(jsonPath("$[2].imageLink", Is.is("https://cdn-icons-png.flaticon.com/512/1144/1144763.png")));
     }
 
     @Test
@@ -229,4 +284,6 @@ public class TestChatResourceController extends AbstractTestApi {
                 .andDo(print())
                 .andExpect(status().is4xxClientError());
     }
+
+
 }
