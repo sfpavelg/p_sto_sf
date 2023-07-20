@@ -8,7 +8,6 @@ import com.javamentor.qa.platform.service.abstracts.dto.chat.MessageDtoService;
 import com.javamentor.qa.platform.service.abstracts.model.GroupChatService;
 import com.javamentor.qa.platform.service.abstracts.dto.chat.SingleChatDtoService;
 import com.javamentor.qa.platform.service.abstracts.model.ChatService;
-import com.javamentor.qa.platform.service.abstracts.model.GroupChatService;
 import com.javamentor.qa.platform.service.impl.model.SingleChatServiceImpl;
 import com.javamentor.qa.platform.models.dto.chat.ChatDto;
 import com.javamentor.qa.platform.models.entity.user.User;
@@ -22,7 +21,6 @@ import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.web.bind.annotation.*;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -51,7 +49,7 @@ public class ChatResourceController {
 
     private final SingleChatDtoService singleChatDtoService;
     private final ChatService chatService;
-    private final GroupChatService groupChatService;
+
 
     /**
      * Gets all single chat MessageDto sorted by persist date.
@@ -159,7 +157,6 @@ public class ChatResourceController {
         groupChatService.updateImage(chatId, newImage);
         return ResponseEntity.ok().build();
     }
-
 
     @ApiOperation(value = "Delete chat by id")
     @ApiResponses(value = {
