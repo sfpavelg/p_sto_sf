@@ -7,7 +7,6 @@ import java.util.Optional;
 import java.util.Set;
 
 public interface GroupChatDao extends ReadWriteDao<GroupChat, Long> {
-
     Set<User> getUsersFromGroupChatById(Long id);
     Optional<GroupChat> getGroupChatWithUsersById(Long id);
 }

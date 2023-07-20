@@ -32,4 +32,5 @@ public class GroupChatDaoImpl extends ReadWriteDaoImpl<GroupChat, Long> implemen
                         "select u from GroupChat u join fetch u.users where u.id= :id")
                 .setParameter("id", chatId));
     }
+
 }

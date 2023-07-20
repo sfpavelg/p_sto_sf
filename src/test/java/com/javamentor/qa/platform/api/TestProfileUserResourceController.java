@@ -320,4 +320,37 @@ public class TestProfileUserResourceController extends AbstractTestApi {
                 .andExpect(jsonPath("$[0].countVoteTag", Is.is(2)))
                 .andExpect(jsonPath("$[0].countAnswerQuestion", Is.is(1)));
     }
+
+    @Test
+    @Sql(value = {"/script/TestProfileUserResourceController/testGetUserProfile/Before.sql"}, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+    @Sql(value = {"/script/TestProfileUserResourceController/testGetUserProfile/After.sql"}, executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
+    public void testGetUserProfile() throws Exception {
+        String JWT = getToken("100@gmail.com", "0pwd");
+
+        //Success
+        this.mvc.perform(get("/api/user/profile/{userId}",100)
+                        .header("Authorization", "Bearer " + JWT)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+
+                .andExpect(jsonPath("$.id", Is.is(100)))
+                .andExpect(jsonPath("$.reputation", Is.is(6)))
+                .andExpect(jsonPath("$.countAnswer", Is.is(1)))
+                .andExpect(jsonPath("$.countQuestion", Is.is(2)))
+                .andExpect(jsonPath("$.countView", Is.is(2)))
+                .andExpect(jsonPath("$.userTagFavoriteDtoList[0].tagId", Is.is(101)))
+                .andExpect(jsonPath("$.userTagFavoriteDtoList[0].name", Is.is("tag with id 101")))
+                .andExpect(jsonPath("$.userTagFavoriteDtoList[0].countMessage", Is.is(2)))
+                .andExpect(jsonPath("$.userTagFavoriteDtoList[1].tagId", Is.is(102)))
+                .andExpect(jsonPath("$.userTagFavoriteDtoList[1].name", Is.is("tag with id 102")))
+                .andExpect(jsonPath("$.userTagFavoriteDtoList[1].countMessage", Is.is(1)));
+
+        //not found User
+        this.mvc.perform(get("/api/user/profile/{userId}", 106).header("Authorization", "Bearer " + JWT))
+                .andDo(print())
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$", Is.is("User with this id:106 not found")));
+    }
 }
