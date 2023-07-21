@@ -4,6 +4,7 @@ import com.javamentor.qa.platform.models.entity.BookMarks;
 import com.javamentor.qa.platform.models.entity.Comment;
 import com.javamentor.qa.platform.models.entity.CommentType;
 import com.javamentor.qa.platform.models.entity.GroupBookmark;
+
 import com.javamentor.qa.platform.models.entity.chat.*;
 import com.javamentor.qa.platform.models.entity.question.*;
 import com.javamentor.qa.platform.models.entity.question.answer.Answer;
@@ -387,15 +388,17 @@ public class TestDataInitService {
     }
 
     public void createGroupChats(Long authorId) {
+        User author = null;
+        if (authorId >= 1) {
+            author = userService.getById(authorId).get();
+        }
         Set<User> userSetJava = new HashSet<>(userService.getAll());
         Chat chatJava = new Chat(ChatType.GROUP);
         chatJava.setTitle("Java");
         GroupChat groupChatJava = new GroupChat();
         groupChatJava.setChat(chatJava);
         groupChatJava.setUsers(userSetJava);
-        if (authorId >= 1) {
-            groupChatJava.setAuthor(userService.getById(authorId).get());
-        }
+        groupChatJava.setAuthor(author);
         groupChatJava.setImageLink("https://cdn-icons-png.flaticon.com/512/1144/1144760.png");
         groupChatService.persist(groupChatJava);
 
@@ -405,9 +408,7 @@ public class TestDataInitService {
         GroupChat groupGlobalChat = new GroupChat();
         groupGlobalChat.setChat(chatGlobal);
         groupGlobalChat.setUsers(userSetJava);
-        if (authorId >= 1) {
-            groupGlobalChat.setAuthor(userService.getById(authorId).get());
-        }
+        groupGlobalChat.setAuthor(author);
         groupGlobalChat.setGlobal(true);
         groupGlobalChat.setImageLink("https://cdn-icons-png.flaticon.com/512/1144/1144760.png");
         groupChatService.persist(groupGlobalChat);
