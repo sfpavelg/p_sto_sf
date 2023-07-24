@@ -2,6 +2,7 @@ package com.javamentor.qa.platform.api;
 
 import com.javamentor.qa.platform.AbstractTestApi;
 import org.hamcrest.core.Is;
+import org.hamcrest.core.IsNull;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.jdbc.Sql;
@@ -67,7 +68,7 @@ public class TestProfileUserResourceController extends AbstractTestApi {
 
                 .andExpect(jsonPath("$[3].questionId", Is.is(112)))
                 .andExpect(jsonPath("$[3].title", Is.is("title13")))
-                .andExpect(jsonPath("$[3].tags", hasSize(0)))
+                .andExpect(jsonPath("$[3].tags", IsNull.nullValue()))
                 .andExpect(jsonPath("$[3].countAnswer", Is.is(0)));
 
         // Check successful execution of request with authenticated user who has no questions
