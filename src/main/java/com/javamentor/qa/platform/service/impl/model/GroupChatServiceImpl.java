@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Set;
+import java.util.stream.Collectors;
 
 
 @Service
@@ -26,6 +27,18 @@ public class GroupChatServiceImpl extends ReadWriteServiceImpl<GroupChat, Long> 
         return groupChatDao.getUsersFromGroupChatById(id);
     }
 
+    @Transactional
+    @Override
+    public void deleteUserFromChatById(Long chatId, Long userId) throws NotFoundException {
+        GroupChat groupChat = groupChatDao.getGroupChatWithUsersById(chatId)
+                .orElseThrow(() -> new NotFoundException("Пользователя нет в чате " + chatId));
+        if (groupChat.getUsers().stream().noneMatch(u -> (u.getId() == userId))) {
+            throw new NotFoundException("Пользователя нет в чате " + chatId);
+        }
+        Set<User> users = groupChat.getUsers().stream().filter(u -> (u.getId() != userId)).collect(Collectors.toSet());
+        groupChat.setUsers(users);
+        groupChatDao.update(groupChat);
+    }
     @Override
     @Transactional
     public void updateImage(Long chatId, String newImage) throws NotFoundException {
