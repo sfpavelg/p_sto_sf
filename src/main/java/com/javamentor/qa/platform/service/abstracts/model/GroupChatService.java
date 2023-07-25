@@ -10,5 +10,7 @@ public interface GroupChatService extends ReadWriteService<GroupChat, Long> {
 
     Set<User> getUsersFromGroupChatById(Long id);
 
+    void deleteUserFromChatById(Long chatId, Long userId) throws NotFoundException;
+
     void updateImage(Long chatId, String newImage) throws NotFoundException;
 }

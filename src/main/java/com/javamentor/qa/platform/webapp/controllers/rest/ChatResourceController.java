@@ -1,11 +1,13 @@
 package com.javamentor.qa.platform.webapp.controllers.rest;
 
 import com.javamentor.qa.platform.models.dto.chat.MessageDto;
+import com.javamentor.qa.platform.models.entity.chat.ChatType;
+import com.javamentor.qa.platform.service.abstracts.dto.chat.GroupChatDtoService;
 import com.javamentor.qa.platform.models.dto.chat.SingleChatDto;
 import com.javamentor.qa.platform.service.abstracts.dto.chat.MessageDtoService;
+import com.javamentor.qa.platform.service.abstracts.model.GroupChatService;
 import com.javamentor.qa.platform.service.abstracts.dto.chat.SingleChatDtoService;
 import com.javamentor.qa.platform.service.abstracts.model.ChatService;
-import com.javamentor.qa.platform.service.abstracts.model.GroupChatService;
 import com.javamentor.qa.platform.service.impl.model.SingleChatServiceImpl;
 import com.javamentor.qa.platform.models.dto.chat.ChatDto;
 import com.javamentor.qa.platform.models.entity.user.User;
@@ -18,6 +20,7 @@ import javassist.NotFoundException;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -32,20 +35,21 @@ import java.util.List;
 
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 
-
 @RestController
 @AllArgsConstructor
 @RequestMapping("/api/user/chat")
 @Api("Chat controller")
 public class ChatResourceController {
 
-
     private final MessageDtoService messageDtoService;
     private final SingleChatServiceImpl singleChatService;
     private final ChatDtoService chatDtoService;
+    private final GroupChatService groupChatService;
+    private final GroupChatDtoService groupChatDtoService;
+
     private final SingleChatDtoService singleChatDtoService;
     private final ChatService chatService;
-    private final GroupChatService groupChatService;
+
 
     /**
      * Gets all single chat MessageDto sorted by persist date.
@@ -101,6 +105,46 @@ public class ChatResourceController {
         return new ResponseEntity<>(singleChatDtoService.getSingleChatDto(user.getId()), HttpStatus.OK);
     }
 
+    /**
+     *
+     * Method returns JSON of GroupChatDto with last message in the group chat
+     *
+     * */
+
+    @ApiOperation(value = "Getting the GroupChatDto")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "GroupChatDto object returned in response"),
+            @ApiResponse(code = 401, message = "Unauthorized request"),
+            @ApiResponse(code = 403, message = "Forbidden"),
+            @ApiResponse(code = 404, message = "Wrong link")})
+    @GetMapping("/group")
+    public ResponseEntity<?> getGroupChat() {
+        User authenticatedUser = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        return ResponseEntity.ok(groupChatDtoService.getGroupChatDto(authenticatedUser.getId(), ChatType.GROUP));
+    }
+
+    /**
+     * Method deletes authorized user from the chat
+     */
+    @ApiOperation(value = "Deleting authorized user from the chat by id")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "User has been successfully deleted from the chat"),
+            @ApiResponse(code = 403, message = "Forbidden"),
+            @ApiResponse(code = 404, message = "Wrong chat id")})
+    @DeleteMapping("/{chatId}")
+    public ResponseEntity<?> deleteChatById(@PathVariable Long chatId) throws NotFoundException {
+        User authenticatedUser = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        if  (groupChatService.existsById(chatId)) {
+            groupChatService.deleteUserFromChatById(chatId, authenticatedUser.getId());
+            return ResponseEntity.ok("Юзер удален из чата " + chatId);
+        }
+        if (singleChatService.existsById(chatId)) {
+            singleChatService.deleteUserFromChatById(chatId, authenticatedUser.getId());
+            return ResponseEntity.ok("Юзер удален из чата " + chatId);
+        }
+        return ResponseEntity.badRequest().body("Такого чата нет");
+    }
+
     @PatchMapping("/{id}/group/image")
     @ApiOperation(value = "Update group chat image")
     @ApiResponses(value = {
@@ -113,7 +157,6 @@ public class ChatResourceController {
         groupChatService.updateImage(chatId, newImage);
         return ResponseEntity.ok().build();
     }
-
 
     @ApiOperation(value = "Delete chat by id")
     @ApiResponses(value = {
