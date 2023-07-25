@@ -13,16 +13,13 @@ public class BlockChatUserListDaoImpl extends ReadWriteDaoImpl<BlockChatUserList
     @PersistenceContext
     private EntityManager entityManager;
 
-    @Override
-    public void persist(BlockChatUserList blockChatUserList) {
+    public boolean isUserBlocked(BlockChatUserList blockChatUserList) {
         BlockChatUserList existingBlock = entityManager.createQuery(
                         "SELECT b FROM BlockChatUserList b WHERE b.profile = :profile AND b.blocked = :blocked",
                         BlockChatUserList.class)
                 .setParameter("profile", blockChatUserList.getProfile())
                 .setParameter("blocked", blockChatUserList.getBlocked())
                 .getResultList().stream().findFirst().orElse(null);
-        if (existingBlock == null) {
-            entityManager.persist(blockChatUserList);
-        }
+        return existingBlock != null;
     }
 }
