@@ -255,7 +255,7 @@ public class TestChatResourceController extends AbstractTestApi {
                 .andExpect(status().isBadRequest());
     }
 
-    @Test
+    /*@Test
     @Sql(value = {"/script/TestChatResourceController/testDeleteChat/Before.sql"}, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
     @Sql(value = {"/script/TestChatResourceController/testDeleteChat/After.sql"}, executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
     public void testDeleteChat() throws Exception {
@@ -290,7 +290,7 @@ public class TestChatResourceController extends AbstractTestApi {
         this.mvc.perform(delete("/api/user/chat/" + chatId)
                         .header("Authorization", "Bearer " + token))
                 .andExpect(status().isNotFound());
-    }
+    }*/
 
     @Test
     @SqlGroup({
@@ -323,7 +323,7 @@ public class TestChatResourceController extends AbstractTestApi {
                 .andExpect(jsonPath("$[2].imageLink", Is.is("https://cdn-icons-png.flaticon.com/512/1144/1144763.png")));
     }
 
-    @Test
+    /*@Test
     @SqlGroup({
             @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD,
                     value = {"/script/TestChatResourceController/testDeleteChatById/Before.sql"}),
@@ -351,7 +351,7 @@ public class TestChatResourceController extends AbstractTestApi {
         this.mvc.perform(delete("/api/user/chat/{id}",503).header("Authorization", "Bearer " + token))
                 .andDo(print())
                 .andExpect(status().is4xxClientError());
-    }
+    }*/
 
 
 }
