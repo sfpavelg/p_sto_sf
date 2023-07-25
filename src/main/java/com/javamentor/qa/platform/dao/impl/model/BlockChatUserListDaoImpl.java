@@ -6,6 +6,7 @@ import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import java.math.BigInteger;
 
 @Repository
 public class BlockChatUserListDaoImpl extends ReadWriteDaoImpl<BlockChatUserList, Long> implements BlockChatUserListDao {
@@ -13,13 +14,11 @@ public class BlockChatUserListDaoImpl extends ReadWriteDaoImpl<BlockChatUserList
     @PersistenceContext
     private EntityManager entityManager;
 
-    public boolean isUserBlocked(BlockChatUserList blockChatUserList) {
-        BlockChatUserList existingBlock = entityManager.createQuery(
-                        "SELECT b FROM BlockChatUserList b WHERE b.profile = :profile AND b.blocked = :blocked",
-                        BlockChatUserList.class)
-                .setParameter("profile", blockChatUserList.getProfile())
-                .setParameter("blocked", blockChatUserList.getBlocked())
-                .getResultList().stream().findFirst().orElse(null);
-        return existingBlock != null;
+    public boolean isUserBlocked(Long userId, Long blockedUserId) {
+        return ((BigInteger) entityManager.createNativeQuery(
+                "SELECT COUNT(*) FROM block_chat_user_list WHERE profile_id = :profile AND blocked_id = :blocked")
+                .setParameter("profile", userId)
+                .setParameter("blocked", blockedUserId)
+             .getSingleResult()).intValue() >= 1;
     }
 }

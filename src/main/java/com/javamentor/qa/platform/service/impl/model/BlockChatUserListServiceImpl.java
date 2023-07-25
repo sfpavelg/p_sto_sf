@@ -17,7 +17,7 @@ public class BlockChatUserListServiceImpl extends ReadWriteServiceImpl<BlockChat
 
     @Override
     public void persist(BlockChatUserList blockChatUserList) {
-        if (!blockChatUserListDao.isUserBlocked(blockChatUserList)) {
+        if (!blockChatUserListDao.isUserBlocked(blockChatUserList.getProfile().getId(), blockChatUserList.getBlocked().getId())) {
             super.persist(blockChatUserList);
         }
     }
