@@ -1,7 +1,6 @@
 package com.javamentor.qa.platform.webapp.controllers.rest;
 
 import com.javamentor.qa.platform.models.dto.GroupBookmarkDto;
-import com.javamentor.qa.platform.models.dto.user.UserProfileCommentDto;
 import com.javamentor.qa.platform.models.dto.user.UserProfileDto;
 import com.javamentor.qa.platform.models.dto.user.UserProfileQuestionDto;
 import com.javamentor.qa.platform.models.dto.user.UserProfileVoteDto;
@@ -9,7 +8,11 @@ import com.javamentor.qa.platform.models.entity.GroupBookmark;
 import com.javamentor.qa.platform.models.entity.user.User;
 import com.javamentor.qa.platform.service.abstracts.dto.GroupBookmarkDtoService;
 import com.javamentor.qa.platform.service.abstracts.dto.answer.AnswerDtoService;
-import com.javamentor.qa.platform.service.abstracts.dto.user.*;
+import com.javamentor.qa.platform.service.abstracts.dto.user.UserProfileCommentDtoService;
+import com.javamentor.qa.platform.service.abstracts.dto.user.UserProfileDtoService;
+import com.javamentor.qa.platform.service.abstracts.dto.user.UserProfileQuestionDtoService;
+import com.javamentor.qa.platform.service.abstracts.dto.user.UserProfileTagDtoService;
+import com.javamentor.qa.platform.service.abstracts.dto.user.UserProfileVoteDtoService;
 import com.javamentor.qa.platform.service.abstracts.model.GroupBookmarkService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -37,8 +40,8 @@ public class ProfileUserResourceController {
     private final UserProfileTagDtoService userProfileTagDtoService;
     private final UserProfileVoteDtoService userProfileVoteDtoService;
     private final UserProfileDtoService userProfileDtoService;
-
     private final UserProfileCommentDtoService userProfileCommentDtoService;
+
     @GetMapping("/questions")
     @ApiOperation(
             value = "Getting all UserProfileQuestionDto of authorized User",
@@ -149,22 +152,21 @@ public class ProfileUserResourceController {
     }
 
     @GetMapping("/comment")
-    @ApiOperation(value = "Get UserProfileCommentDto for authorised user", response = UserProfileCommentDto.class)
+    @ApiOperation(value = "Get UserProfileCommentDto for authorised user")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Success"),
             @ApiResponse(code = 401, message = "Unauthorized request"),
             @ApiResponse(code = 403, message = "Forbidden"),
 
     })
-    public ResponseEntity<?> getUserProfileCommentDto
+        public ResponseEntity<?> getUserProfileCommentDto
             (@AuthenticationPrincipal User user, @RequestParam(defaultValue = "1") int currentPageNumber,
-             @RequestParam(defaultValue = "10") int itemsOnPage) throws NotFoundException  {
+             @RequestParam(defaultValue = "10") int itemsOnPage) {
         HashMap<String, Object> param = new HashMap<>();
         param.put("currentPageNumber", currentPageNumber);
         param.put("itemsOnPage", itemsOnPage);
         param.put("userId", user.getId());
         return ResponseEntity.ok(userProfileCommentDtoService.getUserProfileCommentDto(param));
     }
-
 }
 
