@@ -22,6 +22,4 @@ public class BookmarkDaoImpl extends ReadWriteDaoImpl<BookMarks, Long> implement
                 .getSingleResult();
         return count > 0;
     }
-
-
 }
