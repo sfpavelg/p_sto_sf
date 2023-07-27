@@ -9,7 +9,6 @@ import javax.persistence.FetchType;
 import javax.persistence.ManyToOne;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import java.time.LocalDateTime;
 import java.util.Objects;
@@ -21,7 +20,7 @@ import java.util.Objects;
 @NoArgsConstructor
 public class BlockChatUserList {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(generator = "block_chat_user_list_id_seq")
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)

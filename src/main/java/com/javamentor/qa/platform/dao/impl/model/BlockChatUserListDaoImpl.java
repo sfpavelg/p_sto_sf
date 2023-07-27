@@ -14,10 +14,9 @@ public class BlockChatUserListDaoImpl extends ReadWriteDaoImpl<BlockChatUserList
     private EntityManager entityManager;
 
     public boolean isUserBlocked(Long userId, Long blockedUserId) {
-        return (boolean) entityManager.createNativeQuery(
-                        "SELECT COUNT(*) >= 1 FROM block_chat_user_list WHERE profile_id = :profile AND blocked_id = :blocked")
+        return (boolean) entityManager.createQuery(
+                        "SELECT CASE WHEN COUNT(b) > 0 THEN true ELSE false END FROM BlockChatUserList b WHERE b.profile.id = :profile AND b.blocked.id = :blocked")
                 .setParameter("profile", userId)
-                .setParameter("blocked", blockedUserId)
-                .getSingleResult();
+                .setParameter("blocked", blockedUserId).getSingleResult();
     }
 }
