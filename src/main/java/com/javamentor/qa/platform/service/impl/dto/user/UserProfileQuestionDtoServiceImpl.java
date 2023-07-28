@@ -33,7 +33,6 @@ public class UserProfileQuestionDtoServiceImpl implements UserProfileQuestionDto
         Map<Long, List<TagDto>> tags = tagDtoDao.getMapTagDtoAndQuestionId(questionIdList);
         userProfileQuestionDtos.forEach(b -> b.setTags(tags.get(b.getQuestionId())));
         return userProfileQuestionDtos;
-
     }
 
 
@@ -46,15 +45,5 @@ public class UserProfileQuestionDtoServiceImpl implements UserProfileQuestionDto
         Map<Long, List<TagDto>> tags = tagDtoDao.getMapTagDtoAndQuestionId(questionIdList);
         userProfileQuestionDtos.forEach(b -> b.setTags(tags.get(b.getQuestionId())));
         return userProfileQuestionDtos;
-
-
-//        List<UserProfileQuestionDto> list = new ArrayList<>();
-//        userDtoDao.getAllUserRemovedQuestion(id).stream().forEach(userProfileQuestionDto -> {
-//            userProfileQuestionDto
-//                    .setTags(tagDtoDao.getTagDtoById(userProfileQuestionDto.getQuestionId()));
-//
-//            list.add(userProfileQuestionDto);
-//        });
-//        return list;
     }
 }
