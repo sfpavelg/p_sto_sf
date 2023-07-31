@@ -47,28 +47,16 @@ public class TagDtoDaoImpl implements TagDtoDao {
     @Override
     public Map<Long, List<TagDto>> getMapTagDtoAndQuestionId(List<Long> questionIdList) {
         List<Tuple> tags = entityManager.createQuery("" +
-                        "select t.id, " +
-                        "t.name," +
-                        "t.description, " +
-                        "q.id " +
-                        "from Question q " +
-                        "left join q.tags qt on q.id in (:qid) " +
-                        "left join Tag t on qt.id = t.id " +
-                        "where q.id in (:qid) ", Tuple.class)
+                        "select t.id as id, t.name as name, t.description as description, q.id as q_id " +
+                        "from Tag t join t.questions q where q.id in (:qid)", Tuple.class)
                 .setParameter("qid", questionIdList)
                 .getResultList();
 
         Map<Long, List<TagDto>> tagsmap = new HashMap<>();
         for (Tuple tuple : tags) {
             Long key = tuple.get(3, Long.class);
-            Long id = tuple.get(0, Long.class);
-            if(id==null){
-                tagsmap.computeIfAbsent(key, k -> new ArrayList<>());
-            }
-            if(id!=null) {
-                TagDto tagDto = new TagDto(tuple.get(0, Long.class), tuple.get(1, String.class), tuple.get(2, String.class));
-                tagsmap.computeIfAbsent(key, k -> new ArrayList<>()).add(tagDto);
-            }
+            TagDto tagDto = new TagDto(tuple.get(0, Long.class), tuple.get(1, String.class), tuple.get(2, String.class));
+            tagsmap.computeIfAbsent(key, k -> new ArrayList<>()).add(tagDto);
         }
         return tagsmap;
     }

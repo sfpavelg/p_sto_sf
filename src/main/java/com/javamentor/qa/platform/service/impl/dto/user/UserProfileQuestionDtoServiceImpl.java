@@ -32,6 +32,7 @@ public class UserProfileQuestionDtoServiceImpl implements UserProfileQuestionDto
                 .collect(Collectors.toList());
         Map<Long, List<TagDto>> tags = tagDtoDao.getMapTagDtoAndQuestionId(questionIdList);
         userProfileQuestionDtos.forEach(b -> b.setTags(tags.get(b.getQuestionId())));
+        userProfileQuestionDtos.stream().filter(s->s.getTags()==null).forEach(s->s.setTags(new ArrayList<>()));
         return userProfileQuestionDtos;
     }
 
@@ -44,6 +45,7 @@ public class UserProfileQuestionDtoServiceImpl implements UserProfileQuestionDto
                 .collect(Collectors.toList());
         Map<Long, List<TagDto>> tags = tagDtoDao.getMapTagDtoAndQuestionId(questionIdList);
         userProfileQuestionDtos.forEach(b -> b.setTags(tags.get(b.getQuestionId())));
+        userProfileQuestionDtos.stream().filter(s->s.getTags()==null).forEach(s->s.setTags(new ArrayList<>()));
         return userProfileQuestionDtos;
     }
 }
