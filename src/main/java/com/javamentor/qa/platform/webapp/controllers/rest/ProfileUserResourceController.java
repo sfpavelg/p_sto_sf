@@ -8,6 +8,7 @@ import com.javamentor.qa.platform.models.entity.GroupBookmark;
 import com.javamentor.qa.platform.models.entity.user.User;
 import com.javamentor.qa.platform.service.abstracts.dto.GroupBookmarkDtoService;
 import com.javamentor.qa.platform.service.abstracts.dto.answer.AnswerDtoService;
+import com.javamentor.qa.platform.service.abstracts.dto.user.UserProfileCommentDtoService;
 import com.javamentor.qa.platform.service.abstracts.dto.user.UserProfileDtoService;
 import com.javamentor.qa.platform.service.abstracts.dto.user.UserProfileQuestionDtoService;
 import com.javamentor.qa.platform.service.abstracts.dto.user.UserProfileTagDtoService;
@@ -23,6 +24,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
 
 @RestController
@@ -38,6 +40,7 @@ public class ProfileUserResourceController {
     private final UserProfileTagDtoService userProfileTagDtoService;
     private final UserProfileVoteDtoService userProfileVoteDtoService;
     private final UserProfileDtoService userProfileDtoService;
+    private final UserProfileCommentDtoService userProfileCommentDtoService;
 
     @GetMapping("/questions")
     @ApiOperation(
@@ -148,5 +151,22 @@ public class ProfileUserResourceController {
         return ResponseEntity.ok(userProfileDtoService.getUserProfileDtoByUserId(userId));
     }
 
+    @GetMapping("/comment")
+    @ApiOperation(value = "Get UserProfileCommentDto for authorised user")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Success"),
+            @ApiResponse(code = 401, message = "Unauthorized request"),
+            @ApiResponse(code = 403, message = "Forbidden"),
+
+    })
+        public ResponseEntity<?> getUserProfileCommentDto
+            (@AuthenticationPrincipal User user, @RequestParam(defaultValue = "1") int currentPageNumber,
+             @RequestParam(defaultValue = "10") int itemsOnPage) {
+        HashMap<String, Object> param = new HashMap<>();
+        param.put("currentPageNumber", currentPageNumber);
+        param.put("itemsOnPage", itemsOnPage);
+        param.put("userId", user.getId());
+        return ResponseEntity.ok(userProfileCommentDtoService.getUserProfileCommentDto(param));
+    }
 }
 

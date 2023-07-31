@@ -6,15 +6,16 @@ import com.javamentor.qa.platform.models.dto.tag.RelatedTagsDto;
 import com.javamentor.qa.platform.models.dto.tag.TagDto;
 import com.javamentor.qa.platform.models.dto.tag.UserTagFavoriteDto;
 import org.springframework.stereotype.Repository;
+
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import javax.persistence.Tuple;
+import java.util.Optional;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
-import java.util.ArrayList;
 
 
 @Repository
@@ -58,7 +59,6 @@ public class TagDtoDaoImpl implements TagDtoDao {
             TagDto tagDto = new TagDto(tuple.get(0, Long.class), tuple.get(1, String.class), tuple.get(2, String.class));
             tagsmap.computeIfAbsent(key, k -> new ArrayList<>()).add(tagDto);
         }
-
         return tagsmap;
     }
 
@@ -128,16 +128,21 @@ public class TagDtoDaoImpl implements TagDtoDao {
 
     @Override
     public List<UserTagFavoriteDto> getByUserId(Long userId) {
-
         return entityManager.createQuery("select new com.javamentor.qa.platform.models.dto.tag.UserTagFavoriteDto(" +
                         "t.id," +
                         "t.name," +
-                        "count(t.id) as countMessage)" +
-                        "from Tag t left join t.questions q left join q.answers a left join a.user u where u.id = :userId group by t.id order by countMessage desc", UserTagFavoriteDto.class)
+                        "count(distinct q.id) as countMessage)" +
+                        "from Tag t " +
+                        "left join t.questions q " +
+                        "left join q.answers a " +
+                        "left join a.user u " +
+                        "where u.id = :userId " +
+                        "or q.user.id = :userId " +
+                        "group by t.id " +
+                        "having count(distinct q.id) > 0 " +
+                        "order by countMessage desc", UserTagFavoriteDto.class)
                 .setParameter("userId", userId)
                 .setMaxResults(15)
                 .getResultList();
     }
-
-
 }
