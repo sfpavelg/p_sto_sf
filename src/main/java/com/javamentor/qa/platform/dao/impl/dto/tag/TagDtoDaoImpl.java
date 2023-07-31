@@ -59,7 +59,6 @@ public class TagDtoDaoImpl implements TagDtoDao {
             TagDto tagDto = new TagDto(tuple.get(0, Long.class), tuple.get(1, String.class), tuple.get(2, String.class));
             tagsmap.computeIfAbsent(key, k -> new ArrayList<>()).add(tagDto);
         }
-
         return tagsmap;
     }
 
