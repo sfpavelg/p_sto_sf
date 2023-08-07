@@ -2,6 +2,7 @@ package com.javamentor.qa.platform.api;
 
 import com.javamentor.qa.platform.AbstractTestApi;
 import org.hamcrest.core.Is;
+import org.hamcrest.core.IsNull;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.jdbc.Sql;
@@ -403,5 +404,62 @@ public class TestProfileUserResourceController extends AbstractTestApi {
                 .andExpect(jsonPath("$.items[0].countReputation", Is.is(1)))
                 .andExpect(jsonPath("$.items[0].persistDate", Is.is("2023-01-18T15:21:03.527867")))
                 .andExpect(jsonPath("$.items[0].action", Is.is("UP_VOTE")));
+    }
+
+    @Test
+    @Sql(value = {"/script/TestProfileUserResourceController/testGetUserProfileCommentDto/Before.sql"}, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+    @Sql(value = {"/script/TestProfileUserResourceController/testGetUserProfileCommentDto/After.sql"}, executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
+    public void testGetUserProfileCommentDto() throws Exception {
+        String JWT = getToken("100@gmail.com", "0pwd");
+
+        //Success test
+        this.mvc.perform(get("/api/user/profile/comment")
+                        .header("Authorization", "Bearer " + JWT)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+
+                .andExpect(jsonPath("$.currentPageNumber", Is.is(1)))
+                .andExpect(jsonPath("$.totalPageCount", Is.is(1)))
+                .andExpect(jsonPath("$.totalResultCount", Is.is(3)))
+                //Comment to question and answer
+                .andExpect(jsonPath("$.items[0].id", Is.is(100)))
+                .andExpect(jsonPath("$.items[0].comment", Is.is("comment1")))
+                .andExpect(jsonPath("$.items[0].persistDate", Is.is("2023-01-19T15:21:03.527866")))
+                .andExpect(jsonPath("$.items[0].questionId", Is.is(101)))
+                .andExpect(jsonPath("$.items[0].answerId", Is.is(100)))
+                .andExpect(jsonPath("$.items[0].commentType", Is.is("QUESTION")))
+                //Comment to question with no answer
+                .andExpect(jsonPath("$.items[1].id", Is.is(104)))
+                .andExpect(jsonPath("$.items[1].comment", Is.is("comment5")))
+                .andExpect(jsonPath("$.items[1].persistDate", Is.is("2023-01-19T15:21:03.527866")))
+                .andExpect(jsonPath("$.items[1].questionId", Is.is(102)))
+                .andExpect(jsonPath("$.items[1].answerId", IsNull.nullValue()))
+                .andExpect(jsonPath("$.items[1].commentType", Is.is("QUESTION")))
+                //Comment to answer
+                .andExpect(jsonPath("$.items[2].id", Is.is(108)))
+                .andExpect(jsonPath("$.items[2].comment", Is.is("comment9")))
+                .andExpect(jsonPath("$.items[2].persistDate", Is.is("2023-01-19T15:21:03.527866")))
+                .andExpect(jsonPath("$.items[2].questionId", Is.is(101)))
+                .andExpect(jsonPath("$.items[2].answerId", Is.is(105)))
+                .andExpect(jsonPath("$.items[2].commentType", Is.is("ANSWER")))
+                .andExpect(jsonPath("$.itemsOnPage", Is.is(10)));
+
+        String nJWT = getToken("105@gmail.com", "0pwd");
+
+        //User has no comments at all
+        this.mvc.perform(get("/api/user/profile/comment")
+                        .header("Authorization", "Bearer " + nJWT)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+
+                .andExpect(jsonPath("$.currentPageNumber", Is.is(1)))
+                .andExpect(jsonPath("$.totalPageCount", Is.is(0)))
+                .andExpect(jsonPath("$.totalResultCount", Is.is(0)))
+                .andExpect(jsonPath("$.items", hasSize(0)))
+                .andExpect(jsonPath("$.itemsOnPage", Is.is(10)));
     }
 }

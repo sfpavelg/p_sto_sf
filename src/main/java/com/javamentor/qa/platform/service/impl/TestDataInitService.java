@@ -4,12 +4,14 @@ import com.javamentor.qa.platform.models.entity.BookMarks;
 import com.javamentor.qa.platform.models.entity.Comment;
 import com.javamentor.qa.platform.models.entity.CommentType;
 import com.javamentor.qa.platform.models.entity.GroupBookmark;
+
 import com.javamentor.qa.platform.models.entity.chat.*;
 import com.javamentor.qa.platform.models.entity.question.*;
 import com.javamentor.qa.platform.models.entity.question.answer.Answer;
 import com.javamentor.qa.platform.models.entity.question.answer.CommentAnswer;
 import com.javamentor.qa.platform.models.entity.question.answer.VoteAnswer;
 import com.javamentor.qa.platform.models.entity.question.answer.VoteType;
+import com.javamentor.qa.platform.models.entity.user.BlockChatUserList;
 import com.javamentor.qa.platform.models.entity.user.Role;
 import com.javamentor.qa.platform.models.entity.user.User;
 import com.javamentor.qa.platform.models.entity.user.reputation.Reputation;
@@ -54,6 +56,8 @@ public class TestDataInitService {
     private final GroupBookmarkService groupBookmarkService;
     private final UserChatPinService userChatPinService;
 
+    private final BlockChatUserListService blockChatUserListService;
+
     @Autowired
     public TestDataInitService(RoleService roleService, UserService userService, QuestionService questionService,
                                AnswerService answerService, TagService tagService, RelatedTagService relatedTagService, IgnoredTagService ignoredTagService,
@@ -61,7 +65,8 @@ public class TestDataInitService {
                                VoteQuestionService voteQuestionService, VoteAnswerService voteAnswerService,
                                CommentQuestionService commentQuestionService, CommentAnswerService commentAnswerService,
                                ReputationService reputationService, BookmarkService bookMarkService, GroupChatService groupChatService,
-                               SingleChatService singleChatService, MessageService messageService,GroupBookmarkService groupBookmarkService, UserChatPinService userChatPinService) {
+                               SingleChatService singleChatService, MessageService messageService,GroupBookmarkService groupBookmarkService, UserChatPinService userChatPinService,
+                               BlockChatUserListService blockChatUserListService) {
         this.roleService = roleService;
         this.userService = userService;
         this.questionService = questionService;
@@ -82,6 +87,7 @@ public class TestDataInitService {
         this.singleChatService = singleChatService;
         this.messageService = messageService;
         this.userChatPinService = userChatPinService;
+        this.blockChatUserListService = blockChatUserListService;
     }
 
     public void createSuperUser(int count) {
@@ -387,15 +393,17 @@ public class TestDataInitService {
     }
 
     public void createGroupChats(Long authorId) {
+        User author = null;
+        if (authorId >= 1) {
+            author = userService.getById(authorId).get();
+        }
         Set<User> userSetJava = new HashSet<>(userService.getAll());
         Chat chatJava = new Chat(ChatType.GROUP);
         chatJava.setTitle("Java");
         GroupChat groupChatJava = new GroupChat();
         groupChatJava.setChat(chatJava);
         groupChatJava.setUsers(userSetJava);
-        if (authorId >= 1) {
-            groupChatJava.setAuthor(userService.getById(authorId).get());
-        }
+        groupChatJava.setAuthor(author);
         groupChatJava.setImageLink("https://cdn-icons-png.flaticon.com/512/1144/1144760.png");
         groupChatService.persist(groupChatJava);
 
@@ -405,9 +413,7 @@ public class TestDataInitService {
         GroupChat groupGlobalChat = new GroupChat();
         groupGlobalChat.setChat(chatGlobal);
         groupGlobalChat.setUsers(userSetJava);
-        if (authorId >= 1) {
-            groupGlobalChat.setAuthor(userService.getById(authorId).get());
-        }
+        groupGlobalChat.setAuthor(author);
         groupGlobalChat.setGlobal(true);
         groupGlobalChat.setImageLink("https://cdn-icons-png.flaticon.com/512/1144/1144760.png");
         groupChatService.persist(groupGlobalChat);
@@ -462,6 +468,22 @@ public class TestDataInitService {
         }
     }
 
+    public void createBlockChatUserList(int count) {
+        List<User> users = userService.getAll();
+        for (int i = 0, overAllCount = 0; overAllCount != count; i++) {
+            for (int j = 0; j < 2; j++) {
+                BlockChatUserList blockChatUserList = new BlockChatUserList();
+                blockChatUserList.setProfile(users.get(i));
+                blockChatUserList.setBlocked(users.get(i + j + 1));
+                blockChatUserList.setPersistDate(LocalDateTime.now());
+                blockChatUserListService.persist(blockChatUserList);
+                if (++overAllCount == count) {
+                    break;
+                }
+            }
+        }
+    }
+
 
 
     public void init() {
@@ -486,6 +508,7 @@ public class TestDataInitService {
         createSingleChat(20);
         createMessage();
         createUserChatPin(3L);
+        createBlockChatUserList(5);
     }
 
 }
