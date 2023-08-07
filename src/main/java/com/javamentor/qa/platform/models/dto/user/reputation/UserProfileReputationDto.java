@@ -16,17 +16,9 @@ public class UserProfileReputationDto {
     private LocalDateTime persistDate;
     private ReputationHistoryType action;
 
-    public UserProfileReputationDto(int countReputation, LocalDateTime persistDate, VoteType voteType, ReputationType action) {
+    public UserProfileReputationDto(int countReputation, LocalDateTime persistDate, VoteType voteType, ReputationType reputationType) {
         this.countReputation = countReputation;
         this.persistDate = persistDate;
-        if (action == ReputationType.VoteAnswer) {
-            if (voteType == VoteType.UP_VOTE) {
-                this.action = ReputationHistoryType.UP_VOTE;
-            } else {
-                this.action = ReputationHistoryType.DOWN_VOTE;
-            }
-        } else if (action == ReputationType.Question) {
-            this.action = ReputationHistoryType.CREATE_QUESTION;
-        }
+        this.action = ReputationHistoryType.getReputationHistoryType(voteType, reputationType);
     }
 }
