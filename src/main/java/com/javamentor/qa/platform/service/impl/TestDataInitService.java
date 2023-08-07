@@ -323,10 +323,11 @@ public class TestDataInitService {
         }
         List<VoteQuestion> voteQuestionList = voteQuestionService.getAll();
         for (VoteQuestion voteQuestion : voteQuestionList) {
-            Question question = questionService.getById(voteQuestion.getQuestion().getId()).get();
             Reputation reputation = new Reputation();
             reputation.setPersistDate(voteQuestion.getLocalDateTime());
-            reputation.setAuthor((question.getUser()));
+            reputation.setAuthor(questionList.stream()
+                    .filter(q -> q.getId().equals(voteQuestion.getQuestion().getId()))
+                    .findFirst().get().getUser());
             reputation.setSender(voteQuestion.getUser());
             reputation.setCount(1);
             reputation.setType(ReputationType.VoteQuestion);
@@ -348,10 +349,11 @@ public class TestDataInitService {
         }
         List<VoteAnswer> voteAnswerList = voteAnswerService.getAll();
         for (VoteAnswer voteAnswer : voteAnswerList) {
-            Answer answer = answerService.getById(voteAnswer.getAnswer().getId()).get();
             Reputation reputation = new Reputation();
             reputation.setPersistDate(voteAnswer.getPersistDateTime());
-            reputation.setAuthor(answer.getUser());
+            reputation.setAuthor(answerList.stream()
+                    .filter(q -> q.getId().equals(voteAnswer.getAnswer().getId()))
+                    .findFirst().get().getUser());
             reputation.setSender(voteAnswer.getUser());
             reputation.setCount(1);
             reputation.setType(ReputationType.VoteAnswer);
