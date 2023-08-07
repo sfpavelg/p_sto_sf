@@ -22,13 +22,13 @@ public class UserProfileReputationDtoDaoImpl implements UserProfileReputationDto
                         "SELECT new com.javamentor.qa.platform.models.dto.user.reputation.UserProfileReputationDto" +
                                 "(rep.count, " +
                                 "rep.persistDate, " +
-                                "CASE WHEN rep.type = 0 THEN 2 " +
-                                "WHEN rep.type = 3 THEN voteQuestion.vote " +
-                                "WHEN rep.type = 4 THEN voteAnswer.vote END) " +
+                                "voteA.vote, " +
+                                "rep.type) " +
 
-                                "from Reputation rep join VoteAnswer voteAnswer on rep.id = voteAnswer.answer.id " +
-                                "join VoteQuestion voteQuestion on rep.id = voteQuestion.question.id " +
-                                "where rep.author.id = :userId and (rep.type = 0 or rep.type = 3 or rep.type = 4) order by rep.persistDate desc",
+                                "from Reputation rep " +
+                                "left join Answer a on rep.answer.id = a.id " +
+                                "left join VoteAnswer voteA on a.id = voteA.answer.id " +
+                                "where rep.author.id = :userId order by rep.persistDate desc",
                         UserProfileReputationDto.class)
                 .setParameter("userId", param.get("userId"))
                 .setMaxResults(itemsOnPageParam)
@@ -38,6 +38,13 @@ public class UserProfileReputationDtoDaoImpl implements UserProfileReputationDto
 
     @Override
     public int getTotalResultCount(Map<String, Object> param) {
-        return entityManager.createQuery("SELECT COUNT(r) FROM Reputation r", Integer.class).getSingleResult();
+        return ((Long) (entityManager.createQuery(
+                "SELECT COUNT(r) " +
+                        "FROM Reputation r " +
+                        "LEFT JOIN Answer a on r.answer.id = a.id " +
+                        "LEFT JOIN VoteAnswer v on a.id = v.answer.id " +
+                        "WHERE r.author.id = :userId")
+                .setParameter("userId", param.get("userId"))
+                .getSingleResult())).intValue();
     }
 }
