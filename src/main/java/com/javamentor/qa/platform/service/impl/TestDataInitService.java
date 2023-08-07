@@ -26,7 +26,12 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.*;
+
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
+import java.util.HashSet;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -309,7 +314,7 @@ public class TestDataInitService {
             Reputation reputation = new Reputation();
             reputation.setPersistDate(question.getPersistDateTime());
             reputation.setAuthor(question.getUser());
-            reputation.setSender(question.getUser());
+            reputation.setSender(null);
             reputation.setCount(1);
             reputation.setType(ReputationType.Question);
             reputation.setQuestion(question);
@@ -320,7 +325,9 @@ public class TestDataInitService {
         for (VoteQuestion voteQuestion : voteQuestionList) {
             Reputation reputation = new Reputation();
             reputation.setPersistDate(voteQuestion.getLocalDateTime());
-            reputation.setAuthor(voteQuestion.getUser());
+            reputation.setAuthor(questionList.stream()
+                    .filter(q -> q.getId().equals(voteQuestion.getQuestion().getId()))
+                    .findFirst().get().getUser());
             reputation.setSender(voteQuestion.getUser());
             reputation.setCount(1);
             reputation.setType(ReputationType.VoteQuestion);
@@ -333,7 +340,7 @@ public class TestDataInitService {
             Reputation reputation = new Reputation();
             reputation.setPersistDate(answer.getPersistDateTime());
             reputation.setAuthor(answer.getUser());
-            reputation.setSender(answer.getUser());
+            reputation.setSender(null);
             reputation.setCount(1);
             reputation.setType(ReputationType.Answer);
             reputation.setQuestion(null);
@@ -344,7 +351,9 @@ public class TestDataInitService {
         for (VoteAnswer voteAnswer : voteAnswerList) {
             Reputation reputation = new Reputation();
             reputation.setPersistDate(voteAnswer.getPersistDateTime());
-            reputation.setAuthor(voteAnswer.getUser());
+            reputation.setAuthor(answerList.stream()
+                    .filter(q -> q.getId().equals(voteAnswer.getAnswer().getId()))
+                    .findFirst().get().getUser());
             reputation.setSender(voteAnswer.getUser());
             reputation.setCount(1);
             reputation.setType(ReputationType.VoteAnswer);
