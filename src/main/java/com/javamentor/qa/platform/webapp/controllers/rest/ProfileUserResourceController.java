@@ -4,6 +4,7 @@ import com.javamentor.qa.platform.models.dto.GroupBookmarkDto;
 import com.javamentor.qa.platform.models.dto.user.UserProfileDto;
 import com.javamentor.qa.platform.models.dto.user.UserProfileQuestionDto;
 import com.javamentor.qa.platform.models.dto.user.UserProfileVoteDto;
+import com.javamentor.qa.platform.models.dto.user.reputation.UserProfileReputationDto;
 import com.javamentor.qa.platform.models.entity.GroupBookmark;
 import com.javamentor.qa.platform.models.entity.user.User;
 import com.javamentor.qa.platform.service.abstracts.dto.GroupBookmarkDtoService;
@@ -11,8 +12,10 @@ import com.javamentor.qa.platform.service.abstracts.dto.answer.AnswerDtoService;
 import com.javamentor.qa.platform.service.abstracts.dto.user.UserProfileCommentDtoService;
 import com.javamentor.qa.platform.service.abstracts.dto.user.UserProfileDtoService;
 import com.javamentor.qa.platform.service.abstracts.dto.user.UserProfileQuestionDtoService;
+import com.javamentor.qa.platform.service.abstracts.dto.user.UserProfileReputationDtoService;
 import com.javamentor.qa.platform.service.abstracts.dto.user.UserProfileTagDtoService;
 import com.javamentor.qa.platform.service.abstracts.dto.user.UserProfileVoteDtoService;
+import com.javamentor.qa.platform.service.abstracts.dto.user.UserProfileDtoService;
 import com.javamentor.qa.platform.service.abstracts.model.GroupBookmarkService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -26,6 +29,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @AllArgsConstructor
@@ -41,6 +45,7 @@ public class ProfileUserResourceController {
     private final UserProfileVoteDtoService userProfileVoteDtoService;
     private final UserProfileDtoService userProfileDtoService;
     private final UserProfileCommentDtoService userProfileCommentDtoService;
+    private final UserProfileReputationDtoService userProfileReputationDtoService;
 
     @GetMapping("/questions")
     @ApiOperation(
@@ -167,6 +172,22 @@ public class ProfileUserResourceController {
         param.put("itemsOnPage", itemsOnPage);
         param.put("userId", user.getId());
         return ResponseEntity.ok(userProfileCommentDtoService.getUserProfileCommentDto(param));
+    }
+    @GetMapping("/reputation")
+    @ApiOperation(value = "Get user reputation by items and currentPage", response = UserProfileReputationDto.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Success"),
+            @ApiResponse(code = 401, message = "Unauthorized request"),
+            @ApiResponse(code = 403, message = "Forbidden")
+    })
+    public ResponseEntity<?> getUserProfileReputationDto(@RequestParam(value = "items", defaultValue = "10") int items,
+                                                         @RequestParam(value = "currentPage", defaultValue = "1") int currentPage,
+                                                         @AuthenticationPrincipal User user) {
+        Map<String, Object> params = new HashMap<>();
+        params.put("currentPageNumber", currentPage);
+        params.put("itemsOnPage", items);
+        params.put("userId", user.getId());
+        return ResponseEntity.ok(userProfileReputationDtoService.getAllReputationByCurrentPage(params));
     }
 }
 

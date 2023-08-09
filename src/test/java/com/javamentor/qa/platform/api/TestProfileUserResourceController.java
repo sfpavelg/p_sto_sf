@@ -356,6 +356,86 @@ public class TestProfileUserResourceController extends AbstractTestApi {
     }
 
     @Test
+    @Sql(value = {"/script/TestProfileUserResourceController/testGetUserProfileReputation/Before.sql"}, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+    @Sql(value = {"/script/TestProfileUserResourceController/testGetUserProfileReputation/After.sql"}, executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
+    public void testGetUserProfileReputation() throws Exception {
+        String token = getToken("0@gmail.com", "0pwd");
+
+        // first page
+        this.mvc.perform(get("/api/user/profile/reputation")
+                .header("Authorization", "Bearer " + token)
+                .param("items", "5")
+                .param("currentPage", "1"))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.totalPageCount", Is.is(2)))
+                .andExpect(jsonPath("$.totalResultCount", Is.is(6)))
+                .andExpect(jsonPath("$.currentPageNumber", Is.is(1)))
+                .andExpect(jsonPath("$.items.length()", Is.is(5)))
+                .andExpect(jsonPath("$.items[0].countReputation", Is.is(3)))
+                .andExpect(jsonPath("$.items[0].persistDate", Is.is("2023-01-21T15:21:03.527867")))
+                .andExpect(jsonPath("$.items[0].action", Is.is("UP_VOTE")))
+                .andExpect(jsonPath("$.items[1].countReputation", Is.is(3)))
+                .andExpect(jsonPath("$.items[1].persistDate", Is.is("2023-01-21T15:21:03.527867")))
+                .andExpect(jsonPath("$.items[1].action", Is.is("DOWN_VOTE")))
+                .andExpect(jsonPath("$.items[2].countReputation", Is.is(2)))
+                .andExpect(jsonPath("$.items[2].persistDate", Is.is("2023-01-20T15:21:03.527867")))
+                .andExpect(jsonPath("$.items[2].action", Is.is("DOWN_VOTE")))
+                .andExpect(jsonPath("$.items[3].countReputation", Is.is(2)))
+                .andExpect(jsonPath("$.items[3].persistDate", Is.is("2023-01-20T15:21:03.527867")))
+                .andExpect(jsonPath("$.items[3].action", Is.is("DOWN_VOTE")))
+                .andExpect(jsonPath("$.items[4].countReputation", Is.is(1)))
+                .andExpect(jsonPath("$.items[4].persistDate", Is.is("2023-01-19T15:21:03.527867")))
+                .andExpect(jsonPath("$.items[4].action", Is.is("CREATE_QUESTION")));
+
+        // second page
+        this.mvc.perform(get("/api/user/profile/reputation")
+                        .header("Authorization", "Bearer " + token)
+                        .param("items", "5")
+                        .param("currentPage", "2"))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.totalPageCount", Is.is(2)))
+                .andExpect(jsonPath("$.totalResultCount", Is.is(6)))
+                .andExpect(jsonPath("$.currentPageNumber", Is.is(2)))
+                .andExpect(jsonPath("$.items.length()", Is.is(1)))
+                .andExpect(jsonPath("$.items[0].countReputation", Is.is(1)))
+                .andExpect(jsonPath("$.items[0].persistDate", Is.is("2023-01-18T15:21:03.527867")))
+                .andExpect(jsonPath("$.items[0].action", Is.is("UP_VOTE")));
+
+        // default (items = 10, currentPage = 1)
+        this.mvc.perform(get("/api/user/profile/reputation")
+                        .header("Authorization", "Bearer " + token))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.totalPageCount", Is.is(1)))
+                .andExpect(jsonPath("$.totalResultCount", Is.is(6)))
+                .andExpect(jsonPath("$.currentPageNumber", Is.is(1)))
+                .andExpect(jsonPath("$.items.length()", Is.is(6)))
+                .andExpect(jsonPath("$.items[0].countReputation", Is.is(3)))
+                .andExpect(jsonPath("$.items[0].persistDate", Is.is("2023-01-21T15:21:03.527867")))
+                .andExpect(jsonPath("$.items[0].action", Is.is("UP_VOTE")))
+                .andExpect(jsonPath("$.items[1].countReputation", Is.is(3)))
+                .andExpect(jsonPath("$.items[1].persistDate", Is.is("2023-01-21T15:21:03.527867")))
+                .andExpect(jsonPath("$.items[1].action", Is.is("DOWN_VOTE")))
+                .andExpect(jsonPath("$.items[2].countReputation", Is.is(2)))
+                .andExpect(jsonPath("$.items[2].persistDate", Is.is("2023-01-20T15:21:03.527867")))
+                .andExpect(jsonPath("$.items[2].action", Is.is("DOWN_VOTE")))
+                .andExpect(jsonPath("$.items[3].countReputation", Is.is(2)))
+                .andExpect(jsonPath("$.items[3].persistDate", Is.is("2023-01-20T15:21:03.527867")))
+                .andExpect(jsonPath("$.items[3].action", Is.is("DOWN_VOTE")))
+                .andExpect(jsonPath("$.items[4].countReputation", Is.is(1)))
+                .andExpect(jsonPath("$.items[4].persistDate", Is.is("2023-01-19T15:21:03.527867")))
+                .andExpect(jsonPath("$.items[4].action", Is.is("CREATE_QUESTION")))
+                .andExpect(jsonPath("$.items[5].countReputation", Is.is(1)))
+                .andExpect(jsonPath("$.items[5].persistDate", Is.is("2023-01-18T15:21:03.527867")))
+                .andExpect(jsonPath("$.items[5].action", Is.is("UP_VOTE")));
+    }
+
+    @Test
     @Sql(value = {"/script/TestProfileUserResourceController/testGetUserProfileCommentDto/Before.sql"}, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
     @Sql(value = {"/script/TestProfileUserResourceController/testGetUserProfileCommentDto/After.sql"}, executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
     public void testGetUserProfileCommentDto() throws Exception {
