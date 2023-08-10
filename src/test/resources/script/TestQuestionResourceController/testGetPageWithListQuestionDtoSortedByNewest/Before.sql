@@ -51,8 +51,14 @@ INSERT INTO public.question (id, description, is_deleted, last_redaction_date, p
 (107, 'Asked by user id 107', false, '2023-03-11 17:18:55.765247', '2023-03-11 17:18:55.765247', 'question user id 107', 107),
 (108, 'Asked by user id 108', false, '2023-03-11 17:18:55.77676', '2023-03-11 17:18:55.77676', 'question user id 108', 108),
 (109, 'Asked by user id 109', false, '2023-03-11 17:18:55.786738', '2023-03-11 17:18:55.786738', 'question user id 109', 109),
-(110, 'Asked by user id 110', false, '2023-03-11 17:18:55.797092', '2023-03-11 17:18:55.797092', 'question user id 110', 110)
-;
+(110, 'Asked by user id 110', false, '2023-03-11 17:18:55.797092', '2023-03-11 17:18:55.797092', 'question user id 110', 110),
+
+(111, 'Asked by user id 111', false, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'question user id 111', 111),
+(112, 'Asked by user id 108', false, CURRENT_TIMESTAMP - INTERVAL '2 DAY', CURRENT_TIMESTAMP - INTERVAL '2 DAY', 'question user id 108', 108),
+(113, 'Asked by user id 109', false, CURRENT_TIMESTAMP - INTERVAL '15 DAY', CURRENT_TIMESTAMP - INTERVAL '15 DAY', 'question user id 109', 109),
+(114, 'Asked by user id 110', false, CURRENT_TIMESTAMP - INTERVAL '400 DAY', CURRENT_TIMESTAMP - INTERVAL '400 DAY', 'question user id 110', 110);
+
+
 
 INSERT INTO public.votes_on_questions (id, persist_date, vote, question_id, user_id) VALUES
 (101, '2023-03-12 17:18:55.753564', 'up', 101, 101),
@@ -85,5 +91,8 @@ INSERT INTO public.question_has_tag (question_id, tag_id) VALUES
 (108, 102),
 (108, 103),
 (109, 104),
-(110, 101)
-;
+(110, 101),
+(111, 101),
+(112, 101),
+(113, 101),
+(114, 101);
