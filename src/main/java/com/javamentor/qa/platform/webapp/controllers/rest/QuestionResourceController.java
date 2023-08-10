@@ -221,6 +221,8 @@ public class QuestionResourceController {
      * @param ignoredTag       Optional parameter, contains a list of ID tags of the {@link Tag} entity that should be
      *                         ignored when displaying a list of unanswered questions. If the question contains at least
      *                         one ignored tag, the question is not output.
+     * @param period           Optional parameter that determines the time frame for which questions are displayed.
+     *                         Possible values include DAY, WEEK, MONTH, YEAR, ALL. The default value is ALL.
      * @return {@link ResponseEntity} with status Ok and {@link PageDto<QuestionViewDto>} in body.
      */
     @GetMapping("/new")

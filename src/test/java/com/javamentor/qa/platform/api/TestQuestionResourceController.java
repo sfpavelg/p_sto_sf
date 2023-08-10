@@ -879,7 +879,71 @@ class TestQuestionResourceController extends AbstractTestApi {
                 .andExpect(jsonPath("$.items[5].listTagDto.size()", Is.is(1)))
                 .andExpect(jsonPath("$.items[5].listTagDto[0].id", Is.is(101)));
 
-        //Test 5. Negative test. Incorrect page and correct ignoredTag were passed
+        //Test 5. Positive. The request parameters are passed page, items, period = DAY
+        this.mvc.perform(get("/api/user/question/new")
+                .header("Authorization", "Bearer " + token)
+                .contentType(MediaType.APPLICATION_JSON)
+                .param("page", "1")
+                .param("items", "5")
+                .param("period", "DAY")
+        )
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.currentPageNumber", Is.is(1)))
+                .andExpect(jsonPath("$.totalPageCount", Is.is(1)))
+                .andExpect(jsonPath("$.totalResultCount", Is.is(1)))
+                .andExpect(jsonPath("$.itemsOnPage", Is.is(5)))
+                .andExpect(jsonPath("$.items[0].id", Is.is(111)))
+                .andExpect(jsonPath("$.items[0].title", Is.is("question user id 111")));
+
+        //Test 6. Positive. The request parameters are passed page, items, period = WEEK
+        this.mvc.perform(get("/api/user/question/new")
+                        .header("Authorization", "Bearer " + token)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .param("page", "1")
+                        .param("items", "5")
+                        .param("period", "WEEK")
+                )
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.currentPageNumber", Is.is(1)))
+                .andExpect(jsonPath("$.totalPageCount", Is.is(1)))
+                .andExpect(jsonPath("$.totalResultCount", Is.is(2)))
+                .andExpect(jsonPath("$.itemsOnPage", Is.is(5)))
+                .andExpect(jsonPath("$.items[1].id", Is.is(112)))
+                .andExpect(jsonPath("$.items[1].title", Is.is("question user id 108")));
+
+        //Test 7. Positive. The request parameters are passed page, items, period = MONTH
+        this.mvc.perform(get("/api/user/question/new")
+                        .header("Authorization", "Bearer " + token)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .param("page", "1")
+                        .param("items", "5")
+                        .param("period", "MONTH")
+                )
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.currentPageNumber", Is.is(1)))
+                .andExpect(jsonPath("$.totalPageCount", Is.is(1)))
+                .andExpect(jsonPath("$.totalResultCount", Is.is(3)))
+                .andExpect(jsonPath("$.itemsOnPage", Is.is(5)))
+                .andExpect(jsonPath("$.items[2].id", Is.is(113)))
+                .andExpect(jsonPath("$.items[2].title", Is.is("question user id 109")));
+
+        //Test 8. Positive. The request parameters are passed page, items, period = YEAR
+        this.mvc.perform(get("/api/user/question/new")
+                        .header("Authorization", "Bearer " + token)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .param("page", "3")
+                        .param("items", "5")
+                        .param("period", "YEAR")
+                )
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.currentPageNumber", Is.is(3)))
+                .andExpect(jsonPath("$.totalPageCount", Is.is(3)))
+                .andExpect(jsonPath("$.totalResultCount", Is.is(13)))
+                .andExpect(jsonPath("$.itemsOnPage", Is.is(5)))
+                .andExpect(jsonPath("$.items[2].id", Is.is(101)))
+                .andExpect(jsonPath("$.items[2].title", Is.is("question user id 101")));
+
+        //Test 9. Negative test. Incorrect page and correct ignoredTag were passed
         this.mvc.perform(get("/api/user/question/new")
                         .header("Authorization", "Bearer " + token)
                         .contentType(MediaType.APPLICATION_JSON)
@@ -888,7 +952,7 @@ class TestQuestionResourceController extends AbstractTestApi {
                 )
                 .andExpect(status().is4xxClientError());
 
-        //Test 6. Negative test. The correct page and incorrect items were passed
+        //Test 10. Negative test. The correct page and incorrect items were passed
         this.mvc.perform(get("/api/user/question/new")
                         .header("Authorization", "Bearer " + token)
                         .contentType(MediaType.APPLICATION_JSON)

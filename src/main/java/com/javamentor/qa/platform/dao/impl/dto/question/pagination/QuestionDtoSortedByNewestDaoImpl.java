@@ -7,7 +7,7 @@ import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 
@@ -61,7 +61,7 @@ public class QuestionDtoSortedByNewestDaoImpl implements QuestionDtoSortedByNewe
         QuestionViewDto.class)
         .setParameter("trackedTag", param.get("trackedTag"))
         .setParameter("ignoredTag", param.get("ignoredTag"))
-        .setParameter("startDate", LocalDate.now().minus(period.getValue()))
+        .setParameter("startDate", LocalDateTime.now().minus(period.getValue()))
         .setMaxResults(itemsOnPageParam)
         .setFirstResult(itemsPositionParam)
         .getResultList();
@@ -88,7 +88,7 @@ public class QuestionDtoSortedByNewestDaoImpl implements QuestionDtoSortedByNewe
                                 "and q.persistDateTime >= :startDate")
                 .setParameter("trackedTag", param.get("trackedTag"))
                 .setParameter("ignoredTag", param.get("ignoredTag"))
-                .setParameter("startDate", LocalDate.now().minus(period.getValue()))
+                .setParameter("startDate", LocalDateTime.now().minus(period.getValue()))
                 .getSingleResult());
     }
 }
