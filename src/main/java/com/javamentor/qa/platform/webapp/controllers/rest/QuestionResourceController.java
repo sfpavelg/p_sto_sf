@@ -1,6 +1,7 @@
 package com.javamentor.qa.platform.webapp.controllers.rest;
 
 import com.javamentor.qa.platform.models.dto.PageDto;
+import com.javamentor.qa.platform.models.dto.Period;
 import com.javamentor.qa.platform.models.dto.chat.ChatDto;
 import com.javamentor.qa.platform.models.dto.question.QuestionCommentDto;
 import com.javamentor.qa.platform.models.dto.question.QuestionCreateDto;
@@ -220,6 +221,8 @@ public class QuestionResourceController {
      * @param ignoredTag       Optional parameter, contains a list of ID tags of the {@link Tag} entity that should be
      *                         ignored when displaying a list of unanswered questions. If the question contains at least
      *                         one ignored tag, the question is not output.
+     * @param period           Optional parameter that determines the time frame for which questions are displayed.
+     *                         Possible values include DAY, WEEK, MONTH, YEAR, ALL. The default value is ALL.
      * @return {@link ResponseEntity} with status Ok and {@link PageDto<QuestionViewDto>} in body.
      */
     @GetMapping("/new")
@@ -234,13 +237,15 @@ public class QuestionResourceController {
             @RequestParam(value = "page") Integer pageNumber,
             @RequestParam(value = "items", required = false, defaultValue = "10") Integer itemsCountOnPage,
             @RequestParam(value = "trackedTag", required = false) List<Long> trackedTag,
-            @RequestParam(value = "ignoredTag", required = false) List<Long> ignoredTag
+            @RequestParam(value = "ignoredTag", required = false) List<Long> ignoredTag,
+            @RequestParam(value = "period", required = false, defaultValue = "ALL") Period period
     ) {
         HashMap<String, Object> param = new HashMap<>();
         param.put("currentPageNumber", pageNumber);
         param.put("itemsOnPage", itemsCountOnPage);
         param.put("trackedTag", trackedTag);
         param.put("ignoredTag", ignoredTag);
+        param.put("period", period);
         return ResponseEntity.ok(questionViewDtoService.getPageWithListQuestionDtoSortedByNewest(param));
     }
 
